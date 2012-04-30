@@ -3,7 +3,7 @@
  * This class extends native ymaps.GeoObjectCollection or ymaps.GeoObjectArray
  * with bounds calculation possibility.
  * @example
- *     var collection = new CollectionWithBounds(),
+ *     var collection = new GeoCollectionBounds(),
  *         placemark1 = new ymaps.Placemark([55.7, 37.5]),
  *         placemark2 = new ymaps.Placemark([55.8, 37.6]),
  *         placemark3 = new ymaps.Placemark([55.5, 37.7]),
@@ -33,12 +33,12 @@
 /**
  * GeoObjectCollection with bounds calculating.
  * @class
- * @name CollectionWithBounds
+ * @name GeoCollectionBounds
  * @augments ymaps.GeoObjectCollection
  * @event ymaps.Event#boundschange Fired with bounds changing.
  */
-function CollectionWithBounds () {
-    CollectionWithBounds.superclass.constructor.apply(this, arguments);
+function GeoCollectionBounds() {
+    GeoCollectionBounds.superclass.constructor.apply(this, arguments);
     this._bounds = null;
 
     this.events.add('add', function (e) {
@@ -68,10 +68,10 @@ function CollectionWithBounds () {
     }, this);
 }
 
-ymaps.util.augment(CollectionWithBounds, ymaps.GeoObjectCollection, /** @lends CollectionWithBounds.prototype */ {
+ymaps.util.augment(GeoCollectionBounds, ymaps.GeoObjectCollection, /** @lends GeoCollectionBounds.prototype */ {
     /**
      * @function
-     * @name CollectionWithBounds.getBounds
+     * @name GeoCollectionBounds.getBounds
      * @returns {Array} Represents collection bounds through 2 points array.
      */
     getBounds : function () {
@@ -80,7 +80,7 @@ ymaps.util.augment(CollectionWithBounds, ymaps.GeoObjectCollection, /** @lends C
     /**
      * Represents collection bounds through ymaps.Polygon instance.
      * @function
-     * @name CollectionWithBounds.getBoundsRect
+     * @name GeoCollectionBounds.getBoundsRect
      * @returns {ymaps.Polygon} Useful in collection bounds visualization on the map.
      */
     getBoundsRect : function () {
