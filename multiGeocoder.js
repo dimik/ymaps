@@ -25,7 +25,7 @@
  */
 function MultiplyGeocoder(options) {
     this._options = options || {};
-};
+}
 
 /**
  * Функция множественнеого геокодирования.
@@ -39,15 +39,15 @@ function MultiplyGeocoder(options) {
  * @returns {Object} Как и в обычном геокодере, вернем объект-обещание.
  */
 MultiplyGeocoder.prototype.geocode = function (requests, options) {
-    var size = requests.length,
+    var self = this,
+        size = requests.length,
         promise = new ymaps.util.Promise(),
-        options = options && ymaps.util.extend({}, this._options, options) || this._options,
         result = {
             geoObjects : new ymaps.GeoObjectArray()
         };
 
     requests.forEach(function (request, index) {
-        ymaps.geocode(request, options)
+        ymaps.geocode(request, ymaps.util.extend({}, self._options, options))
             .then(
                 function (response) {
                     var geoObject = response.geoObjects.get(0);
