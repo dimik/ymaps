@@ -59,7 +59,7 @@ MultiplyGeocoder.prototype.geocode = function (requests, options) {
                     promise.reject(err);
                 }
             );
-    }, this);
+    });
 
     return promise;
 };
