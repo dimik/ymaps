@@ -1,5 +1,5 @@
 /**
- * @fileOwerview
+ * @fileOverview
  * Пример реализации функциональности множественного геокодирования.
  * Аналогичная разработка для первой версии АПИ.
  * @see http://api.yandex.ru/maps/doc/jsapi/1.x/examples/multiplygeocoding.html
