@@ -67,15 +67,12 @@ var AutoSwitcher = function () {
          */
         addToMap: function (map) {
             this.map = map;
-
             this.provider = {
                 events: new ymaps.event.Manager(),
                 getZoomRange: bind(this.getZoomRange, this)
             };
             map.zoomRange.addProvider(this.provider);
-
             map.events.add('boundschange', this.update, this);
-
             this.getZoomRange(map.getCenter()).then(bind(this.update, this));
         },
 
@@ -87,9 +84,7 @@ var AutoSwitcher = function () {
         removeFromMap: function () {
             this.map.events.remove('boundschange', this.update, this);
             this.map.zoomRange.removeProvider(this.provider);
-            if (this.currentLayer) {
-                this.map.layers.remove(this.currentLayer);
-            }
+            this.removeCurrentLayer();
             this.map = null;
         },
 
@@ -118,6 +113,15 @@ var AutoSwitcher = function () {
         },
 
         /**
+         * Remove current layer from map.
+         * @function
+         * @name AutoSwitcher.removeCurrentLayer
+         */
+        removeCurrentLayer: function () {
+            this.currentLayer && this.map.layers.remove(this.currentLayer);
+        },
+
+        /**
          * Change current map layer.
          * @function
          * @name AutoSwitcher.switchLayer
@@ -128,7 +132,7 @@ var AutoSwitcher = function () {
                 return;
             }
 
-            this.currentLayer && this.map.layers.remove(this.currentLayer);
+            this.removeCurrentLayer();
             this.map.layers.add(this.currentLayer = layer);
         },
 
