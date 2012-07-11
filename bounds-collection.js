@@ -31,6 +31,84 @@
  */
 
 /**
+ * Encapsulates bounds calculating methods.
+ * @class
+ * @name GeoBounds
+ * @param {Array} [lowerCorner] Bottom left corner of the area.
+ * @param {Array} [upperCorner] Top right corner of the area.
+ */
+function GeoBounds(lowerCorner, upperCorner) {
+    this.setBounds([lowerCorner, upperCorner]);
+}
+
+GeoBounds.prototype = {
+    constructor : GeoBounds,
+    /**
+     * Bounds getter.
+     * @function
+     * @name GeoBounds.getBounds
+     * @returns {Array} Forms bounds and return it.
+     */
+    getBounds : function () {
+        return Array.isArray(this._lower) && Array.isArray(this._upper) ? [this._lower, this._upper] : null;
+    },
+    /**
+     * Bounds setter.
+     * @function
+     * @name GeoBounds.setBounds
+     * @param {Array} bounds
+     */
+    setBounds : function (bounds) {
+        if(Array.isArray(bounds)) {
+            this._lower = Array.isArray(bounds[0]) && bounds[0].slice(0);
+            this._upper = Array.isArray(bounds[1]) && bounds[1].slice(0);
+        }
+    },
+    /**
+     * Checks whether a point is contained in the bounds area.
+     * @function
+     * @name GeoBounds.contains
+     * @param {Array} point GoePoint GeoJSON geometry representation.
+     * @returns {Boolean}
+     */
+    contains : function (point) {
+        var bounds = this.getBounds();
+
+        return !!bounds &&
+            bounds[0][0] <= point[0] &&
+            bounds[0][1] <= point[1] &&
+            bounds[1][0] >= point[0] &&
+            bounds[1][1] >= point[1];
+    },
+    /**
+     * Update bounds with other bounds.
+     * @function
+     * @name GeoBounds.update
+     * @param {Array} bounds
+     */
+    update : function (bounds) {
+        if(!this.getBounds()) {
+            this.setBounds(bounds);
+            return;
+        }
+
+        var lowerCorner = this._lower;
+            upperCorner = this._upper;
+
+        if(Array.isArray(lowerCorner) && Array.isArray(upperCorner)) {
+            lowerCorner.splice(0, 2,
+                Math.min(lowerCorner[0], bounds[0][0]),
+                Math.min(lowerCorner[1], bounds[0][1])
+            ),
+            upperCorner.splice(0, 2,
+                Math.max(upperCorner[0], bounds[1][0]),
+                Math.max(upperCorner[1], bounds[1][1])
+            )
+        }
+    },
+};
+
+/**
  * GeoObjectCollection with bounds calculating.
  * @class
  * @name GeoCollectionBounds
@@ -39,32 +117,33 @@
  */
 function GeoCollectionBounds() {
     GeoCollectionBounds.superclass.constructor.apply(this, arguments);
-    this._bounds = null;
+    this._bounds = new GeoBounds();
 
     this.events.add('add', function (e) {
-        var childBounds = e.get('child').geometry.getBounds(),
-            boundsRect = this.getBoundsRect();
+        var childBounds = e.get('child').geometry.getBounds();
 
-        boundsRect && boundsRect.geometry.contains(childBounds[0]) && boundsRect.geometry.contains(childBounds[1]) ||
-        (this._updateBounds(childBounds), this.events.fire('boundschange', new ymaps.Event({
+         this._bounds.contains(childBounds[0]) && this._bounds.contains(childBounds[1]) ||
+        (this._bounds.update(childBounds), this.events.fire('boundschange', {
             target : this,
-            bounds : this._bounds
-        }, true)));
+            bounds : this._bounds.getBounds()
+        }, true));
     }, this)
     .add('remove', function (e) {
         var childBounds = e.get('child').geometry.getBounds();
 
-        this.getLength() || (this._bounds = null);
+        this.getLength() || (this._bounds = new GeoBounds());
 
-        this._bounds &&
-           (this._bounds[0][0] <= childBounds[0][0] ||
-            this._bounds[0][1] <= childBounds[0][1] ||
-            this._bounds[1][0] <= childBounds[1][0] ||
-            this._bounds[1][0] <= childBounds[1][0]) &&
-        (this._recalculateBounds(), this.events.fire('boundschange', new ymaps.Event({
+        var bounds = this._bounds.getBounds();
+
+        bounds &&
+           (bounds[0][0] <= childBounds[0][0] ||
+            bounds[0][1] <= childBounds[0][1] ||
+            bounds[1][0] <= childBounds[1][0] ||
+            bounds[1][0] <= childBounds[1][0]) &&
+        (this._recalculateBounds(), this.events.fire('boundschange', {
             target : this,
-            bounds : this._bounds
-        }, true)));
+            bounds : bounds
+        }, true));
     }, this);
 }
 
@@ -75,7 +154,9 @@ ymaps.util.augment(GeoCollectionBounds, ymaps.GeoObjectCollection, /** @lends Ge
      * @returns {Array} Represents collection bounds through 2 points array.
      */
     getBounds : function () {
-        return this._bounds;
+        var bounds = this._bounds.getBounds();
+
+        return bounds && [bounds[0].slice(0), bounds[1].slice(0)];
     },
     /**
      * Represents collection bounds through ymaps.Polygon instance.
@@ -84,12 +165,14 @@ ymaps.util.augment(GeoCollectionBounds, ymaps.GeoObjectCollection, /** @lends Ge
      * @returns {ymaps.Polygon} Useful in collection bounds visualization on the map.
      */
     getBoundsRect : function () {
-        if(!this._bounds) {
+        var bounds = this._bounds.getBounds();
+
+        if(!bounds) {
             return;
         }
 
-        var lowerCorner = this._bounds[0],
-            upperCorner = this._bounds[1],
+        var lowerCorner = bounds[0],
+            upperCorner = bounds[1],
             rectangle = new ymaps.Polygon([[
                 lowerCorner,
                 [lowerCorner[0], upperCorner[1]],
@@ -100,38 +183,14 @@ ymaps.util.augment(GeoCollectionBounds, ymaps.GeoObjectCollection, /** @lends Ge
         return rectangle;
     },
     /**
-     * Update collection bounds with child item bounds.
-     * @ignore
-     * @function
-     * @param {Array} childBounds
-     */
-    _updateBounds : function (childBounds) {
-        if(!this._bounds) {
-            this._bounds = [[].concat(childBounds[0]), [].concat(childBounds[1])];
-            return;
-        }
-
-        var lowerCorner = this._bounds[0],
-            upperCorner = this._bounds[1];
-
-        lowerCorner.splice(0, 2,
-            Math.min(lowerCorner[0], childBounds[0][0]),
-            Math.min(lowerCorner[1], childBounds[0][1])
-        ),
-        upperCorner.splice(0, 2,
-            Math.max(upperCorner[0], childBounds[1][0]),
-            Math.max(upperCorner[1], childBounds[1][1])
-        )
-    },
-    /**
      * Complete collection bounds recount.
      * @ignore
      * @function
      */
     _recalculateBounds : function () {
-        this._bounds = null;
+        this._bounds = new GeoBounds();
         this.each(function (item) {
-            this._updateBounds(item.geometry.getBounds());
+            this._bounds.update(item.geometry.getBounds());
         }, this);
     }
 });
