@@ -157,11 +157,11 @@ var AutoSwitcher = function () {
                         if (Math.abs(mapCenter[0] - center[0]) < 1e-6 && Math.abs(mapCenter[1] - center[1]) < 1e-6) {
                             _this.mapZoomRange = res.map;
                             _this.satZoomRange = res.sat;
-                            promise.resolve([
-                                Math.min(res.map[0], res.sat[0]),
-                                Math.max(res.map[1], res.sat[1])
-                            ]);
                         }
+                        promise.resolve([
+                            Math.min(res.map[0], res.sat[0]),
+                            Math.max(res.map[1], res.sat[1])
+                        ]);
                     }
                 }
 
