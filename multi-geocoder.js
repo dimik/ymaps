@@ -42,9 +42,8 @@ MultiplyGeocoder.prototype.geocode = function (requests, options) {
     var self = this,
         size = requests.length,
         promise = new ymaps.util.Promise(),
-        result = {
-            geoObjects : new ymaps.GeoObjectArray()
-        };
+        result = [],
+        geoObjects = new ymaps.GeoObjectArray();
 
     requests.forEach(function (request, index) {
         ymaps.geocode(request, ymaps.util.extend({}, self._options, options))
@@ -52,8 +51,8 @@ MultiplyGeocoder.prototype.geocode = function (requests, options) {
                 function (response) {
                     var geoObject = response.geoObjects.get(0);
 
-                    geoObject && result.geoObjects.add(geoObject, index);
-                    --size || promise.resolve(result);
+                    geoObject && (result[index] = geoObject);
+                    --size || (result.forEach(geoObjects.add, geoObjects), promise.resolve({ geoObjects : geoObjects }));
                 },
                 function (err) {
                     promise.reject(err);
