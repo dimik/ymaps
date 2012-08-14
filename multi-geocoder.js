@@ -2,9 +2,9 @@
  * @fileOverview
  * Пример реализации функциональности множественного геокодирования.
  * Аналогичная разработка для первой версии АПИ.
- * @see http://api.yandex.ru/maps/doc/jsapi/1.x/examples/multiplygeocoding.html
+ * @see http://api.yandex.ru/maps/doc/jsapi/1.x/examples/multigeocoding.html
  * @example
- * var multiGeocoder = new MultiplyGeocoder({ boundedBy : map.getBounds() });
+ * var multiGeocoder = new MultiGeocoder({ boundedBy : map.getBounds() });
  * multiGeocoder
  *     .geocode(['Москва, Льва Толстого 16', [55.7, 37.5], 'Санкт-Петербург'])
  *         .then(
@@ -20,10 +20,10 @@
 /**
  * Класс для геокодирования списка адресов или координат.
  * @class
- * @name MultiplyGeocoder
+ * @name MultiGeocoder
  * @param {Object} [options={}] Дефолтные опции мультигеокодера.
  */
-function MultiplyGeocoder(options) {
+function MultiGeocoder(options) {
     this._options = options || {};
 }
 
@@ -34,11 +34,11 @@ function MultiplyGeocoder(options) {
  * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/util.extend.xml
  * @requires ymaps.util.Promise
  * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/util.Promise.xml
- * @name MultiplyGeocoder.geocode
+ * @name MultiGeocoder.geocode
  * @param {Array} requests Массив строк-имен топонимов и/или геометрий точек (обратное геокодирование)
  * @returns {Object} Как и в обычном геокодере, вернем объект-обещание.
  */
-MultiplyGeocoder.prototype.geocode = function (requests, options) {
+MultiGeocoder.prototype.geocode = function (requests, options) {
     var self = this,
         size = requests.length,
         promise = new ymaps.util.Promise(),
