@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример реализации пользовательского макета поискового контрола</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/bootstrap/css/bootstrap.min..css" rel="stylesheet">
+    <script src="http://yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard,util.bind&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+ymaps.ready(function () {
+    var map = new ymaps.Map('YMapsID', {
+            center: [55.751574, 37.573856],
+            zoom: 9,
+            behaviors: ['scrollZoom', 'drag']
+        }),
+
+    // Создание макета для поискового контрола.
+    MySearchControlLayout = ymaps.templateLayoutFactory.createClass(
+        '<form class="form-search">' +
+            '<div class="input-append">' +
+                '<input type="text" class="span4 search-query" data-provide="typeahead">' +
+                '<button type="submit" class="btn btn-$[data.theme|primary]">Поиск</button>' +
+            '</div>' +
+        '</form>', {
+
+            build: function () {
+                MySearchControlLayout.superclass.build.call(this);
+
+                this.onSubmit = ymaps.util.bind(this.onSubmit, this);
+                this.onFieldChange = ymaps.util.bind(this.onFieldChange, this);
+                this.dataSource = ymaps.util.bind(this.dataSource, this);
+
+                this.form = $('.form-search')
+                    .on('submit', this.onSubmit);
+
+                this.field = $('.search-query')
+                    .on('change', this.onFieldChange)
+                    .typeahead({source: this.dataSource, items: 5, minLength: 3});
+
+                this.provider = this.getData().control.options.get('provider');
+
+                this.getData().state.events.add('change', this.onStateChange, this);
+            },
+
+            clear: function () {
+                this.form.off('submit', this.onSubmit);
+                this.field.off('**');
+                this.getData().state.events.remove('change', this.onStateChange, this);
+
+                MySearchControlLayout.superclass.clear.call(this);
+            },
+
+            onFieldChange: function () {
+                if(this.field.is(':focus')) {
+                    this.form.trigger('submit');
+                }
+            },
+
+            dataSource: function (query, callback) {
+                ymaps.geocode(query, {provider: this.provider})
+                    .then(function (res) {
+                        var results = [];
+
+                        res.geoObjects.each(function (geoObject) {
+                            var text = geoObject.properties.get('text'),
+                                name = geoObject.properties.get('name'),
+                                description = geoObject.properties.get('description'),
+                                tags = (this.provider === 'yandex#publicMap' &&
+                                        geoObject.properties.get('metaDataProperty.PSearchObjectMetaData.Tags') || [])
+                                            .map(function (t) { return t.tag });
+
+                            results.push(
+                                text || [name, description]
+                                    .concat(tags)
+                                    .filter(Boolean)
+                                    .join(', ')
+                            );
+                        });
+
+                        callback(results);
+                    });
+            },
+
+            onSubmit: function (e) {
+                e.preventDefault();
+
+                this.events.fire('search', {
+                    request: this.field.val()
+                });
+            },
+
+            onStateChange: function () {
+                var results = this.getData().state.get('results'),
+                    result = results && results[0];
+
+                if(result) {
+                    result.options.set('preset', 'twirl#darkblueStretchyIcon');
+                    result.properties.set('iconContent', result.properties.get('name'));
+                    // result.options.set('iconLayout', ymaps.templateLayoutFactory.createClass('<i class="icon-google_maps icon-large"/>'));
+                    // result.options.set('iconOffset', [-8, -28]);
+                }
+            }
+        }),
+
+        searchControl = new ymaps.control.SearchControl({layout: MySearchControlLayout, /** provider: 'yandex#publicMap' */});
+
+    map.controls.add(searchControl, {left: 5, top: 5});
+
+});
+    </script>
+</head>
+
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пользовательский макет поискового контрола</p>
+            <div id="YMapsID" style="width: 800px; height: 400px"></div>
+        </div>
+    </div>
+</body>
+
+</html>

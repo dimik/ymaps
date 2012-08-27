@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример реализации пользовательского макета контрола пробок</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <script src="http://yandex.st/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard,package.traffic,util.bind&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+ymaps.ready(function () {
+    var map = new ymaps.Map('YMapsID', {
+            center: [55.751574, 37.573856],
+            zoom: 9,
+            behaviors: ['scrollZoom', 'drag']
+        }),
+
+        // Создание макета для контрола пробок.
+        MyTrafficControlLayout = ymaps.templateLayoutFactory.createClass("<div id='traffic'>" +
+            "<div id='shown'>[if state.shown]hide[else]show[endif]</div>" +
+            "[if state.shown]" +
+                "<div id='now'>now</div>" +
+                "<div id='usually'>usually</div>" +
+            "[endif]" +
+            "</div>", {
+
+            build: function () {
+                MyTrafficControlLayout.superclass.build.call(this);
+                this.actualCallback = ymaps.util.bind(this.setActualProvider, this);
+                this.archiveCallback = ymaps.util.bind(this.setArchiveProvider, this);
+                this.shownCallback = ymaps.util.bind(this.checkShown, this);
+                $('#shown').bind('click', this.shownCallback);
+                $('#now').bind('click', this.actualCallback);
+                $('#usually').bind('click', this.archiveCallback);
+            },
+
+            clear: function () {
+                $('#shown').unbind('click', this.shownCallback);
+                $('#now').unbind('click', this.actualCallback);
+                $('#usually').unbind('click', this.archiveCallback);
+                MyTrafficControlLayout.superclass.clear.call(this);
+            },
+
+            setActualProvider: function () {
+                this.events.fire('providerkeychange', {newProviderKey: 'traffic#actual'});
+            },
+
+            setArchiveProvider: function () {
+                this.events.fire('providerkeychange', {newProviderKey: 'traffic#archive'});
+            },
+
+            checkShown: function () {
+                if (this.getData().state.get('shown')) {
+                    this.events.fire('hide');
+                }
+                else {
+                    this.events.fire('show');
+                }
+            }
+        }),
+
+        trafficControl = new ymaps.control.TrafficControl(undefined, {layout: MyTrafficControlLayout});
+
+    map.controls.add(trafficControl, {left: 5, top: 5});
+});
+    </script>
+</head>
+
+<body>
+    <h2>Пример реализации пользовательского макета контрола пробок</h2>
+    <div id="YMapsID" style="width: 800px; height: 400px"></div>
+</body>
+
+</html>

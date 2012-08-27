@@ -1,0 +1,5 @@
+.form-search .input-append .btn.first {
+    webkit-border-radius: 0 0;
+    -moz-border-radius: 0 0;
+    border-radius: 0 0;
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры реализации макетов контролов</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+</head>
+<body data-spy="scroll" data-target=".navbar" data-offset="0">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="./index.html">АПИ Контролы</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="">
+                            <a href="#button">Button</a>
+                        </li>
+                        <li class="">
+                            <a href="#rollup">RollupButton</a>
+                        </li>
+                        <li class="active">
+                            <a href="#listbox">ListBox</a>
+                        </li>
+                        <li class="">
+                            <a href="#search">SearchControl</a>
+                        </li>
+                        <li class="">
+                            <a href="#traffic">TrafficControl</a>
+                        </li>
+                        <li class="">
+                            <a href="#zoom">SmallZoom</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fulid">
+        <div id="button" class="container">
+            <iframe src="button/index.html" width="100%" height="600px"></iframe>
+        </div>
+        <div id="listbox" class="container">
+            <iframe src="listbox/index.html" width="100%" height="600px"></iframe>
+        </div>
+        <div id="zoom" class="container">
+            <iframe src="zoom/index.html" width="100%" height="600px"></iframe>
+        </div>
+        <div id="search" class="container">
+            <iframe src="search/index.html" width="100%" height="600px"></iframe>
+        </div>
+    </div>
+</body>
+</html>
