@@ -3,29 +3,32 @@
 <head>
     <title>Пример реализации пользовательского макета кнопки</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="http://api-maps.yandex.ru/2.0.15/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
 
     <script type="text/javascript">
+var map, MyButtonLayout, button;
+
 ymaps.ready(function () {
-    var map = new ymaps.Map('YMapsID', {
-            center: [55.751574, 37.573856],
-            zoom: 9,
-            behaviors: ['scrollZoom', 'drag']
-        }),
+    map = new ymaps.Map('YMapsID', {
+        center: [55.751574, 37.573856],
+        zoom: 9
+    });
 
-        // Создание макета для кнопки.
-        button = new ymaps.control.Button({
-            data: {
-                content: 'Жмак-жмак',
-                title: 'Жми уже давай'
-            }
-        }, {
-            selectOnClick: false,
-            layout: ymaps.templateLayoutFactory.createClass('<a class="btn btn-$[data.theme|primary]" title="$[data.title]">$[data.content]</a>')
-        });
+    // Создание макета для кнопки.
+    MyButtonLayout = ymaps.templateLayoutFactory.createClass('<button class="btn[if data.theme] btn-$[data.theme][endif]" title="$[data.title]">$[data.content]</button>');
 
-    map.controls.add(button, {left: 5, top: 5});
+    button = new ymaps.control.Button({
+        data: {
+            content: 'Жмак-жмак',
+            title: 'Жми уже давай'
+        }
+    }, {
+        selectOnClick: false,
+        layout: MyButtonLayout
+    });
+
+    map.controls.add(button, {left: 10, top: 10});
 
     button.events.add('click', function () {
         alert('клик!');

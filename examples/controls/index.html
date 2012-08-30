@@ -3,57 +3,92 @@
 <head>
     <title>Примеры реализации макетов контролов</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="controls.css" rel="stylesheet">
     <script src="http://yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
 </head>
-<body data-spy="scroll" data-target=".navbar" data-offset="0">
+<body data-spy="scroll" data-target=".nav" data-offset="0">
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
-            <div class="container">
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="brand" href="./index.html">АПИ Контролы</a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li class="">
+            <div class="container-fluid offset2">
+                <a class="brand" href="/examples/controls/">АПИ Контролы</a>
+                <div class="nav">
+                    <ul class="nav" id="scroll-menu">
+                        <li class="active">
                             <a href="#button">Button</a>
                         </li>
                         <li class="">
-                            <a href="#rollup">RollupButton</a>
-                        </li>
-                        <li class="active">
                             <a href="#listbox">ListBox</a>
                         </li>
                         <li class="">
                             <a href="#search">SearchControl</a>
                         </li>
                         <li class="">
+                            <a href="#smallzoom">SmallZoom</a>
+                        </li>
+                        <li class="">
                             <a href="#traffic">TrafficControl</a>
                         </li>
                         <li class="">
-                            <a href="#zoom">SmallZoom</a>
+                            <a href="#typeselector">TypeSelector</a>
                         </li>
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><strong>Тема контролов</strong> <i class="caret"></i></a>
+                            <ul class="dropdown-menu" role="menu" id="theme-menu">
+                              <li><a href="#"><span class="badge">1</span> default</a></li>
+                              <li><a href="#"><span class="badge badge-primary">2</span> primary</a></li>
+                              <li><a href="#"><span class="badge badge-info">3</span> info</a></li>
+                              <li><a href="#"><span class="badge badge-success">4</span> success</a></li>
+                              <li><a href="#"><span class="badge badge-important">5</span> danger</a></li>
+                              <li><a href="#"><span class="badge badge-inverse">6</span> inverse</a></li>
+                            </ul>
+                          </li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container-fulid">
-        <div id="button" class="container">
+    <div class="container-fluid">
+        <div id="button" class="container-fluid">
             <iframe src="button/index.html" width="100%" height="600px"></iframe>
         </div>
-        <div id="listbox" class="container">
+        <div id="listbox" class="container-fluid">
             <iframe src="listbox/index.html" width="100%" height="600px"></iframe>
         </div>
-        <div id="zoom" class="container">
-            <iframe src="zoom/index.html" width="100%" height="600px"></iframe>
-        </div>
-        <div id="search" class="container">
+        <div id="search" class="container-fluid">
             <iframe src="search/index.html" width="100%" height="600px"></iframe>
         </div>
+        <div id="smallzoom" class="container-fluid">
+            <iframe src="smallzoom/index.html" width="100%" height="600px"></iframe>
+        </div>
+        <div id="traffic" class="container-fluid">
+            <iframe src="traffic/index.html" width="100%" height="600px"></iframe>
+        </div>
+        <div id="typeselector" class="container-fluid">
+            <iframe src="typeselector/index.html" width="100%" height="600px"></iframe>
+        </div>
     </div>
+    <script type="text/javascript">
+$(function () {
+    setTimeout(function () {
+        $('[data-spy="scroll"]').scrollspy('refresh');
+    }, 0);
+
+    $('#theme-menu a').on('click', function (e) {
+        var theme = $.trim($(this).contents().filter(function () { return this.nodeType == 3 }).text());
+
+        $('body').trigger('click.dropdown.data-api');
+
+        $('iframe').each(function (index, iframe) {
+            var map = iframe.contentWindow.map;
+
+            map.controls.get(0).data.set('theme', 'default' !== theme && theme);
+        });
+    });
+});
+    </script>
 </body>
 </html>

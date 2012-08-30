@@ -3,82 +3,60 @@
 <head>
     <title>Пример реализации пользовательского макета группы кнопок</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-
-    <script src="http://yandex.st/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
-    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard,util.bind&lang=ru-RU" type="text/javascript"></script>
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="http://yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0.15/?load=package.standard&lang=ru-RU&mode=debug" type="text/javascript"></script>
 
     <script type="text/javascript">
+var map, MyRollupLayout, rollupButton;
+
 ymaps.ready(function () {
-    var map = new ymaps.Map('YMapsID', {
-            center: [55.751574, 37.573856],
-            zoom: 9,
-            behaviors: ['scrollZoom', 'drag']
-        }),
+    map = new ymaps.Map('YMapsID', {
+        center: [55.751574, 37.573856],
+        zoom: 9
+    });
 
-        // Создание макета для группы кнопок.
-        myRollupLayout = ymaps.templateLayoutFactory.createClass('<div class="btn-group[if state.expanded] open[endif]">' +
-  <a class="btn btn-primary" href="#"><i class="icon-user icon-white"></i> User</a>
-  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-  <ul class="dropdown-menu">
-    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-    <li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>
-    <li class="divider"></li>
-    <li><a href="#"><i class="i"></i> Make admin</a></li>
-  </ul>
-</div>
-            "<div id='rollup-header'>[if state.expanded]Свернуть[else]Развернуть[endif]</div>" +
-            // В этом контейнере будут располагаться дочерние элементы.
-            "<div id='rollup-body'></div>", {
+    // Создание макета для группы кнопок.
+    MyRollupLayout = ymaps.templateLayoutFactory.createClass('<div class="btn-group">' +
+        '<a class="btn[if data.theme] btn-$[data.theme][endif]" href="#"><i class="icon-user[if data.theme] icon-white[endif]"></i> User</a>' +
+        '<a class="btn[if data.theme] btn-$[data.theme][endif] dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>' +
+        '<ul id="childcontainer" class="dropdown-menu">' +
+            '<li><a href="#"><i class="icon-pencil"></i> Edit</a></li>' +
+            '<li><a href="#"><i class="icon-trash"></i> Delete</a></li>' +
+            '<li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>' +
+        '</ul>' +
+        '</div>', {
 
-            build: function () {
-                myRollupLayout.superclass.build.call(this);
-                this.checkExpandCallback = ymaps.util.bind(this.checkExpanded, this);
-                $('#rollup-header').bind('click', this.checkExpandCallback);
+        build: function () {
+            MyRollupLayout.superclass.build.call(this);
 
-                // Поскольку макет будет перестраиваться много раз из-за
-                // изменения значения поля state.expanded,
-                // нужно при каждом перестроении сообщать об изменении контейнера
-                // дочерних элементов через событие интерфейса IGroupControlLayout.
-                this.events.fire('childcontainerchange', {
-                    newChildContainerElement: $('#rollup-body').get(0),
-                    oldChildContainerElement: this.childContainerElement
-                });
-                this.childContainerElement = $('#rollup-body').get(0);
-            },
+            this.childContainerElement = $('#childcontainer').get(0);
+            this.events.fire('childcontainerchange', {
+                newChildContainerElement: this.childContainerElement,
+                oldChildContainerElement: null
+            });
+        },
 
-            clear: function () {
-                $('#rollup-header').unbind('click', this.checkExpandCallback);
-                myRollupLayout.superclass.clear.call(this);
-            },
+        clear: function () {
+            MyRollupLayout.superclass.clear.call(this);
+        },
 
-            // Переопределяем метод, который требует интерфейс IGroupControlLayout.
-            getChildContainerElement: function () {
-                return this.childContainerElement;
-            },
+        // Переопределяем метод, который требует интерфейс IGroupControlLayout.
+        getChildContainerElement: function () {
+            return this.childContainerElement;
+        },
+    });
 
-            checkExpanded: function () {
-                // При клике на переключающий элемент проверяем состояние
-                // элемента управления и генерируем одно из событий интерфейса
-                // IExpandableControlLayout.
-                if (this.getData().state.get('expanded')) {
-                    this.events.fire('collapse');
-                }
-                else {
-                    this.events.fire('expand');
-                }
-            }
-        }),
-
-        rollupButton = new ymaps.control.RollupButton({
-            items: [
-                new ymaps.control.Button('Киев'),
-                new ymaps.control.Button('Львов'),
-                new ymaps.control.Button('Харьков')
-            ]
-        }, {
-            layout: myRollupLayout
-        });
+    rollupButton = new ymaps.control.RollupButton({
+        items: [
+            new ymaps.control.Button('Киев'),
+            new ymaps.control.Button('Львов'),
+            new ymaps.control.Button('Харьков')
+        ]
+    }, {
+        layout: MyRollupLayout
+    });
 
     map.controls.add(rollupButton, {right: 5, top: 5});
 });
@@ -86,8 +64,12 @@ ymaps.ready(function () {
 </head>
 
 <body>
-    <h2>Пример реализации пользовательского макета группы кнопок</h2>
-    <div id="YMapsID" style="width: 800px; height: 400px"></div>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пользовательский макет группы кнопок</p>
+            <div id="YMapsID" style="width: 800px; height: 400px"></div>
+        </div>
+    </div>
 </body>
 
 </html>
