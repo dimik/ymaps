@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример реализации пользовательского макета кнопки</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="http://api-maps.yandex.ru/2.0.15/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+var map, MyButtonLayout, button;
+
+ymaps.ready(function () {
+    map = new ymaps.Map('YMapsID', {
+        center: [55.751574, 37.573856],
+        zoom: 9
+    });
+
+    // Создание макета для кнопки.
+    MyButtonLayout = ymaps.templateLayoutFactory.createClass('<button class="btn[if data.theme] btn-$[data.theme][endif]" title="$[data.title]">$[data.content]</button>');
+
+    button = new ymaps.control.Button({
+        data: {
+            content: 'Жмак-жмак',
+            title: 'Жми уже давай'
+        }
+    }, {
+        selectOnClick: false,
+        layout: MyButtonLayout
+    });
+
+    map.controls.add(button, {left: 10, top: 10});
+
+    button.events.add('click', function () {
+        alert('клик!');
+    });
+});
+    </script>
+</head>
+
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пользовательский макет кнопки</p>
+            <div id="YMapsID" style="width: 800px; height: 400px"></div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
