@@ -41,14 +41,14 @@ ymaps.ready(function () {
                 .typeahead({source: this.dataSource, items: 5, minLength: 3});
 
             this.getData().state.events.add('change', this.onStateChange, this);
-            this.getData().control.events.add('resultshow', this.onShowResult, this);
+            // this.getData().control.events.add('resultshow', this.onShowResult, this);
         },
 
         clear: function () {
-            this.form.off('submit', this.onSubmit);
-            this.field.off('**');
+            // this.getData().control.events.remove('resultshow', this.onShowResult, this);
             this.getData().state.events.remove('change', this.onStateChange, this);
-            this.getData().control.events.remove('resultshow', this.onShowResult, this);
+            this.field.off('**');
+            this.form.off('submit', this.onSubmit);
 
             MySearchControlLayout.superclass.clear.call(this);
         },
@@ -67,12 +67,13 @@ ymaps.ready(function () {
                     var results = [];
 
                     res.geoObjects.each(function (geoObject) {
-                        var text = geoObject.properties.get('text'),
-                            name = geoObject.properties.get('name'),
-                            description = geoObject.properties.get('description'),
-                            tags = (provider === 'yandex#publicMap' &&
-                                    geoObject.properties.get('metaDataProperty.PSearchObjectMetaData.Tags') || [])
-                                        .map(function (t) { return t.tag });
+                        var props = geoObject.properties,
+                            text = props.get('text'),
+                            name = props.get('name'),
+                            description = props.get('description'),
+                            // tags = props.get('metaDataProperty.PSearchObjectMetaData.Tags', [])
+                            tags = $.map(props.get('metaDataProperty.PSearchObjectMetaData') &&
+                                    props.get('metaDataProperty.PSearchObjectMetaData.Tags') || [], function (t) { return t.tag });
 
                         results.push(
                             text || [name, description]
@@ -104,7 +105,8 @@ ymaps.ready(function () {
                 // Можно определить свой макет иконки.
                 // result.options.set('iconLayout', ymaps.templateLayoutFactory.createClass('<i class="icon-google_maps icon-large"/>'));
                 // result.options.set('iconOffset', [-8, -28]);
-                result.events.add('mapchange', this.onShowResult, this);
+                // Открытие балуна на результате
+                // result.events.add('mapchange', this.onShowResult, this);
             }
         },
 
@@ -125,10 +127,12 @@ ymaps.ready(function () {
         }
     });
 
-    searchControl = new ymaps.control.SearchControl({layout: MySearchControlLayout, /** provider: 'yandex#publicMap' */});
+    searchControl = new ymaps.control.SearchControl({
+        layout: MySearchControlLayout/*,
+        provider: 'yandex#publicMap'*/
+    });
 
     map.controls.add(searchControl, {left: 10, top: 10});
-
 });
     </script>
 </head>

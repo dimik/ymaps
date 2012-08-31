@@ -9,7 +9,7 @@
     <script src="http://api-maps.yandex.ru/2.0.15/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
 
     <script type="text/javascript">
-var map, MyTypeSelectorLayout, MyTypeSelectorItemLayout, typeSelector;
+var map, MyTypeSelectorLayout, MyTypeSelectorHeaderLayout, MyTypeSelectorItemLayout, typeSelector;
 
 ymaps.ready(function () {
     map = new ymaps.Map('YMapsID', {
@@ -20,10 +20,10 @@ ymaps.ready(function () {
     // Создание макета элемента управления "Типы карты"
     MyTypeSelectorLayout = ymaps.templateLayoutFactory.createClass(
         '<div class="btn-group">' +
-            '<a class="btn[if data.theme] btn-$[data.theme][endif] dropdown-toggle" data-toggle="dropdown">' +
-                '[if options.fixTitle]$[data.title][else]$[state.title][endif]&nbsp;' +
-                '<span class="caret"/>' +
-            '</a>' +
+            '<button class="btn[if data.theme] btn-$[data.theme][endif] dropdown-toggle" data-toggle="dropdown">' +
+                '$[[options.headerLayout]]' +
+                '<span class="caret"></span>' +
+            '</button>' +
             '<ul id="childcontainer" class="dropdown-menu"/>' +
         '</div>', {
 
@@ -43,11 +43,13 @@ ymaps.ready(function () {
         }
     });
 
+    MyTypeSelectorHeaderLayout = ymaps.templateLayoutFactory.createClass('[if options.fixTitle]$[data.title][else]$[state.title][endif]&nbsp;');
+
     MyTypeSelectorItemLayout = ymaps.templateLayoutFactory.createClass('<li><a href="#">[if state.selected]<i class="icon-ok"></i>&nbsp;[endif]$[data.content]</a></li>');
 
     typeSelector = new ymaps.control.TypeSelector({
         data: {
-            title: 'Показать',
+            title: 'Показать'
         },
         mapTypes: [
             'yandex#map', // тип карты "схема"
@@ -58,6 +60,7 @@ ymaps.ready(function () {
         ]
     }, {
         layout: MyTypeSelectorLayout,
+        headerLayout: MyTypeSelectorHeaderLayout,
         itemLayout: MyTypeSelectorItemLayout,
         fixTitle: false,
         expandOnClick: false
