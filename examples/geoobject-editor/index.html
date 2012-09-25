@@ -105,8 +105,14 @@ ymaps.ready(function () {
 
             this.geoObjects.add(geoObject);
 
+            geoObject.properties.set('balloonContentBody', 'test');
+            geoObject.balloon.open();
+
             if(geoObject.editor) {
                 geoObject.editor.startDrawing();
+                geoObject.editor.events.add('statechange', function (e) {
+                    console.log('statechange', e);
+                });
             }
         }
     };
@@ -138,6 +144,18 @@ ymaps.ready(function () {
                 coordinates = this.getData().coordPosition;
 
             e.preventDefault();
+
+            switch(geometry) {
+                case 'LineString':
+                    coordinates = [coordinates];
+                    break;
+                case 'Polygon':
+                    coordinates = [[coordinates, coordinates]];
+                    break;
+                case 'Rectange':
+                    coordinates = [coordinates, coordinates];
+                    break;
+            }
 
             geoObjects.events.fire('geoobjectcreated', {
                 geoObject: new ymaps.GeoObject({
