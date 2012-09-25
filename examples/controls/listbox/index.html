@@ -13,7 +13,7 @@ var map, MyListBoxLayout, MyListBoxItemLayout, MyListBoxSeparatorLayout, listBox
 
 ymaps.ready(function () {
     map = new ymaps.Map('YMapsID', {
-        center: [55.751574, 37.573856],
+        center: [55.753559, 37.609218],
         zoom: 9
     });
 
@@ -52,7 +52,7 @@ ymaps.ready(function () {
             title: 'Выберите город'
         },
         items: [
-            new ymaps.control.ListBoxItem({data: {content: 'Москва', center: [55.752736, 37.606815]}}, {layout: MyListBoxItemLayout}),
+            new ymaps.control.ListBoxItem({data: {content: 'Москва', center: [55.753559, 37.609218]}}, {layout: MyListBoxItemLayout}),
             new ymaps.control.ListBoxItem({data: {content: 'Новосибирск', center: [55.026366, 82.907803]}}, {layout: MyListBoxItemLayout}),
             new ymaps.control.ListBoxSeparator({}, {layout: MyListBoxSeparatorLayout}),
             new ymaps.control.ListBoxItem({data: {content: 'Нью-Йорк', center: [40.695537, -73.97552]}}, {layout: MyListBoxItemLayout})
