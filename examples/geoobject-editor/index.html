@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример реализации редактора геообъектов</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full,util.augment&lang=ru-RU" type="text/javascript"></script>
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <!--script src="//backbonejs.org/backbone.js" type="text/javascript"></script-->
+
+    <script type="text/javascript">
+ymaps.ready(function () {
+    var map = new ymaps.Map('YMapsID', {
+        center: [55.751574, 37.573856],
+        zoom: 9,
+        behaviors: ['drag', 'scrollZoom']
+    });
+
+    function EditableGeoObjectCollection() {
+        EditableGeoObjectCollection.superclass.constructor.apply(this, arguments);
+
+        this.editor = new GeoObjectCollectionEditor(this);
+        this.balloon = new EditableGeoObjectCollectionBalloon(this);
+    }
+
+    function EditableGeoObjectCollectionBalloon(collection) {
+        this.geoObjects = collection;
+    }
+
+    EditableGeoObjectCollectionBalloon.prototype = {
+        constructor: EditableGeoObjectCollectionBalloon,
+
+        open: function (position, data, options) {
+            var balloon = this.geoObjects.getMap() && this.geoObjects.getMap().balloon;
+
+            if(balloon) {
+                this.balloon = balloon.open.call(balloon, position, data, options);
+                this.geoObjects.events.fire('balloonopen', {
+                    balloon: this.balloon
+                });
+            }
+
+            return this.balloon;
+        },
+
+        close: function () {
+            this.balloon && this.balloon.close();
+            this.geoObjects.events.fire('balloonclose', {});
+        }
+    };
+
+    ymaps.util.augment(EditableGeoObjectCollection, ymaps.GeoObjectCollection);
+
+    function GeoObjectCollectionEditor(collection) {
+        this.geoObjects = collection;
+    }
+
+    GeoObjectCollectionEditor.prototype = {
+        constructor: GeoObjectCollectionEditor,
+
+        startEditing: function (options) {
+            var eventName = options && options.editEvent ||
+                this.geoObjects.options.get('editEvent', 'contextmenu'); // По-умолчанию редактируем геообъекты по клику правой кнопкой мышки.
+
+            this.geoObjects.events.add(eventName, this.onEditGeoObject, this);
+
+        },
+        stopEditing: function () {
+
+        },
+        startDrawing: function (options) {
+            var eventName = options && options.addEvent ||
+                this.geoObjects.options.get('addEvent', 'click'); // По-умолчанию добавляем геообъекты по клику.
+
+            this.getMap().events.add(eventName, this.onCreateGeoObject, this);
+            this.geoObjects.events.add('geoobjectcreated', this.onGeoObjectCreated, this);
+        },
+        stopDrawing: function () {
+        },
+
+        onGeoObjectAdded: function (e) {
+            console.log('geoObject added', e);
+        },
+
+        getMap: function () {
+            if(!this.geoObjects.getMap()) {
+                throw new Error('EditableGeoObjectCollection must be added on map for drawing');
+            }
+
+            return this.geoObjects.getMap();
+        },
+
+        onCreateGeoObject: function (e) {
+            console.log('click');
+            var coordinates = e.get('coordPosition');
+
+            this.geoObjects.balloon.open(e.get('coordPosition'), { geoObjects: this.geoObjects, coordPosition: coordinates }, {
+                contentLayout: GeoObjectCreateMenuLayout
+            });
+        },
+
+        onGeoObjectCreated: function (e) {
+            console.log('created');
+            var geoObject = e.get('geoObject');
+
+            this.geoObjects.add(geoObject);
+
+            if(geoObject.editor) {
+                geoObject.editor.startDrawing();
+            }
+        }
+    };
+
+    GeoObjectCreateMenuLayout = ymaps.templateLayoutFactory.createClass([
+        '<ul id="create-menu" class="nav nav-list">',
+            '<li class="nav-header">Создать</li>',
+            '<li><a href="#" data-geometry="Point">Метку</a></li>',
+            '<li><a href="#" data-geometry="LineString">Ломаную линию</a></li>',
+            '<li><a href="#" data-geometry="Polygon">Многоугольник</a></li>',
+            '<li><a href="#" data-geometry="Rectange">Прямоугольник</a></li>',
+            '<li><a href="#" data-geometry="Circle">Круг</a></li>',
+        '</ul>'
+    ].join(''), {
+        build: function () {
+            GeoObjectCreateMenuLayout.superclass.build.call(this);
+
+            $('#create-menu').on('click', $.proxy(this.onItemClick, this));
+        },
+        clear: function () {
+            $('#create-menu').off('click');
+
+            GeoObjectCreateMenuLayout.superclass.clear.call(this);
+        },
+        onItemClick: function (e) {
+            var target = $(e.target),
+                geometry = target.data('geometry'),
+                geoObjects = this.getData().geoObjects,
+                coordinates = this.getData().coordPosition;
+
+            e.preventDefault();
+
+            geoObjects.events.fire('geoobjectcreated', {
+                geoObject: new ymaps.GeoObject({
+                    geometry: { type: geometry, coordinates: coordinates }
+                }),
+                target: geoObjects
+            });
+
+            geoObjects.balloon.close();
+        }
+    });
+
+    GeoObjectEditMenuLayout = ymaps.templateLayoutFactory.createClass([
+        '<ul class="nav nav-list">',
+            '<li><a href="#" data-action="edit">Редактировать</a></li>',
+            '<li><a href="#" data-action="clone">Редактировать копию</a></li>',
+            '<li><a href="#" data-action="delete">Удалить</a></li>',
+        '</ul>'
+    ].join(''));
+
+    var editableCollection = new EditableGeoObjectCollection();
+
+    map.geoObjects.add(editableCollection);
+
+    editableCollection.editor.startDrawing();
+
+});
+    </script>
+    <style type="text/css">
+html,body {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+    </style>
+</head>
+
+<body>
+    <div class="well container-fluid" style="height:100%">
+        <p class="lead">Редактор геообъектов</p>
+        <div id="YMapsID" style="width: 100%; height: 100%"></div>
+    </div>
+    </div>
+</body>
+
+</html>
