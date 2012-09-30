@@ -16,6 +16,8 @@ ymaps.ready(function () {
         behaviors: ['drag', 'scrollZoom']
     });
 
+    $.getScript('view/_view.js', function () {
+
     function EditableGeoObjectCollection() {
         EditableGeoObjectCollection.superclass.constructor.apply(this, arguments);
 
@@ -49,7 +51,7 @@ ymaps.ready(function () {
         }
     };
 
-    ymaps.util.augment(EditableGeoObjectCollection, ymaps.GeoObjectCollection);
+    ymaps.util.augment(EditableGeoObjectCollection, ymaps.GeoObjectArray);
 
     function GeoObjectCollectionEditor(collection) {
         this.geoObjects = collection;
@@ -95,166 +97,52 @@ ymaps.ready(function () {
             var coordinates = e.get('coordPosition');
 
             this.geoObjects.balloon.open(e.get('coordPosition'), { geoObjects: this.geoObjects, coordPosition: coordinates }, {
-                contentLayout: GeoObjectCreateMenuLayout
+                contentLayout: GeoObjectCollectionView.getLayout('createMenu')
             });
         },
 
         onGeoObjectCreated: function (e) {
-            console.log('created');
-            var geoObject = e.get('geoObject');
+            var geoObject = e.get('geoObject'),
+                geoObjects = e.get('target'),
+                onStateChange = function (e) {
+                    if(e.get('newDrawing') === false) {
+                        geoObject.editor.events.remove('statechange', onStateChange, this);
+                        this.openGeoObjectEditor(geoObject);
+                    }
+                };
 
-            this.geoObjects.add(geoObject);
+            geoObjects.add(geoObject);
 
             // У круга и прямоугольника пока нет редактора
             if(geoObject.editor) {
                 geoObject.editor.startDrawing();
-                // в обработчике события нельзя получиь ссылку на геообъект, поэтому передаем его в контексте.
-                geoObject.editor.events.add('statechange', this.onStateChange, geoObject);
+                // в обработчике события нельзя получить ссылку на геообъект, поэтому передаем его в контексте.
+                geoObject.editor.events.add('statechange', onStateChange, this);
             }
             else {
                 geoObject.balloon.open();
             }
         },
 
-        onStateChange: function (e) {
-            if(e.get('newDrawing') === false) {
-                console.log(GeoObjectEditFormActionsLayout, PointFieldsetLayout);
-                this.options.set({
-                    balloonContentBodyLayout: GeoObjectEditFormLayout,
-                    actionsLayout: GeoObjectEditFormActionsLayout,
-                    fieldsetLayout: PointFieldsetLayout
-                });
-                this.balloon.open();
-            }
-        },
-    };
-
-    GeoObjectCreateMenuLayout = ymaps.templateLayoutFactory.createClass([
-        '<ul id="create-menu" class="nav nav-list">',
-            '<li class="nav-header">Создать</li>',
-            '<li><a href="#" data-geometry="Point">Метку</a></li>',
-            '<li><a href="#" data-geometry="LineString">Ломаную линию</a></li>',
-            '<li><a href="#" data-geometry="Polygon">Многоугольник</a></li>',
-            '<li><a href="#" data-geometry="Rectangle">Прямоугольник</a></li>',
-            '<li><a href="#" data-geometry="Circle">Круг</a></li>',
-        '</ul>'
-    ].join(''), {
-        build: function () {
-            GeoObjectCreateMenuLayout.superclass.build.call(this);
-
-            $('#create-menu').on('click', $.proxy(this.onItemClick, this));
-        },
-        clear: function () {
-            $('#create-menu').off('click');
-
-            GeoObjectCreateMenuLayout.superclass.clear.call(this);
-        },
-        onItemClick: function (e) {
-            var target = $(e.target),
-                geometry = target.data('geometry'),
-                geoObjects = this.getData().geoObjects,
-                coordinates = this.getData().coordPosition;
-
-            e.preventDefault();
-
-            switch(geometry) {
-                case 'LineString':
-                    coordinates = [coordinates];
-                    break;
-                case 'Polygon':
-                    coordinates = [[coordinates, coordinates]];
-                    break;
-                case 'Rectangle':
-                    coordinates = [coordinates, coordinates];
-                    break;
-            }
-
-            geoObjects.events.fire('geoobjectcreated', {
-                geoObject: new ymaps.GeoObject({
-                    geometry: { type: geometry, coordinates: coordinates }
-                }),
-                target: geoObjects
+        openGeoObjectEditor: function (geoObject) {
+            geoObject.options.set({
+                balloonContentBodyLayout: GeoObjectEditorView.getLayout('editForm'),
+                balloonActionsLayout: GeoObjectEditorView.getLayout('editFormActions'),
+                balloonFieldsetLayout: GeoObjectEditorView.getLayout('pointFieldset'),
+                hideIconOnBalloonOpen: false
             });
 
-            geoObjects.balloon.close();
+            geoObject.balloon.open();
         }
-    });
-
-    GeoObjectEditMenuLayout = ymaps.templateLayoutFactory.createClass([
-        '<ul class="nav nav-list">',
-            '<li><a href="#" data-action="edit">Редактировать</a></li>',
-            '<li><a href="#" data-action="clone">Редактировать копию</a></li>',
-            '<li><a href="#" data-action="delete">Удалить</a></li>',
-        '</ul>'
-    ].join(''));
-
-    GeoObjectEditFormLayout = ymaps.templateLayoutFactory.createClass([
-        '<form class="form-horizontal">',
-            '<fieldset>',
-                // '<legend>$[properties.editor.legend]</legend>',
-                '<div class="control-group">',
-                    '<label class="control-label">Название</label>',
-                    '<div class="controls">',
-                        '<input class="input-xlarge" name="name" type="text" placeholder="Название объекта" value="$[properties.name]"/>',
-                    '</div>',
-                '</div>',
-                '<div class="control-group">',
-                    '<label class="control-label">Описание</label>',
-                    '<div class="controls">',
-                        '<textarea rows="3" class="input-xlarge" name="description" placeholder="Описание объекта">$[properties.description]</textarea>',
-                    '</div>',
-                '</div>',
-                '$[[options.fieldsetLayout]]',
-                '$[[options.actionsLayout]]',
-            '</fieldset>',
-        '</form>'
-    ].join(''));
-
-
-    GeoObjectEditFormActionsLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="form-actions">',
-            '<button type="button" class="btn btn-primary">Сохранить</button>',
-            '<button class="btn">Отменить</button>',
-        '</div>'
-    ].join(''));
-
-    PointFieldsetLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="control-group">',
-            '<label class="control-label">Адрес</label>',
-            '<div class="controls">',
-                '<input class="input-xlarge" name="name" type="text" placeholder="Адрес объекта" value="$[properties.address]"/>',
-            '</div>',
-        '</div>',
-        '<div class="control-group">',
-            '<label class="control-label">Тип иконки</label>',
-            '<div class="controls">',
-                '<select class="input-xlarge" name="icontype">',
-                    '<option value="Icon">Метки без содержимого</option>',
-                    '<option value="DotIcon">Метки без содержимого с точкой в центре</option>',
-                    '<option value="StretchyIcon">Метки с текстом (иконки тянутся под контент)</option>',
-                    // '<option value="standart">Стандартные значки (пиктограммы)</option>',
-                '</select>',
-            '</div>',
-        '</div>',
-        '<div class="control-group">',
-            '<label class="control-label">Цвет иконки</label>',
-            '<div class="controls">',
-                '<select class="input-xlarge" name="iconcolor">',
-                    '<option value="blue">Синий</option>',
-                    '<option value="darkblue">Темно-синий</option>',
-                    '<option value="green">Зеленый</option>',
-                    '<option value="darkgreen">Темно-зеленый</option>',
-                    '<option value="orange">Темно-зеленый</option>',
-                '</select>',
-            '</div>',
-        '</div>'
-    ].join(''));
+    };
 
     var editableCollection = new EditableGeoObjectCollection();
 
     map.geoObjects.add(editableCollection);
 
     editableCollection.editor.startDrawing();
+
+    });
 
 });
     </script>
