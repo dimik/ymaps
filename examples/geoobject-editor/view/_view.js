@@ -66,42 +66,6 @@ var GeoObjectCollectionView = (function () {
 
 var GeoObjectEditorView = (function () {
 
-    var BaseFieldset = ymaps.templateLayoutFactory.createClass('', {
-        getFieldsValues: function () {
-            var result = {};
-
-            this.fields.each(function () {
-                result[this.name] = this.value;
-            });
-
-            return result;
-        },
-        setFieldsValues: function () {
-            var props = this.fields.map(function () { return this.name; }).get();
-
-            props.forEach(function (prop) {
-                var value = this.geoObject.properties.get(prop);
-
-                value && this.fields.filter('[name=' + prop + ']').val(value);
-            }, this);
-        },
-        onFieldsChange: function (e) {
-            this.updateGeoObject(this.getFieldsValues());
-        },
-        updateGeoObject: function (props) {
-            var geoObject = this.geoObject;
-
-            geoObject.options.set(props);
-            geoObject.properties.set(props);
-        },
-        clear: function () {
-            console.log(this);
-            this.fields.off('change');
-
-            GeoObjectEditorView.getLayout(this.layout).superclass.clear.call(this);
-        }
-    });
-
     var views = {
         EditForm: ymaps.templateLayoutFactory.createClass([
             '<form class="form-horizontal" style="padding-top: 15px">',
@@ -198,7 +162,7 @@ var GeoObjectEditorView = (function () {
             '<div class="control-group">',
                 '<label class="control-label">Тип иконки</label>',
                 '<div class="controls">',
-                    '<select class="input-xlarge" tabindex="5" name="iconStyle">',
+                    '<select class="input-xlarge" tabindex="5" name="iconstyle">',
                         '<option value="Icon">Метки без содержимого</option>',
                         '<option value="DotIcon">Метки без содержимого с точкой в центре</option>',
                         '<option value="StretchyIcon">Метки с текстом (иконки тянутся под контент)</option>',
@@ -209,7 +173,7 @@ var GeoObjectEditorView = (function () {
             '<div class="control-group">',
                 '<label class="control-label">Цвет иконки</label>',
                 '<div class="controls">',
-                    '<select class="input-xlarge" tabindex="6" name="iconColor">',
+                    '<select class="input-xlarge" tabindex="6" name="iconcolor">',
                         '<option value="blue">Синий</option>',
                         '<option value="darkblue">Темно-синий</option>',
                         '<option value="green">Зеленый</option>',
@@ -230,123 +194,96 @@ var GeoObjectEditorView = (function () {
             '</div>'
         ].join(''), {
             build: function () {
+                GeoObjectEditorView.getLayout('pointFieldset').superclass.build.call(this);
+
                 var el = this.getParentElement(),
-                    geoObject = this.geoObject = this.getData().geoObject,
-                    geometryType = geoObject.geometry.getType();
+                    geoObject = this.geoObject = this.getData().geoObject;
 
-                this.layout = geometryType + 'Fieldset';
+                this.iconStyleField = $('[name=iconstyle]', el)
+                    .on('change', $.proxy(this.onIconChange, this));
 
-                GeoObjectEditorView.getLayout(this.layout).superclass.build.call(this);
+                this.iconColorField = $('[name=iconcolor]', el)
+                    .on('change', $.proxy(this.onIconChange, this));
 
-                this.fields = $('[name^=icon]', el)
-                    .on('change', $.proxy(this.onFieldsChange, this));
+                this.coordField = $('[name=coordinates]', el)
+                    .on('change', $.proxy(this.onCoordChange, this));
 
-                this.positionField = $('[name=coordinates]', el)
-                    .on('change', $.proxy(this.onPositionChange, this));
-
-                this.setFieldsValues();
+                if(geoObject.properties.get('iconStyle')) {
+                    this.updateIconFields();
+                }
+                else {
+                    this.iconStyleField.change();
+                }
 
                 if(!geoObject.properties.get('address')) {
                     this.getAddress(geoObject.geometry.getCoordinates(), function (res) {
                         var result = res.geoObjects.get(0),
                             address = result && result.properties.get('text');
 
-                        address && geoObject.properties.set('address', address);
+                        if(result) {
+                            geoObject.properties.set('address', address);
+                        }
                     });
                 }
             },
             clear: function () {
-                this.fields.off('change');
-                this.positionField.off('change');
+                this.iconStyleField.off('change');
+                this.iconColorField.off('change');
+                this.coordField.off('change');
 
-                GeoObjectEditorView.getLayout(this.layout).superclass.clear.call(this);
+                GeoObjectEditorView.getLayout('pointFieldset').superclass.clear.call(this);
             },
-            onPositionChange: function (e) {
-                var geoObject = this.geoObject,
-                    coordinates = $(e.target).val().split(',');
+            updateIconFields: function () {
+                var props = this.geoObject.properties,
+                    style = props.get('iconStyle'),
+                    color = props.get('iconColor');
 
-                geoObject.geometry.setCoordinates(coordinates);
-                geoObject.properties.get('balloon').autoPan();
+                this.iconStyleField.find('option[value=' + style + ']').attr('selected', 'selected');
+                this.iconColorField.find('option[value=' + color + ']').attr('selected', 'selected');
             },
-            updateGeoObject: function (props) {
+            onIconChange: function (e) {
+                var style = this.iconStyleField.find('option:selected').val(),
+                    color = this.iconColorField.find('option:selected').val();
+
+                this.updateIcon(style, color);
+            },
+            onCoordChange: function (e) {
+                var coordinates = $(e.target).val().split(',');
+
+                this.geoObject.geometry.setCoordinates(coordinates);
+            },
+            updateIcon: function (style, color) {
                 var geoObject = this.geoObject,
                     geoObjects = geoObject.getParent(),
                     index = geoObjects.indexOf(geoObject),
-                    preset = 'twirl#' + props.iconColor + props.iconStyle;
+                    preset = 'twirl#' + color + style,
+                    opts = geoObject.options, props = geoObject.properties;
 
-                geoObject.options.set('preset', preset)
+                opts.set('preset', preset)
                     .unset('iconContentLayout');
 
-                geoObject.properties.set(props);
+                props.set({
+                    iconStyle: style,
+                    iconColor: color
+                });
 
-                switch(props.iconStyle) {
+                switch(style) {
                     case 'StretchyIcon':
-                        geoObject.options.set('iconContentLayout', GeoObjectView.getLayout('strechyIconContent'));
+                        opts.set('iconContentLayout', GeoObjectView.getLayout('strechyIconContent'));
                         break;
                     case 'Icon':
-                        index++ < 100 && geoObject.properties.set('iconContent', index);
+                        index++ < 100 && props.set('iconContent', index);
                         break;
                     default:
-                        geoObject.properties.unset('iconContent');
+                        props.unset('iconContent');
                 }
             },
             getAddress: function (coordinates, callback) {
                 ymaps.geocode(coordinates, { results: 1 })
                     .then(callback);
             }
-        }),
-
-        LineStringFieldset: ymaps.templateLayoutFactory.createClass([
-            '<div class="control-group">',
-                '<label class="control-label">Цвет линии</label>',
-                '<div class="controls">',
-                    '<input type="text" name="strokeColor" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
-                '</div>',
-            '</div>',
-            '<div class="control-group">',
-                '<label class="control-label">Толщина линии</label>',
-                '<div class="controls">',
-                    '<input type="text" name="strokeWidth" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
-                '</div>',
-            '</div>',
-            '<div class="control-group">',
-                '<label class="control-label">Стиль линии</label>',
-                '<div class="controls">',
-                    '<select class="input-xlarge" tabindex="6" name="strokeStyle">',
-                        '<option value="solid">Сплошная линия</option>',
-                        '<option value="dash">Тире</option>',
-                        '<option value="dashdot">Длинное тире - короткое тире</option>',
-                        '<option value="dot">Точки</option>',
-                        '<option value="longdash">Длинные тире</option>',
-                        '<option value="longdashdot">Очень длинное тире - точка</option>',
-                        '<option value="longdashdotdot">Длинное тире - точка - точка</option>',
-                        '<option value="shortdash">Короткие тире</option>',
-                        '<option value="shortdashdot">Тире - точка</option>',
-                        '<option value="shortdashdotdot">Тире - точка - точка</option>',
-                        '<option value="shortdot">Точки через двойной интервал</option>',
-                    '</select>',
-                '</div>',
-            '</div>'
-        ].join(''), {
-            build: function () {
-                var el = this.getParentElement(),
-                    geoObject = this.geoObject = this.getData().geoObject,
-                    geometryType = geoObject.geometry.getType();
-
-                this.layout = geometryType + 'Fieldset';
-
-                GeoObjectEditorView.getLayout(this.layout).superclass.build.call(this);
-
-                this.fields = $('[name^=stroke]', el)
-                    .on('change', $.proxy(this.onFieldsChange, this));
-
-                this.setFieldsValues();
-            }
         })
     };
-
-    ymaps.util.augment(views['PointFieldset'], BaseFieldset);
-    ymaps.util.augment(views['LineStringFieldset'], BaseFieldset);
 
     return {
         getLayout: function (key) {

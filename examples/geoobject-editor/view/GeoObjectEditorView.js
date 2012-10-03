@@ -1,6 +1,6 @@
 var GeoObjectEditorView = (function () {
 
-    var BaseFieldsetMethods = {
+    var BaseFieldset = ymaps.templateLayoutFactory.createClass('', {
         getFieldsValues: function () {
             var result = {};
 
@@ -29,11 +29,12 @@ var GeoObjectEditorView = (function () {
             geoObject.properties.set(props);
         },
         clear: function () {
+            console.log(this.fields);
             this.fields.off('change');
 
             GeoObjectEditorView.getLayout(this.layout).superclass.clear.call(this);
         }
-    };
+    });
 
     var views = {
         EditForm: ymaps.templateLayoutFactory.createClass([
@@ -161,7 +162,7 @@ var GeoObjectEditorView = (function () {
                     '</select>',
                 '</div>',
             '</div>'
-        ].join(''), ymaps.util.extend({}, BaseFieldsetMethods, {
+        ].join(''), {
             build: function () {
                 var el = this.getParentElement(),
                     geoObject = this.geoObject = this.getData().geoObject,
@@ -227,7 +228,7 @@ var GeoObjectEditorView = (function () {
                 ymaps.geocode(coordinates, { results: 1 })
                     .then(callback);
             }
-        })),
+        }),
 
         LineStringFieldset: ymaps.templateLayoutFactory.createClass([
             '<div class="control-group">',
@@ -260,7 +261,7 @@ var GeoObjectEditorView = (function () {
                     '</select>',
                 '</div>',
             '</div>'
-        ].join(''), ymaps.util.extend({}, BaseFieldsetMethods, {
+        ].join(''), {
             build: function () {
                 var el = this.getParentElement(),
                     geoObject = this.geoObject = this.getData().geoObject,
@@ -275,8 +276,11 @@ var GeoObjectEditorView = (function () {
 
                 this.setFieldsValues();
             }
-        }))
+        })
     };
+
+    ymaps.util.augment(views['PointFieldset'], BaseFieldset);
+    ymaps.util.augment(views['LineStringFieldset'], BaseFieldset);
 
     return {
         getLayout: function (key) {
