@@ -1,4 +1,4 @@
-var GeoObjectView = (function () {
+define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
     var views = {
         EditMenu: ymaps.templateLayoutFactory.createClass([
@@ -20,11 +20,14 @@ var GeoObjectView = (function () {
         ].join(''))
     };
 
-    return {
-        getLayout: function (key) {
-            return views[key.charAt(0).toUpperCase() + key.substring(1)];
-        }
-    };
+    function GeoObjectView() {}
 
-}());
+    (function () {
+        this.getLayout = function (key) {
+            return views[key.charAt(0).toUpperCase() + key.substring(1)];
+        };
+    }).call(GeoObjectView.prototype);
+
+    return GeoObjectView;
+});
 
