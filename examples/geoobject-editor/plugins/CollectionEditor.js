@@ -17,10 +17,8 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
         startEditing: function (options) {
             var collection = this.geoObjects;
 
-            debugger; // навешиваю обработчики
             collection.events
                 .add('contextmenu', this.onEditingStart, this)
-                .add('actioncreate', this.onActionCreate, this)
                 .add('actionedit', this.onActionEdit, this)
                 .add('actiondelete', this.onActionDelete, this);
 
@@ -37,7 +35,6 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
 
             collection.events
                 .remove('contextmenu', this.onEditingStart, this)
-                .remove('actioncreate', this.onActionCreate, this)
                 .remove('actionedit', this.onActionEdit, this)
                 .remove('actiondelete', this.onActionDelete, this);
 
@@ -138,7 +135,6 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
             collection.balloon.close();
             collection.add(geoObject);
 
-            debugger; // в обработчике
             (new GeoObjectEditor(geoObject)).startDrawing();
         },
 

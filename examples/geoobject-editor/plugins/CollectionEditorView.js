@@ -55,7 +55,6 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
                 console.log(geometryType, coordinates, Array.isArray(coordinates));
 
-                debugger; // кидаю событие
                 collection.events.fire('actioncreate', {
                     geometry: new ymaps.geometry[geometryType](coordinates),
                     geometryType: geometryType,
