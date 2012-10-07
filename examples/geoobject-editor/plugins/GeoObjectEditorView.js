@@ -112,11 +112,12 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 geoObject.properties.set(field.attr('name'), field.val());
             },
             onSubmit: function (e) {
-                var geoObject = this.geoObject;
+                var geoObject = this.geoObject,
+                    geoObjectEditor = geoObject.properties.get('editor');
 
                 e.preventDefault();
 
-                geoObject.editor.stopEditing();
+                geoObjectEditor.stopEditing();
             }
         }),
 

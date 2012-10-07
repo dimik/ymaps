@@ -1,5 +1,22 @@
 define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
+    var BaseMethods = {
+        build: function () {
+            views[this.layout].superclass.build.call(this);
+
+            var el = this.getParentElement();
+
+            this.menu = $('.nav', el)
+                .on('click', $.proxy(this.onItemClick, this));
+        },
+        clear: function () {
+            this.menu.off('click');
+
+            views[this.layout].superclass.clear.call(this);
+        },
+        onItemClick: function () {}
+    };
+
     var views = {
         CreateMenu: ymaps.templateLayoutFactory.createClass([
             '<ul class="nav nav-list">',
@@ -12,50 +29,67 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             '</ul>'
         ].join(''), {
             build: function () {
-                views['CreateMenu'].superclass.build.call(this);
-
-                var el = this.getParentElement();
-
-                this.menu = $('.nav', el)
-                    .on('click', $.proxy(this.onItemClick, this));
+                this.layout = 'CreateMenu';
+                BaseMethods.build.call(this);
             },
             clear: function () {
-                this.menu.off('click');
-
-                views['CreateMenu'].superclass.clear.call(this);
+                BaseMethods.clear.call(this);
             },
             onItemClick: function (e) {
-                var target = $(e.target),
-                    geometryType = target.data('geometry'),
+                var geometryType = $(e.target).data('geometry'),
                     collection = this.getData().geoObjects,
-                    coordPosition = this.getData().coordPosition,
-                    center = coordPosition.map(function (i) { return i.toFixed(6); }),
-                    geometry;
+                    coordinates = this.getData().coordPosition;
 
                 e.preventDefault();
 
                 switch(geometryType) {
                     case 'LineString':
-                        geometry = { type: geometryType, coordinates: [coordPosition] };
+                        coordinates = [coordinates];
                         break;
                     case 'Polygon':
-                        geometry = { type: geometryType, coordinates: [[coordPosition, coordPosition]] };
+                        coordinates = [[coordinates, coordinates]];
                         break;
                     case 'Rectangle':
-                        geometry = { type: geometryType, coordinates: [coordPosition, coordPosition] };
-                        break;
-                    case 'Circle':
-                        geometry = new ymaps.geometry.Circle(coordPosition);
-                        break;
-                    default:
-                        geometry = { type: geometryType, coordinates: coordPosition };
+                        coordinates = [coordinates, coordinates];
                 }
 
-                collection.events.fire('geoobjectcreate', {
-                    geoObject: new ymaps.GeoObject({
-                        geometry: geometry,
-                        properties: { center: center }
-                    }),
+                console.log(geometryType, coordinates, Array.isArray(coordinates));
+
+                debugger; // кидаю событие
+                collection.events.fire('actioncreate', {
+                    geometry: new ymaps.geometry[geometryType](coordinates),
+                    geometryType: geometryType,
+                    coordinates: coordinates,
+                    target: collection,
+                    coordPosition: this.getData().coordPosition
+                });
+            }
+        }),
+
+        EditMenu: ymaps.templateLayoutFactory.createClass([
+            '<ul class="nav nav-list">',
+                '<li class="nav-header">Действие</li>',
+                '<li><a href="#" data-action="edit">Редактировать</a></li>',
+                '<li><a href="#" data-action="clone">Редактировать копию</a></li>',
+                '<li><a href="#" data-action="delete">Удалить</a></li>',
+            '</ul>'
+        ].join(''), {
+            build: function () {
+                this.layout = 'EditMenu';
+                BaseMethods.build.call(this);
+            },
+            clear: function () {
+                BaseMethods.clear.call(this);
+            },
+            onItemClick: function (e) {
+                var action = $(e.target).data('action'),
+                    geoObject = this.getData().geoObject,
+                    collection = this.getData().geoObjects;
+
+                e.preventDefault();
+
+                collection.events.fire('action' + action, {
+                    geoObject: geoObject,
                     target: collection
                 });
             }

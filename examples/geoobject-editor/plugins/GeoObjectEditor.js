@@ -5,12 +5,11 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
      */
     function GeoObjectEditor(geoObject) {
         this.geoObject = geoObject;
-        this.editor = geoObject.editor;
+        this.geometryEditor = geoObject.editor;
         this.geometry = geoObject.geometry.getType();
 
-        if(this.editor) {
-            this.options = this.editor.options;
-            this.editor.events
+        if(this.geometryEditor) {
+            this.geometryEditor.events
                 .add('statechange', this.onStateChange, this);
         }
 
@@ -30,7 +29,7 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
          * @name GeoObjectEditor.startEditing
          */
         startEditing: function () {
-            var editor = this.editor;
+            var editor = this.geometryEditor;
 
             this.events.fire('editingstart');
 
@@ -50,7 +49,7 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
          * @name GeoObjectEditor.startEditing
          */
         stopEditing: function () {
-            var editor = this.editor;
+            var editor = this.geometryEditor;
 
             if(editor && editor.stopEditing) {
                 editor.stopEditing.apply(editor, arguments);
@@ -66,7 +65,7 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
          * @name GeoObjectEditor.startDrawing
          */
         startDrawing: function () {
-            var editor = this.editor;
+            var editor = this.geometryEditor;
 
             this.events.fire('drawingstart');
 
@@ -84,7 +83,7 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
          * @name GeoObjectEditor.stopDrawing
          */
         stopDrawing: function () {
-            var editor = this.editor;
+            var editor = this.geometryEditor;
 
             if(editor && editor.stopDrawing) {
                 editor.stopDrawing.apply(editor, arguments);
@@ -117,7 +116,8 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
 
             geoObject.properties.set({
                 balloon: geoObject.balloon.open(),
-                view: new GeoObjectView()
+                view: new GeoObjectView(),
+                editor: this
             });
         },
         onEditingStop: function () {
@@ -127,7 +127,8 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
             geoObject.balloon.close();
             geoObject.properties
                 .unset('balloon')
-                .unset('view');
+                .unset('view')
+                .unset('editor');
             geoObject.options
                 .unset('hideIconOnBalloonOpen')
                 .set('balloonContentBodyLayout', view.getLayout('balloonContent'));

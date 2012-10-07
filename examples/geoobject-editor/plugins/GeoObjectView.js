@@ -1,14 +1,6 @@
 define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
     var views = {
-        EditMenu: ymaps.templateLayoutFactory.createClass([
-            '<ul class="nav nav-list">',
-                '<li><a href="#" data-action="edit">Редактировать</a></li>',
-                '<li><a href="#" data-action="clone">Редактировать копию</a></li>',
-                '<li><a href="#" data-action="delete">Удалить</a></li>',
-            '</ul>'
-        ].join('')),
-
         StrechyIconContent: ymaps.templateLayoutFactory.createClass('<span>$[properties.name]</span>'),
 
         BalloonContent: ymaps.templateLayoutFactory.createClass([
