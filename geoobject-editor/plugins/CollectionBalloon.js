@@ -12,7 +12,7 @@ define(['ready!ymaps'], function (ymaps) {
                 balloon = map && map.balloon;
 
             if(balloon) {
-                this.balloon = balloon.open.call(balloon, position, data, options);
+                this.balloon = balloon.open(position, data, options);
                 this.geoObjects.events.fire('balloonopen', {
                     balloon: this.balloon
                 });
