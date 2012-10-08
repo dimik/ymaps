@@ -10,13 +10,18 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
             views[this.layout].superclass.build.call(this);
 
-            this.styleFields = $('[name^=icon],[name^=stroke],[name^=fill]', el)
+            this.styleFields = $('[name^=icon],[name^=stroke],[name^=fill],[name^=border],[name=outline]', el)
                 .on('change', $.proxy(this.onStyleChange, this));
 
             this.geometryFields = $('[name=center],[name=width],[name=height],[name=radius]', el)
                 .on('change', $.proxy(this.onGeometryChange, this));
 
+            this.styleGroupControls = this.styleFields
+                .filter('[name=fill],[name=outline]')
+                .on('change', $.proxy(this.onStyleGroupChange, this));
+
             this.setFieldsValues(this.styleFields);
+            this.setGroupControlsState();
         },
         clear: function () {
             this.styleFields.off('change');
@@ -47,6 +52,28 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
         },
         onStyleChange: function (e) {
             this.updateGeoObject(this.getFieldsValues(this.styleFields));
+        },
+        onStyleGroupChange: function (e) {
+            var field = $(e.target);
+                prefix = field.data('control'),
+                container = field.closest('.control-group'),
+                controls = container.nextAll('.control-group:has([name^=' + prefix + '])');
+
+            controls.slideToggle();
+            // controls.toggleClass('hide', field.not(':checked'));
+            field.val(Number(field.is(':checked')));
+            this.updateGeoObject(this.getFieldsValues(field));
+        },
+        setGroupControlsState: function () {
+            this.styleGroupControls.each(function () {
+                var checked = Boolean(Number(this.value));
+
+                if(this.checked !== checked) {
+                    $(this)
+                        .attr('checked', checked)
+                        .change();
+                }
+            });
         },
         onGeometryChange: function (e) {},
         updateGeoObject: function (props) {
@@ -145,7 +172,10 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             onCancel: function (e) {
                 e.preventDefault();
 
-                this.geoObject.setParent(null);
+                this.geoObject.getParent()
+                    .events.fire('actiondelete', {
+                        geoObject: this.geoObject
+                    });
             }
         }),
 
@@ -199,17 +229,11 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             build: function () {
                 BaseFieldsetMethods.build.call(this);
 
-                var geoObject = this.geoObject;
+                var geoObject = this.geoObject,
+                    hasNoAddress = !geoObject.properties.get('address');
 
-                if(!geoObject.properties.get('address')) {
-                    this.getAddress(geoObject.geometry.getCoordinates(), function (res) {
-                        var result = res.geoObjects.get(0),
-                            address = result && result.properties.get('text');
-
-                        if(address) {
-                            geoObject.properties.set('address', address);
-                        }
-                    });
+                if(hasNoAddress) {
+                    this.setAddressFieldValue();
                 }
             },
             onGeometryChange: function (e) {
@@ -218,6 +242,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
                 geoObject.geometry.setCoordinates(coordinates);
                 geoObject.properties.get('balloon').autoPan();
+                this.setAddressFieldValue();
             },
             updateGeoObject: function (props) {
                 var geoObject = this.geoObject,
@@ -242,9 +267,19 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                         geoObject.properties.unset('iconContent');
                 }
             },
-            getAddress: function (coordinates, callback) {
+            setAddressFieldValue: function () {
+                var geoObject = this.geoObject,
+                    coordinates = geoObject.geometry.getCoordinates();
+
                 ymaps.geocode(coordinates, { results: 1 })
-                    .then(callback);
+                    .then(function (res) {
+                        var result = res.geoObjects.get(0),
+                            address = result && result.properties.get('text');
+
+                        if(address) {
+                            geoObject.properties.set('address', address);
+                        }
+                    });
             }
         })),
 
@@ -283,27 +318,40 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
         PolygonFieldset: ymaps.templateLayoutFactory.createClass([
             '<div class="control-group">',
+                '<label class="control-label">Наличие</label>',
+                '<div class="controls">',
+                    '<label class="checkbox">',
+                        '<input type="checkbox" name="outline" tabindex="3" data-control="stroke" value="1">',
+                        'обводки',
+                    '</label>',
+                    '<label class="checkbox">',
+                        '<input type="checkbox" name="fill" tabindex="4" data-control="fill" value="1">',
+                        'заливки',
+                    '</label>',
+                '</div>',
+            '</div>',
+            '<div class="control-group hide">',
                 '<label class="control-label">Цвет заливки</label>',
                 '<div class="controls">',
-                    '<input type="text" name="fillColor" tabindex="3" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
+                    '<input type="text" name="fillColor" tabindex="5" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Цвет линии</label>',
                 '<div class="controls">',
-                    '<input type="text" name="strokeColor" tabindex="4" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
+                    '<input type="text" name="strokeColor" tabindex="6" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Толщина линии</label>',
                 '<div class="controls">',
-                    '<input type="text" name="strokeWidth" tabindex="5" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
+                    '<input type="text" name="strokeWidth" tabindex="7" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Стиль линии</label>',
                 '<div class="controls">',
-                    '<select class="input-xlarge" tabindex="6" name="strokeStyle">',
+                    '<select class="input-xlarge" tabindex="8" name="strokeStyle">',
                         '<option value="solid">Сплошная линия</option>',
                         '<option value="dash">Тире</option>',
                         '<option value="dashdot">Длинное тире - короткое тире</option>',
@@ -336,27 +384,46 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '</div>',
             '</div>',
             '<div class="control-group">',
+                '<label class="control-label">Радиус скругления</label>',
+                '<div class="controls">',
+                    '<input type="text" name="borderRadius" tabindex="6" class="input-micro" placeholder="1" value="$[properties.borderRadius]">',
+                '</div>',
+            '</div>',
+            '<div class="control-group">',
+                '<label class="control-label">Наличие</label>',
+                '<div class="controls">',
+                    '<label class="checkbox">',
+                        '<input type="checkbox" name="outline" tabindex="7" data-control="stroke" value="1">',
+                        'обводки',
+                    '</label>',
+                    '<label class="checkbox">',
+                        '<input type="checkbox" name="fill" tabindex="8" data-control="fill" value="1">',
+                        'заливки',
+                    '</label>',
+                '</div>',
+            '</div>',
+            '<div class="control-group hide">',
                 '<label class="control-label">Цвет заливки</label>',
                 '<div class="controls">',
-                    '<input type="text" name="fillColor" tabindex="6" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
+                    '<input type="text" name="fillColor" tabindex="9" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Цвет линии</label>',
                 '<div class="controls">',
-                    '<input type="text" name="strokeColor" tabindex="7" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
+                    '<input type="text" name="strokeColor" tabindex="10" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Толщина линии</label>',
                 '<div class="controls">',
-                    '<input type="text" name="strokeWidth" tabindex="8" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
+                    '<input type="text" name="strokeWidth" tabindex="11" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Стиль линии</label>',
                 '<div class="controls">',
-                    '<select class="input-xlarge" tabindex="9" name="strokeStyle">',
+                    '<select class="input-xlarge" tabindex="12" name="strokeStyle">',
                         '<option value="solid">Сплошная линия</option>',
                         '<option value="dash">Тире</option>',
                         '<option value="dashdot">Длинное тире - короткое тире</option>',
@@ -372,6 +439,22 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '</div>',
             '</div>'
         ].join(''), ymaps.util.extend({}, BaseFieldsetMethods, {
+            build: function () {
+                BaseFieldsetMethods.build.call(this);
+
+                var geoObject = this.geoObject,
+                    width = geoObject.properties.get('width', 0),
+                    height = geoObject.properties.get('height', 0),
+                    hasZeroArea = width * height === 0;
+
+                if(hasZeroArea) {
+                    this.geometryFields
+                        .filter('[name=width]').val(1000)
+                        .end()
+                        .filter('[name=height]').val(1000)
+                    this.onGeometryChange();
+                }
+            },
             onGeometryChange: function (e) {
                 var geoObject = this.geoObject,
                     coordSystem = geoObject.geometry.options.get('projection').getCoordSystem(),
@@ -389,13 +472,16 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                         coordinates = [lowerCorner, upperCorner];
 
                     geoObject.geometry.setCoordinates(coordinates);
-                    geoObject.properties.get('balloon').autoPan();
 
                     geoObject.properties.set({
                         center: center,
                         width: width,
                         height: height
                     });
+
+                    setTimeout(function () {
+                        geoObject.properties.get('balloon').autoPan();
+                    }, 0);
                 }
             }
         })),
@@ -414,27 +500,40 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '</div>',
             '</div>',
             '<div class="control-group">',
+                '<label class="control-label">Наличие</label>',
+                '<div class="controls">',
+                    '<label class="checkbox">',
+                        '<input type="checkbox" name="outline" tabindex="5" data-control="stroke" value="1">',
+                        'обводки',
+                    '</label>',
+                    '<label class="checkbox">',
+                        '<input type="checkbox" name="fill" tabindex="6" data-control="fill" value="1">',
+                        'заливки',
+                    '</label>',
+                '</div>',
+            '</div>',
+            '<div class="control-group hide">',
                 '<label class="control-label">Цвет заливки</label>',
                 '<div class="controls">',
-                    '<input type="text" name="fillColor" tabindex="5" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
+                    '<input type="text" name="fillColor" tabindex="7" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Цвет линии</label>',
                 '<div class="controls">',
-                    '<input type="text" name="strokeColor" tabindex="6" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
+                    '<input type="text" name="strokeColor" tabindex="8" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Толщина линии</label>',
                 '<div class="controls">',
-                    '<input type="text" name="strokeWidth" tabindex="7" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
+                    '<input type="text" name="strokeWidth" tabindex="9" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
+            '<div class="control-group hide">',
                 '<label class="control-label">Стиль линии</label>',
                 '<div class="controls">',
-                    '<select class="input-xlarge" tabindex="8" name="strokeStyle">',
+                    '<select class="input-xlarge" tabindex="10" name="strokeStyle">',
                         '<option value="solid">Сплошная линия</option>',
                         '<option value="dash">Тире</option>',
                         '<option value="dashdot">Длинное тире - короткое тире</option>',
@@ -450,6 +549,19 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '</div>',
             '</div>'
         ].join(''), ymaps.util.extend({}, BaseFieldsetMethods, {
+            build: function () {
+                BaseFieldsetMethods.build.call(this);
+
+                var geoObject = this.geoObject,
+                    radius = geoObject.properties.get('radius', 0),
+                    hasZeroArea = Math.PI * radius === 0;
+
+                if(hasZeroArea) {
+                    this.geometryFields
+                        .filter('[name=radius]').val(1000);
+                    this.onGeometryChange();
+                }
+            },
             onGeometryChange: function (e) {
                 var geoObject = this.geoObject,
                     center = this.geometryFields.filter('[name=center]').val().split(',').map(Number),
@@ -459,12 +571,14 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                     .setCoordinates(center)
                     .setRadius(radius);
 
-                geoObject.properties.get('balloon').autoPan();
-
                 geoObject.properties.set({
                     center: center,
                     radius: radius
                 });
+
+                setTimeout(function () {
+                    geoObject.properties.get('balloon').autoPan();
+                }, 0);
             }
         }))
     };

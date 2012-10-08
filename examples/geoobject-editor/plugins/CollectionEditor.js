@@ -117,25 +117,17 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
         onActionCreate: function (e) {
             var coordPosition = e.get('coordPosition'),
                 center = coordPosition.map(function (i) { return i.toFixed(6); }),
-                geometryType = e.get('geometryType'),
-                coordinates = e.get('coordinates'),
                 collection = e.get('target'),
-                /*
                 geometry = e.get('geometry'),
                 geoObject = new ymaps.GeoObject({
                     geometry: geometry,
                     properties: { center: center }
-                });
-                */
-                geoObject = new ymaps.GeoObject({
-                    geometry: new ymaps.geometry[geometryType](coordinates),
-                    properties: { center: center }
-                });
+                }),
+                geoObjectEditor = new GeoObjectEditor(geoObject);
 
             collection.balloon.close();
             collection.add(geoObject);
-
-            (new GeoObjectEditor(geoObject)).startDrawing();
+            geoObjectEditor.startDrawing();
         },
 
         onActionEdit: function (e) {
@@ -147,8 +139,7 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
             geoObjectEditor.startEditing();
         },
 
-        onActionClone: function (e) {
-        },
+        onActionClone: function (e) {},
 
         onActionDelete: function (e) {
             var collection = e.get('target'),

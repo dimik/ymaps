@@ -53,12 +53,8 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                         coordinates = [coordinates, coordinates];
                 }
 
-                console.log(geometryType, coordinates, Array.isArray(coordinates));
-
                 collection.events.fire('actioncreate', {
                     geometry: new ymaps.geometry[geometryType](coordinates),
-                    geometryType: geometryType,
-                    coordinates: coordinates,
                     target: collection,
                     coordPosition: this.getData().coordPosition
                 });
