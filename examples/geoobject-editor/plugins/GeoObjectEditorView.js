@@ -86,6 +86,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 }
             }
 
+            console.log(props);
             geoObject.options.set(props);
             geoObject.properties.set(props);
         }
