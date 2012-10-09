@@ -10,14 +10,14 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
             views[this.layout].superclass.build.call(this);
 
-            this.styleFields = $('[name^=icon],[name^=stroke],[name^=fill],[name^=border],[name=outline]', el)
+            this.styleFields = $('[name^=icon],[name^=stroke],[name^=fill],[name^=border]', el)
                 .on('change', $.proxy(this.onStyleChange, this));
 
             this.geometryFields = $('[name=center],[name=width],[name=height],[name=radius]', el)
                 .on('change', $.proxy(this.onGeometryChange, this));
 
             this.styleGroupControls = this.styleFields
-                .filter('[name=fill],[name=outline]')
+                .filter('[name=fill],[name=stroke]')
                 .on('change', $.proxy(this.onStyleGroupChange, this));
 
             this.setFieldsValues(this.styleFields);
@@ -77,16 +77,17 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
         },
         onGeometryChange: function (e) {},
         updateGeoObject: function (props) {
-            var geoObject = this.geoObject,
-                hasOwn = Object.prototype.hasOwnProperty;
+            var geoObject = this.geoObject;
 
             for(var key in props) {
-                if(hasOwn.call(props, key) && !props[key]) {
-                    props[key] = geoObject.options.get(key) || geoObject.properties.get(key);
+                if(props[key]) {
+                    isNaN(props[key]) || (props[key] = Number(props[key]));
+                }
+                else {
+                    delete props[key];
                 }
             }
 
-            console.log(props);
             geoObject.options.set(props);
             geoObject.properties.set(props);
         }
@@ -322,7 +323,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '<label class="control-label">Наличие</label>',
                 '<div class="controls">',
                     '<label class="checkbox">',
-                        '<input type="checkbox" name="outline" tabindex="3" data-control="stroke" value="1">',
+                        '<input type="checkbox" name="stroke" tabindex="3" data-control="stroke" value="1">',
                         'обводки',
                     '</label>',
                     '<label class="checkbox">',
@@ -394,7 +395,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '<label class="control-label">Наличие</label>',
                 '<div class="controls">',
                     '<label class="checkbox">',
-                        '<input type="checkbox" name="outline" tabindex="7" data-control="stroke" value="1">',
+                        '<input type="checkbox" name="stroke" tabindex="7" data-control="stroke" value="1">',
                         'обводки',
                     '</label>',
                     '<label class="checkbox">',
@@ -504,7 +505,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '<label class="control-label">Наличие</label>',
                 '<div class="controls">',
                     '<label class="checkbox">',
-                        '<input type="checkbox" name="outline" tabindex="5" data-control="stroke" value="1">',
+                        '<input type="checkbox" name="stroke" tabindex="5" data-control="stroke" value="1">',
                         'обводки',
                     '</label>',
                     '<label class="checkbox">',
