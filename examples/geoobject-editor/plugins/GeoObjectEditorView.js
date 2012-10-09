@@ -59,7 +59,9 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 container = field.closest('.control-group'),
                 controls = container.nextAll('.control-group:has([name^=' + prefix + '])');
 
-            controls.slideToggle();
+            controls.slideToggle('slow', $.proxy(function () {
+                this.events.fire('change');
+            }, this));
             // controls.toggleClass('hide', field.not(':checked'));
             field.val(Number(field.is(':checked')));
             this.updateGeoObject(this.getFieldsValues(field));
