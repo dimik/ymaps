@@ -60,8 +60,8 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 container = field.closest('.control-group'),
                 controls = container.nextAll('.control-group:has([name^=' + prefix + '])');
 
-            this.geoObject.properties.get('balloon')
-                .getOverlay().getLayout().options.set('maxHeight', 1500);
+            // this.geoObject.properties.get('balloon')
+            //    .getOverlay().getLayout().options.set('maxHeight', 1500);
             /*
             console.log(this.geoObject.options.get('balloonMaxHeight'));
             this.getData().options.set('maxHeight', 1500);
