@@ -68,12 +68,8 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             this.geoObject.options.set('balloonMaxHeight', 1500);
             console.log(this.geoObject.options.get('balloonMaxHeight'));
             */
-            console.log(this.geoObject.options.get('balloonMaxHeight'));
-            this.getData().options.set('maxHeight', 1500);
-            this.geoObject.options.set('balloonMaxHeight', 1500);
-            console.log(this.geoObject.options.get('balloonMaxHeight'));
-            console.log(this.getData().options.get('maxHeight'));
 
+            window.g = this.geoObject;
             /*
             controls.slideToggle('slow', $.proxy(function () {
                 this.events.fire('change');
