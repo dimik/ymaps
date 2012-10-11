@@ -69,6 +69,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             console.log(this.geoObject.options.get('balloonMaxHeight'));
             */
 
+            console.log(this.geoObject);
             window.g = this.geoObject;
             /*
             controls.slideToggle('slow', $.proxy(function () {
