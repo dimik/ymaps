@@ -54,15 +54,27 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             this.updateGeoObject(this.getFieldsValues(this.styleFields));
         },
         onStyleGroupChange: function (e) {
-            var field = $(e.target);
+            var self = this,
+                field = $(e.target),
                 prefix = field.data('control'),
                 container = field.closest('.control-group'),
                 controls = container.nextAll('.control-group:has([name^=' + prefix + '])');
 
+            /*
             controls.slideToggle('slow', $.proxy(function () {
                 this.events.fire('change');
             }, this));
-            // controls.toggleClass('hide', field.not(':checked'));
+            controls.toggleClass('hide', field.not(':checked'));
+            */
+            controls.animate({
+                height: "toggle",
+                opacity: "toggle"
+            }, {
+                duration: 'slow',
+                step: function (now, fx) {
+                    self.events.fire('change');
+                }
+            });
             field.val(Number(field.is(':checked')));
             this.updateGeoObject(this.getFieldsValues(field));
         },
