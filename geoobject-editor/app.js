@@ -26,5 +26,8 @@ require(['map', 'Collection'], function (map, Collection) {
     var collection = new Collection();
 
     map.geoObjects.add(collection);
-    collection.editor.startDrawing();
+    collection.editor
+        .startEditing()
+        .startDrawing();
+
 });

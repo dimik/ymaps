@@ -17,7 +17,12 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
         startEditing: function (options) {
             var collection = this.geoObjects;
 
-            // collection.events.add('contextmenu', this.onEdit, this);
+            collection.events
+                .add('contextmenu', this.onEditingStart, this)
+                .add('actionedit', this.onActionEdit, this)
+                .add('actiondelete', this.onActionDelete, this);
+
+            return this;
         },
 
         /**
@@ -25,7 +30,16 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
          * @function
          * @name CollectionEditor.startEditing
          */
-        stopEditing: function () {},
+        stopEditing: function () {
+            var collection = this.geoObjects;
+
+            collection.events
+                .remove('contextmenu', this.onEditingStart, this)
+                .remove('actionedit', this.onActionEdit, this)
+                .remove('actiondelete', this.onActionDelete, this);
+
+            return this;
+        },
 
         /**
          * Start drawning (creating) collection items.
@@ -37,8 +51,10 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
             var map = this.getMap(),
                 collection = this.geoObjects;
 
-            map.events.add('click', this.onMapClick, this);
-            collection.events.add('geoobjectcreate', this.onGeoObjectCreated, this);
+            map.events.add('click', this.onDrawingStart, this);
+            collection.events.add('actioncreate', this.onActionCreate, this);
+
+            return this;
         },
 
         /**
@@ -50,8 +66,10 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
             var map = this.getMap(),
                 collection = this.geoObjects;
 
-            map.events.remove('click', this.onMapClick, this);
+            map.events.remove('click', this.onDrawingStart, this);
             collection.events.remove('geoobjectcreate', this.onGeoObjectCreated, this);
+
+            return this;
         },
 
         /**
@@ -70,7 +88,7 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
             return map;
         },
 
-        onMapClick: function (e) {
+        onDrawingStart: function (e) {
             var coordinates = e.get('coordPosition'),
                 collection = this.geoObjects;
 
@@ -82,14 +100,53 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
             });
         },
 
-        onGeoObjectCreated: function (e) {
-            var geoObject = e.get('geoObject'),
-                collection = e.get('target');
+        onEditingStart: function (e) {
+            var coordinates = e.get('coordPosition'),
+                collection = this.geoObjects,
+                geoObject = e.get('target');
+
+            collection.balloon.open(coordinates, {
+                geoObjects: collection,
+                geoObject: geoObject,
+                coordPosition: coordinates
+            }, {
+                contentLayout: this.view.getLayout('editMenu')
+            });
+        },
+
+        onActionCreate: function (e) {
+            var coordPosition = e.get('coordPosition'),
+                center = coordPosition.map(function (i) { return i.toFixed(6); }),
+                collection = e.get('target'),
+                geometry = e.get('geometry'),
+                geoObject = new ymaps.GeoObject({
+                    geometry: geometry,
+                    properties: { center: center }
+                }),
+                geoObjectEditor = new GeoObjectEditor(geoObject);
 
             collection.balloon.close();
             collection.add(geoObject);
-            geoObject.editor = new GeoObjectEditor(geoObject);
-            geoObject.editor.startDrawing();
+            geoObjectEditor.startDrawing();
+        },
+
+        onActionEdit: function (e) {
+            var collection = e.get('target'),
+                geoObject = e.get('geoObject'),
+                geoObjectEditor = new GeoObjectEditor(geoObject);
+
+            collection.balloon.close();
+            geoObjectEditor.startEditing();
+        },
+
+        onActionClone: function (e) {},
+
+        onActionDelete: function (e) {
+            var collection = e.get('target'),
+                geoObject = e.get('geoObject');
+
+            collection.balloon.close();
+            collection.remove(geoObject);
         }
     };
 
