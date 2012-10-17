@@ -1,4 +1,4 @@
-define(['ready!ymaps', 'jquery'], function (ymaps, $) {
+define(['ready!ymaps', 'jquery', 'RectangleGeometry'], function (ymaps, $, RectangleGeometry) {
 
     var BaseMethods = {
         build: function () {
@@ -38,25 +38,39 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             onItemClick: function (e) {
                 var geometryType = $(e.target).data('geometry'),
                     collection = this.getData().geoObjects,
-                    coordinates = this.getData().coordPosition;
+                    coordinates = this.getData().coordPosition,
+                    center = coordinates.map(function (i) { return i.toFixed(6); }),
+                    geoObject;
 
                 e.preventDefault();
 
                 switch(geometryType) {
+                    case 'Point':
+                        geoObject = new ymaps.Placemark(coordinates);
                     case 'LineString':
-                        coordinates = [coordinates];
+                        geoObject = new ymaps.Polyline([coordinates]);
                         break;
                     case 'Polygon':
-                        coordinates = [[coordinates, coordinates]];
+                        geoObject = new ymaps.Polygon([[coordinates, coordinates]]);
                         break;
                     case 'Rectangle':
-                        coordinates = [coordinates, coordinates];
+                        geoObject = new ymaps.Rectangle(RectangleGeometry.createFromCenterAndSize(coordinates, [1000, 1000]), {
+                            center: center,
+                            width: 1000,
+                            height: 1000
+                        });
+                        break;
+                    case 'Circle':
+                        geoObject = new ymaps.Circle([coordinates, 500], {
+                            center: center,
+                            radius: 500
+                        });
+                        break;
                 }
 
                 collection.events.fire('actioncreate', {
-                    geometry: new ymaps.geometry[geometryType](coordinates),
-                    target: collection,
-                    coordPosition: this.getData().coordPosition
+                    type: 'actioncreate',
+                    target: geoObject
                 });
             }
         }),
@@ -78,14 +92,15 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             },
             onItemClick: function (e) {
                 var action = $(e.target).data('action'),
+                    eventType = 'action' + action,
                     geoObject = this.getData().geoObject,
                     collection = this.getData().geoObjects;
 
                 e.preventDefault();
 
-                collection.events.fire('action' + action, {
-                    geoObject: geoObject,
-                    target: collection
+                collection.events.fire(eventType, {
+                    type: eventType,
+                    target: geoObject
                 });
             }
         })

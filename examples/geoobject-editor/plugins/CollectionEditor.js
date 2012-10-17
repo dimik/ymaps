@@ -67,7 +67,7 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
                 collection = this.geoObjects;
 
             map.events.remove('click', this.onDrawingStart, this);
-            collection.events.remove('geoobjectcreate', this.onGeoObjectCreated, this);
+            collection.events.remove('actioncreate', this.onActionCreate, this);
 
             return this;
         },
@@ -115,14 +115,8 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
         },
 
         onActionCreate: function (e) {
-            var coordPosition = e.get('coordPosition'),
-                center = coordPosition.map(function (i) { return i.toFixed(6); }),
-                collection = e.get('target'),
-                geometry = e.get('geometry'),
-                geoObject = new ymaps.GeoObject({
-                    geometry: geometry,
-                    properties: { center: center }
-                }),
+            var collection = this.geoObjects,
+                geoObject = e.get('target'),
                 geoObjectEditor = new GeoObjectEditor(geoObject);
 
             collection.balloon.close();
@@ -131,8 +125,8 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
         },
 
         onActionEdit: function (e) {
-            var collection = e.get('target'),
-                geoObject = e.get('geoObject'),
+            var collection = this.geoObjects,
+                geoObject = e.get('target'),
                 geoObjectEditor = new GeoObjectEditor(geoObject);
 
             collection.balloon.close();
@@ -142,8 +136,8 @@ define(['ready!ymaps', 'CollectionEditorView', 'GeoObjectEditor'], function (yma
         onActionClone: function (e) {},
 
         onActionDelete: function (e) {
-            var collection = e.get('target'),
-                geoObject = e.get('geoObject');
+            var collection = this.geoObjects,
+                geoObject = e.get('target');
 
             collection.balloon.close();
             collection.remove(geoObject);

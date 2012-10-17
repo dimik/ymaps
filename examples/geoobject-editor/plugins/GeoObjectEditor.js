@@ -115,10 +115,15 @@ define(['ready!ymaps', 'GeoObjectEditorView', 'GeoObjectView'], function (ymaps,
             });
 
             geoObject.properties.set({
-                balloon: geoObject.balloon.open(),
                 view: new GeoObjectView(),
-                editor: this
-            });
+                editor: this,
+                activetab: {
+                    info: true,
+                    styles: false,
+                    geometry: false
+                }
+            })
+            .set('balloon', geoObject.balloon.open());
         },
         onEditingStop: function () {
             var geoObject = this.geoObject,
