@@ -2,8 +2,9 @@ requirejs.config({
     baseUrl: 'lib',
     paths: {
         ymaps: 'http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug',
-        ready: '../plugins/ready',
-        map: '../plugins/map',
+        ready: '../plugins/ymaps/ready',
+        map: '../plugins/ymaps/map',
+        RectangleGeometry: '../plugins/ymaps/geometry/Rectangle',
         Collection: '../plugins/Collection',
         CollectionBalloon: '../plugins/CollectionBalloon',
         CollectionEditor: '../plugins/CollectionEditor',
@@ -18,6 +19,9 @@ requirejs.config({
         },
         jquery: {
             exports: '$'
+        },
+        bootstrap: {
+            deps: ['jquery'],
         }
     }
 });

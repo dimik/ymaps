@@ -1,4 +1,4 @@
-define(['ready!ymaps', 'jquery'], function (ymaps, $) {
+define(['ready!ymaps', 'jquery'/*, 'bootstrap'*/], function (ymaps, $) {
 
     var BaseFieldsetMethods = {
         build: function () {
@@ -10,24 +10,45 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
             views[this.layout].superclass.build.call(this);
 
-            this.styleFields = $('[name^=icon],[name^=stroke],[name^=fill],[name^=border],[name=outline]', el)
+            this.styleGroupControls = $('[name=fill],[name=stroke]')
+                .on('change', $.proxy(this.onStyleGroupChange, this));
+
+            this.styleFields = $('[name^=icon],[name^=stroke],[name^=fill],[name^=border]', el)
                 .on('change', $.proxy(this.onStyleChange, this));
 
             this.geometryFields = $('[name=center],[name=width],[name=height],[name=radius]', el)
                 .on('change', $.proxy(this.onGeometryChange, this));
 
-            this.styleGroupControls = this.styleFields
-                .filter('[name=fill],[name=outline]')
-                .on('change', $.proxy(this.onStyleGroupChange, this));
+            this.tabs = $('[data-toggle=tab]')
+                .on('shown', $.proxy(this.onTabShown, this));
+            this.tabs = $('[data-toggle=tab]')
+                .on('click', $.proxy(this.onTabClick, this));
 
-            this.setFieldsValues(this.styleFields);
-            this.setGroupControlsState();
+            // this.setFieldsValues(this.styleFields);
+            // this.setGroupControlsState();
         },
         clear: function () {
             this.styleFields.off('change');
             this.geometryFields.off('change');
+            this.tabs.off('click shown');
 
             views[this.layout].superclass.clear.call(this);
+        },
+        onTabClick: function (e) {
+            var target = $(e.target).data('target'),
+                geoObject = this.geoObject,
+                activetab = geoObject.properties.get('activetab');
+
+            e.preventDefault();
+
+            for(var tab in activetab) {
+                activetab[tab] = tab === target;
+            }
+
+            geoObject.properties.set('activetab', activetab);
+        },
+        onTabShown: function (e) {
+            this.events.fire('change');
         },
         getFieldsValues: function (fields) {
             var result = {};
@@ -54,15 +75,35 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             this.updateGeoObject(this.getFieldsValues(this.styleFields));
         },
         onStyleGroupChange: function (e) {
-            var field = $(e.target);
+            var self = this,
+                field = $(e.target);
                 prefix = field.data('control'),
                 container = field.closest('.control-group'),
                 controls = container.nextAll('.control-group:has([name^=' + prefix + '])');
 
-            controls.slideToggle();
+            if(field.is(':checked')) {
+                controls.find(':input').removeAttr('disabled');
+            }
+            else {
+                controls.find(':input').attr('disabled', 'disabled');
+            }
+            /*
+            controls.animate({
+                height: "toggle",
+                opacity: "toggle"
+            }, {
+                duration: 'slow',
+                step: function (now, fx) {
+                    self.events.fire('change');
+                }
+            });
+            controls.slideToggle('fast', $.proxy(function () {
+                this.events.fire('change');
+            }, this));
+            */
             // controls.toggleClass('hide', field.not(':checked'));
             field.val(Number(field.is(':checked')));
-            this.updateGeoObject(this.getFieldsValues(field));
+            // this.updateGeoObject(this.getFieldsValues(field));
         },
         setGroupControlsState: function () {
             this.styleGroupControls.each(function () {
@@ -77,12 +118,14 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
         },
         onGeometryChange: function (e) {},
         updateGeoObject: function (props) {
-            var geoObject = this.geoObject,
-                hasOwn = Object.prototype.hasOwnProperty;
+            var geoObject = this.geoObject;
 
             for(var key in props) {
-                if(hasOwn.call(props, key) && !props[key]) {
-                    props[key] = geoObject.options.get(key) || geoObject.properties.get(key);
+                if(props[key]) {
+                    isNaN(props[key]) || (props[key] = Number(props[key]));
+                }
+                else {
+                    delete props[key];
                 }
             }
 
@@ -96,20 +139,31 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
             '<form class="form-horizontal" style="padding-top: 15px">',
                 '<fieldset>',
                     // '<legend>$[properties.editor.legend]</legend>',
-                    '<div class="control-group">',
-                        '<label class="control-label">Название</label>',
-                        '<div class="controls">',
-                            '<input class="input-xlarge" type="text" name="name" tabindex="1" placeholder="Название объекта" value="$[properties.name]"/>',
+                    '<div class="tabbable tabs-below">',
+                    '<div class="tab-content">',
+                        '<div class="tab-pane[if properties.activetab.info] active[endif]" id="tab-info">',
+                            '<div class="control-group">',
+                                '<label class="control-label">Название</label>',
+                                '<div class="controls">',
+                                    '<input class="input-xlarge" type="text" name="name" tabindex="1" placeholder="Название объекта" value="$[properties.name]"/>',
+                                '</div>',
+                            '</div>',
+                            '<div class="control-group">',
+                                '<label class="control-label">Описание</label>',
+                                '<div class="controls">',
+                                    '<textarea rows="3" class="input-xlarge" name="description" tabindex="2" placeholder="Описание объекта">$[properties.description]</textarea>',
+                                '</div>',
+                            '</div>',
                         '</div>',
+                        '$[[options.fieldsetLayout]]',
                     '</div>',
-                    '<div class="control-group">',
-                        '<label class="control-label">Описание</label>',
-                        '<div class="controls">',
-                            '<textarea rows="3" class="input-xlarge" name="description" tabindex="2" placeholder="Описание объекта">$[properties.description]</textarea>',
-                        '</div>',
+                        '$[[options.actionsLayout]]',
+                    '<ul class="nav nav-tabs">',
+                        '<li[if properties.activetab.info] class="active"[endif]><a href="#tab-info" data-target="info" data-toggle="tab">Информация</a></li>',
+                        '<li[if properties.activetab.styles] class="active"[endif]><a href="#tab-styles" data-target="styles" data-toggle="tab">Стили</a></li>',
+                        '<li[if properties.activetab.geometry] class="active"[endif]><a href="#tab-geometry" data-target="geometry" data-toggle="tab">Геометрия</a></li>',
+                    '</ul>',
                     '</div>',
-                    '$[[options.fieldsetLayout]]',
-                    '$[[options.actionsLayout]]',
                 '</fieldset>',
             '</form>'
         ].join(''), {
@@ -149,7 +203,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
         }),
 
         EditFormActions: ymaps.templateLayoutFactory.createClass([
-            '<div class="form-actions" style="margin: 0 -15px 0 -15px">',
+            '<div class="form-actions">',
                 '<button type="submit" class="btn btn-primary">Сохранить</button>',
                 '<button type="reset" class="btn" style="margin-left: 10px">Отменить</button>',
             '</div>'
@@ -174,7 +228,8 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
 
                 this.geoObject.getParent()
                     .events.fire('actiondelete', {
-                        geoObject: this.geoObject
+                        type: 'actiondelete',
+                        target: this.geoObject
                     });
             }
         }),
@@ -240,9 +295,14 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 var geoObject = this.geoObject,
                     coordinates = $(e.target).val().split(',');
 
-                geoObject.geometry.setCoordinates(coordinates);
-                geoObject.properties.get('balloon').autoPan();
+                geoObject.geometry
+                    .setCoordinates(coordinates);
+
                 this.setAddressFieldValue();
+
+                setTimeout(function () {
+                    geoObject.properties.get('balloon').autoPan();
+                }, 0);
             },
             updateGeoObject: function (props) {
                 var geoObject = this.geoObject,
@@ -321,7 +381,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '<label class="control-label">Наличие</label>',
                 '<div class="controls">',
                     '<label class="checkbox">',
-                        '<input type="checkbox" name="outline" tabindex="3" data-control="stroke" value="1">',
+                        '<input type="checkbox" name="stroke" tabindex="3" data-control="stroke" value="1">',
                         'обводки',
                     '</label>',
                     '<label class="checkbox">',
@@ -330,25 +390,25 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                     '</label>',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Цвет заливки</label>',
                 '<div class="controls">',
                     '<input type="text" name="fillColor" tabindex="5" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Цвет линии</label>',
                 '<div class="controls">',
                     '<input type="text" name="strokeColor" tabindex="6" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Толщина линии</label>',
                 '<div class="controls">',
                     '<input type="text" name="strokeWidth" tabindex="7" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Стиль линии</label>',
                 '<div class="controls">',
                     '<select class="input-xlarge" tabindex="8" name="strokeStyle">',
@@ -369,120 +429,101 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
         ].join(''), BaseFieldsetMethods),
 
         RectangleFieldset: ymaps.templateLayoutFactory.createClass([
-            '<div class="control-group">',
-                '<label class="control-label">Координаты центра</label>',
-                '<div class="controls">',
-                    '<input class="input-xlarge" type="text" name="center" tabindex="3" value="$[properties.center]"/>',
+            '<div class="tab-pane[if properties.activetab.geometry] active[endif]" id="tab-geometry">',
+                '<div class="control-group">',
+                    '<label class="control-label">Координаты центра</label>',
+                    '<div class="controls">',
+                        '<input class="input-xlarge" type="text" name="center" tabindex="3" value="$[properties.center]"/>',
+                    '</div>',
+                '</div>',
+                '<div class="control-group">',
+                    '<label class="control-label">Размер в метрах</label>',
+                    '<div class="controls form-inline">',
+                        '<input class="input-mini" type="text" name="width" tabindex="4" value="$[properties.width|0]"/>',
+                        '&nbsp;x&nbsp;',
+                        '<input class="input-mini" type="text" name="height" tabindex="5" value="$[properties.height|0]"/>',
+                    '</div>',
+                '</div>',
+                '<div class="control-group">',
+                    '<label class="control-label">Радиус скругления</label>',
+                    '<div class="controls">',
+                        '<input type="text" name="borderRadius" tabindex="6" class="input-micro" placeholder="1" value="$[properties.borderRadius]">',
+                    '</div>',
                 '</div>',
             '</div>',
-            '<div class="control-group">',
-                '<label class="control-label">Размер в метрах</label>',
-                '<div class="controls form-inline">',
-                    '<input class="input-mini" type="text" name="width" tabindex="4" value="$[properties.width|0]"/>',
-                    '&nbsp;x&nbsp;',
-                    '<input class="input-mini" type="text" name="height" tabindex="5" value="$[properties.height|0]"/>',
+            '<div class="tab-pane[if properties.activetab.styles] active[endif]" id="tab-styles">',
+                '<div class="control-group">',
+                    '<label class="control-label">Наличие</label>',
+                    '<div class="controls">',
+                        '<label class="checkbox">',
+                            '<input type="checkbox" name="stroke" tabindex="7" data-control="stroke" value="$[properties.stroke|1]"[if properties.stroke] checked[endif][ifdef properties.stroke][else] checked[endif]>',
+                            'обводки',
+                        '</label>',
+                        '<label class="checkbox">',
+                            '<input type="checkbox" name="fill" tabindex="8" data-control="fill" value="$[properties.fill|1]"[if properties.fill] checked[endif][ifdef properties.fill][else] checked[endif]>',
+                            'заливки',
+                        '</label>',
+                    '</div>',
                 '</div>',
-            '</div>',
-            '<div class="control-group">',
-                '<label class="control-label">Радиус скругления</label>',
-                '<div class="controls">',
-                    '<input type="text" name="borderRadius" tabindex="6" class="input-micro" placeholder="1" value="$[properties.borderRadius]">',
+                '<div class="control-group">',
+                    '<label class="control-label">Цвет заливки</label>',
+                    '<div class="controls">',
+                        '<input type="text" name="fillColor" tabindex="9" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
+                    '</div>',
                 '</div>',
-            '</div>',
-            '<div class="control-group">',
-                '<label class="control-label">Наличие</label>',
-                '<div class="controls">',
-                    '<label class="checkbox">',
-                        '<input type="checkbox" name="outline" tabindex="7" data-control="stroke" value="1">',
-                        'обводки',
-                    '</label>',
-                    '<label class="checkbox">',
-                        '<input type="checkbox" name="fill" tabindex="8" data-control="fill" value="1">',
-                        'заливки',
-                    '</label>',
+                '<div class="control-group">',
+                    '<label class="control-label">Цвет линии</label>',
+                    '<div class="controls">',
+                        '<input type="text" name="strokeColor" tabindex="10" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
+                    '</div>',
                 '</div>',
-            '</div>',
-            '<div class="control-group hide">',
-                '<label class="control-label">Цвет заливки</label>',
-                '<div class="controls">',
-                    '<input type="text" name="fillColor" tabindex="9" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
+                '<div class="control-group">',
+                    '<label class="control-label">Толщина линии</label>',
+                    '<div class="controls">',
+                        '<input type="text" name="strokeWidth" tabindex="11" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
+                    '</div>',
                 '</div>',
-            '</div>',
-            '<div class="control-group hide">',
-                '<label class="control-label">Цвет линии</label>',
-                '<div class="controls">',
-                    '<input type="text" name="strokeColor" tabindex="10" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
-                '</div>',
-            '</div>',
-            '<div class="control-group hide">',
-                '<label class="control-label">Толщина линии</label>',
-                '<div class="controls">',
-                    '<input type="text" name="strokeWidth" tabindex="11" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
-                '</div>',
-            '</div>',
-            '<div class="control-group hide">',
-                '<label class="control-label">Стиль линии</label>',
-                '<div class="controls">',
-                    '<select class="input-xlarge" tabindex="12" name="strokeStyle">',
-                        '<option value="solid">Сплошная линия</option>',
-                        '<option value="dash">Тире</option>',
-                        '<option value="dashdot">Длинное тире - короткое тире</option>',
-                        '<option value="dot">Точки</option>',
-                        '<option value="longdash">Длинные тире</option>',
-                        '<option value="longdashdot">Очень длинное тире - точка</option>',
-                        '<option value="longdashdotdot">Длинное тире - точка - точка</option>',
-                        '<option value="shortdash">Короткие тире</option>',
-                        '<option value="shortdashdot">Тире - точка</option>',
-                        '<option value="shortdashdotdot">Тире - точка - точка</option>',
-                        '<option value="shortdot">Точки через двойной интервал</option>',
-                    '</select>',
+                '<div class="control-group">',
+                    '<label class="control-label">Стиль линии</label>',
+                    '<div class="controls">',
+                        '<select class="input-xlarge" tabindex="12" name="strokeStyle">',
+                            '<option value="solid">Сплошная линия</option>',
+                            '<option value="dash">Тире</option>',
+                            '<option value="dashdot">Длинное тире - короткое тире</option>',
+                            '<option value="dot">Точки</option>',
+                            '<option value="longdash">Длинные тире</option>',
+                            '<option value="longdashdot">Очень длинное тире - точка</option>',
+                            '<option value="longdashdotdot">Длинное тире - точка - точка</option>',
+                            '<option value="shortdash">Короткие тире</option>',
+                            '<option value="shortdashdot">Тире - точка</option>',
+                            '<option value="shortdashdotdot">Тире - точка - точка</option>',
+                            '<option value="shortdot">Точки через двойной интервал</option>',
+                        '</select>',
+                    '</div>',
                 '</div>',
             '</div>'
         ].join(''), ymaps.util.extend({}, BaseFieldsetMethods, {
-            build: function () {
-                BaseFieldsetMethods.build.call(this);
-
-                var geoObject = this.geoObject,
-                    width = geoObject.properties.get('width', 0),
-                    height = geoObject.properties.get('height', 0),
-                    hasZeroArea = width * height === 0;
-
-                if(hasZeroArea) {
-                    this.geometryFields
-                        .filter('[name=width]').val(1000)
-                        .end()
-                        .filter('[name=height]').val(1000)
-                    this.onGeometryChange();
-                }
-            },
             onGeometryChange: function (e) {
                 var geoObject = this.geoObject,
-                    coordSystem = geoObject.geometry.options.get('projection').getCoordSystem(),
                     center = this.geometryFields.filter('[name=center]').val().split(',').map(Number),
                     width = Number(this.geometryFields.filter('[name=width]').val()),
                     height = Number(this.geometryFields.filter('[name=height]').val());
 
-                if(center.length === 2 && width && height) {
-                    var topCenter = coordSystem.solveDirectProblem(center, [1, 0], height/2).endPoint,
-                        bottomCenter = coordSystem.solveDirectProblem(center, [-1, 0], height/2).endPoint,
-                        leftCenter = coordSystem.solveDirectProblem(center, [0, -1], width/2).endPoint,
-                        rightCenter = coordSystem.solveDirectProblem(center, [0, 1], width/2).endPoint,
-                        lowerCorner = [bottomCenter[0], leftCenter[1]],
-                        upperCorner = [topCenter[0], rightCenter[1]],
-                        coordinates = [lowerCorner, upperCorner];
+                geoObject.geometry
+                    .setCenter(center)
+                    .setWidth(width)
+                    .setHeight(height);
 
-                    geoObject.geometry.setCoordinates(coordinates);
-
-                    geoObject.properties.set({
-                        center: center,
-                        width: width,
-                        height: height
-                    });
-
-                    setTimeout(function () {
-                        geoObject.properties.get('balloon').autoPan();
-                    }, 0);
-                }
+                geoObject.properties.set({
+                    center: center,
+                    width: width,
+                    height: height
+                });
+/*
+                setTimeout(function () {
+                    geoObject.properties.get('balloon').autoPan();
+                }, 0);
+                */
             }
         })),
 
@@ -503,7 +544,7 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '<label class="control-label">Наличие</label>',
                 '<div class="controls">',
                     '<label class="checkbox">',
-                        '<input type="checkbox" name="outline" tabindex="5" data-control="stroke" value="1">',
+                        '<input type="checkbox" name="stroke" tabindex="5" data-control="stroke" value="1">',
                         'обводки',
                     '</label>',
                     '<label class="checkbox">',
@@ -512,25 +553,25 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                     '</label>',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Цвет заливки</label>',
                 '<div class="controls">',
                     '<input type="text" name="fillColor" tabindex="7" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.fillColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Цвет линии</label>',
                 '<div class="controls">',
                     '<input type="text" name="strokeColor" tabindex="8" class="input-xlarge" placeholder="FFFFFFAA или rgba(255,0,0,1)" value="$[properties.strokeColor]">',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Толщина линии</label>',
                 '<div class="controls">',
                     '<input type="text" name="strokeWidth" tabindex="9" class="input-micro" placeholder="1" value="$[properties.strokeWidth]">',
                 '</div>',
             '</div>',
-            '<div class="control-group hide">',
+            '<div class="control-group">',
                 '<label class="control-label">Стиль линии</label>',
                 '<div class="controls">',
                     '<select class="input-xlarge" tabindex="10" name="strokeStyle">',
@@ -549,19 +590,6 @@ define(['ready!ymaps', 'jquery'], function (ymaps, $) {
                 '</div>',
             '</div>'
         ].join(''), ymaps.util.extend({}, BaseFieldsetMethods, {
-            build: function () {
-                BaseFieldsetMethods.build.call(this);
-
-                var geoObject = this.geoObject,
-                    radius = geoObject.properties.get('radius', 0),
-                    hasZeroArea = Math.PI * radius === 0;
-
-                if(hasZeroArea) {
-                    this.geometryFields
-                        .filter('[name=radius]').val(1000);
-                    this.onGeometryChange();
-                }
-            },
             onGeometryChange: function (e) {
                 var geoObject = this.geoObject,
                     center = this.geometryFields.filter('[name=center]').val().split(',').map(Number),
