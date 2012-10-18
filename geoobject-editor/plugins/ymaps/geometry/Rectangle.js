@@ -15,7 +15,7 @@ define(['ready!ymaps'], function (ymaps) {
         setWidth: function (width) {
             var center = this.getCenter(),
                 height = this.getHeight(),
-                coordinates = this.getCoordinatesFromCenterAndSize(center, [width, height]);
+                coordinates = getCoordinatesFromCenterAndSize(center, [width, height], this.options);
 
             this.setCoordinates(coordinates);
 
@@ -31,7 +31,7 @@ define(['ready!ymaps'], function (ymaps) {
         setHeight: function (height) {
             var center = this.getCenter(),
                 width = this.getWidth(),
-                coordinates = this.getCoordinatesFromCenterAndSize(center, [width, height]);
+                coordinates = getCoordinatesFromCenterAndSize(center, [width, height], this.options);
 
             this.setCoordinates(coordinates);
 
@@ -48,23 +48,22 @@ define(['ready!ymaps'], function (ymaps) {
         setCenter: function (center) {
             var width = this.getWidth(),
                 height = this.getHeight(),
-                coordinates = this.getCoordinatesFromCenterAndSize(center, [width, height]);
+                coordinates = getCoordinatesFromCenterAndSize(center, [width, height], this.options);
 
             this.setCoordinates(coordinates);
 
             return this;
-        },
-        getCoordinatesFromCenterAndSize: getCoordinatesFromCenterAndSize
+        }
     });
 
-    RectangleGeometry.createFromCenterAndSize = function (center, size, options) {
-        var coordinates = getCoordinatesFromCenterAndSize.call({ options : options }, center, size);
+    RectangleGeometry.fromCenterAndSize = function (center, size, options) {
+        var coordinates = getCoordinatesFromCenterAndSize(center, size, options);
 
         return new RectangleGeometry(coordinates, options);
     }
 
-    function getCoordinatesFromCenterAndSize(center, size) {
-        var projection = this.options && (this.options.get('projection') || this.options.projection) || ymaps.projection.wgs84Mercator,
+    function getCoordinatesFromCenterAndSize(center, size, options) {
+        var projection = options && (options.get('projection') || options.projection) || ymaps.projection.wgs84Mercator,
             coordSystem = projection.getCoordSystem(),
             width = Number(size[0]),
             height = Number(size[1]);

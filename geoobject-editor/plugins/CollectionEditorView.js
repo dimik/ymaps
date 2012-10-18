@@ -54,7 +54,7 @@ define(['ready!ymaps', 'jquery', 'RectangleGeometry'], function (ymaps, $, Recta
                         geoObject = new ymaps.Polygon([[coordinates, coordinates]]);
                         break;
                     case 'Rectangle':
-                        geoObject = new ymaps.Rectangle(RectangleGeometry.createFromCenterAndSize(coordinates, [1000, 1000]), {
+                        geoObject = new ymaps.Rectangle(RectangleGeometry.fromCenterAndSize(coordinates, [1000, 1000], collection.getMap().options), {
                             center: center,
                             width: 1000,
                             height: 1000
