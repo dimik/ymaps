@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример определения попадания точки в область</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <script src="http://api-maps.yandex.ru/2.0.18/?load=package.standard,package.geoObjects&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        var myMap, myColection, myCircle;
+
+        ymaps.ready(function () {
+            // Создание экземпляра карты и его привязка к созданному контейнеру
+            myMap = new ymaps.Map("map", {
+                center: [55.755768, 37.617671], // Москва
+                zoom: 10,
+                behaviors: ["default", "scrollZoom"]
+            });
+
+            // Создание коллекции геообъектов
+            myCollection = new ymaps.GeoObjectCollection();
+            // Создание оверлея круга
+            myCircle = new ymaps.Circle([myMap.getCenter(), 10000], {
+                hintContent: 'Перетащи меня'
+            }, {
+                draggable: true
+            });
+
+            // Добавление меток в коллекцию
+            myCollection
+                .add(new ymaps.Placemark([55.755546, 37.654538]))
+                .add(new ymaps.Placemark([55.356775, 37.589764]))
+                .add(new ymaps.Placemark([55.208867, 37.409948]))
+                .add(new ymaps.Placemark([55.156375, 37.376845]))
+                .add(new ymaps.Placemark([55.945682, 37.268598]))
+                .add(new ymaps.Placemark([55.647685, 37.196578]))
+                .add(new ymaps.Placemark([55.578996, 37.094667]))
+                .add(new ymaps.Placemark([55.484970, 37.737869]))
+                .add(new ymaps.Placemark([55.892466, 37.834056]))
+                .add(new ymaps.Placemark([55.045867, 37.967653]))
+
+            // Добавление геообъектов на карту
+            myMap.geoObjects
+                .add(myCircle)
+                .add(myCollection);
+
+            // Выставляем границы карте, чтобы все геообъекты были видны
+            myMap.setBounds(myCollection.getBounds());
+
+            // Перетаскиваем круг и проверяем попадание в него координат меток
+            myCircle.events.add('drag', function (e) {
+                myCollection.each(function (geoObject) {
+                    if(myCircle.geometry.contains(geoObject.geometry.getCoordinates())) {
+                        geoObject.options.set('preset', 'twirl#greenIcon');
+                    }
+                    else {
+                        geoObject.options.unset('preset');
+                    }
+                });
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+    <div id="map" style="width:600px;height:400px"></div>
+</body>
+
+</html>
+
+
