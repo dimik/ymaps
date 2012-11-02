@@ -23,7 +23,8 @@
 
             myGeoObjectsCollection
                 // Добавляем круг в коллекцию
-                .add(new ymaps.Circle([myMap.getCenter(), 10000], { pointColor: 'red' }, { strokeColor: "FF0000AA" }))
+                // TODO: раскомментировать когда починят contains у круга
+                // .add(new ymaps.Circle([myMap.getCenter(), 10000], { pointColor: 'red' }, { strokeColor: "FF0000AA" }))
                 // Добавляем прямоугольник в коллекцию
                 .add(new ymaps.Rectangle(myMap.getBounds(), { pointColor: 'green' }, { strokeColor: "00FF00AA" }))
                 // Добавляем полигон в коллекцию
