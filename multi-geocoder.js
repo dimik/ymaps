@@ -40,13 +40,14 @@ function MultiGeocoder(options) {
  */
 MultiGeocoder.prototype.geocode = function (requests, options) {
     var self = this,
+        opts = ymaps.util.extend({}, self._options, options),
         size = requests.length,
         promise = new ymaps.util.Promise(),
         result = [],
         geoObjects = new ymaps.GeoObjectArray();
 
     requests.forEach(function (request, index) {
-        ymaps.geocode(request, ymaps.util.extend({}, self._options, options))
+        ymaps.geocode(request, opts)
             .then(
                 function (response) {
                     var geoObject = response.geoObjects.get(0);
