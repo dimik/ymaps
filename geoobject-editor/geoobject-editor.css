@@ -67,4 +67,13 @@ body {
 .tabs-below .nav-tabs > .active > a:hover {
   border-color: transparent #ddd #ddd #ddd;
 }
+.ymaps-b-dropdown-button__dropdown-arrow {
+    top: auto !important;
+    right: 1px !important;
+    bottom: 2px;
+}
 
+.btn.btn-editor {
+    display: block;
+    padding: 2px 4px 3px;
+}

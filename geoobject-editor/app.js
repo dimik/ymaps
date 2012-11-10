@@ -11,7 +11,9 @@ requirejs.config({
         CollectionEditorView: '../plugins/CollectionEditorView',
         GeoObjectEditor: '../plugins/GeoObjectEditor',
         GeoObjectEditorView: '../plugins/GeoObjectEditorView',
-        GeoObjectView: '../plugins/GeoObjectView'
+        GeoObjectView: '../plugins/GeoObjectView',
+        RollupButton: '../plugins/RollupButton',
+        RollupButtonView: '../plugins/RollupButtonView'
     },
     shim: {
         ymaps: {
@@ -26,10 +28,13 @@ requirejs.config({
     }
 });
 
-require(['map', 'Collection'], function (map, Collection) {
-    var collection = new Collection();
+require(['map', 'Collection', 'RollupButton'], function (map, Collection, RollupButton) {
+    var collection = new Collection(),
+        button = new RollupButton();
 
     map.geoObjects.add(collection);
+    map.controls.add(button, {top: 5, left: 5});
+
     collection.editor
         .startEditing()
         .startDrawing();
