@@ -173,7 +173,7 @@ ymaps.ready(function () {
                 if(circle) {
                     map.geoObjects.remove(circle);
                 }
-                this._circle = circle = new ymaps.Circle([location, accuracy], {}, { opacity: 0.3 });
+                this._circle = circle = new ymaps.Circle([location, accuracy], {}, { opacity: 0.6 });
                 map.geoObjects.add(circle);
             }
         },
