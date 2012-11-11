@@ -144,7 +144,7 @@ ymaps.ready(function () {
          */
         handleGeolocationResult: function (position) {
             var location = [position.coords.latitude, position.coords.longitude],
-                accuracy = position.accuracy,
+                accuracy = position.coords.accuracy,
                 map = this.getMap(),
                 options = this._options,
                 placemark = this._placemark,
