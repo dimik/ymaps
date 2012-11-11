@@ -15,6 +15,8 @@ function GeolocationButton(params) {
         noCentering: false,
         // Не ставить метку.
         noPlacemark: false,
+        // Не показывать точность определения местоположения.
+        noAccuracy: false,
         // Режим получения наиболее точных данных.
         enableHighAccuracy: false,
         // Максимальное время ожидания ответа (в миллисекундах).
@@ -74,12 +76,17 @@ ymaps.ready(function () {
                 this.deselect();
             }
 
-            // Запрашиваем текущие координаты устройства.
-            navigator.geolocation.getCurrentPosition(
-                this._onGeolocationSuccess.bind(this),
-                this._onGeolocationError.bind(this),
-                this._options
-            );
+            if(navigator.geolocation) {
+                // Запрашиваем текущие координаты устройства.
+                navigator.geolocation.getCurrentPosition(
+                    this._onGeolocationSuccess.bind(this),
+                    this._onGeolocationError.bind(this),
+                    this._options
+                );
+            }
+            else {
+                this.handleGeolocationError('Ваш броузер не поддерживает GeolocationAPI.');
+            }
         },
 
         /**
@@ -90,23 +97,9 @@ ymaps.ready(function () {
          * @param {Object} position Объект, описывающий текущее местоположение.
          */
         _onGeolocationSuccess: function (position) {
-            var coords = position.coords,
-                location = [coords.latitude, coords.longitude],
-                map = this.getMap(),
-                options = this._options;
-
+            this.handleGeolocationResult(position);
             // Меняем иконку кнопки обратно
             this.toggleIconImage('wifi.png');
-
-            // Смена центра карты (если нужно)
-            if(!options.noCentering) {
-                map.setCenter(location, 15);
-            }
-
-            // Установка метки по координатам местоположения (если нужно).
-            if(!options.noPlacemark) {
-                this.showGeolocationIcon(location);
-            }
         },
         /**
          * Обработчик ошибки геолокации.
@@ -115,16 +108,24 @@ ymaps.ready(function () {
          * @param {Object} error Описание причины ошибки.
          */
         _onGeolocationError: function (error) {
-            this.hint
-                .show('Точное местоположение определить не удалось.')
-                .hide(2000);
-
+            this.handleGeolocationError('Точное местоположение определить не удалось.');
             // Меняем иконку кнопки обратно.
             this.toggleIconImage('wifi.png');
 
             if(console) {
                 console.warn('GeolocationError: ' + GeolocationButton.ERRORS[error.code - 1]);
             }
+        },
+        /**
+         * Выводим ошибки в хинт.
+         * @function
+         * @name GeolocationButton.handleGeolocationError
+         * @param {Object} err Описание причины ошибки.
+         */
+        handleGeolocationError: function (err) {
+            this.hint
+                .show(err)
+                .hide(2000);
         },
         /**
          * Меняет иконку кнопки.
@@ -138,42 +139,59 @@ ymaps.ready(function () {
         /**
          * Отображение метки по координатам.
          * @function
-         * @name GeolocationButton.showGeolocationIcon
-         * @param {Number[]} location Координаты точки.
+         * @name GeolocationButton.showGeolocationResult
+         * @param {Object} position Результат геолокации.
          */
-        showGeolocationIcon: function (location) {
-            var placemark = this._placemark,
-                map = this.getMap();
+        handleGeolocationResult: function (position) {
+            var location = [position.coords.latitude, position.coords.longitude],
+                accuracy = position.accuracy,
+                map = this.getMap(),
+                options = this._options,
+                placemark = this._placemark,
+                circle = this._circle;
 
-            // Удаляем старую метку.
-            placemark && map.geoObjects.remove(placemark);
-            this._placemark = placemark = new ymaps.Placemark(location, {}, { preset: 'geolocation#icon' });
-            map.geoObjects.add(placemark);
+            // Смена центра карты (если нужно)
+            if(!options.noCentering) {
+                map.setCenter(location, 15);
+            }
 
-            // Показываем адрес местоположения в хинте метки.
-            this.getAddress(location, function (err, address) {
-                if (err) {
-                    console.warn(err.toString());
+            // Установка метки по координатам местоположения (если нужно).
+            if(!options.noPlacemark) {
+                // Удаляем старую метку.
+                if(placemark) {
+                    map.geoObjects.remove(placemark);
                 }
-                else {
-                    address && placemark.properties.set('hintContent', address);
+                this._placemark = placemark = new ymaps.Placemark(location, {}, { preset: 'geolocation#icon' });
+                map.geoObjects.add(placemark);
+                // Показываем адрес местоположения в хинте метки.
+                this.getLocationInfo(placemark);
+            }
+
+            // Показываем точность определения местоположения (если нужно).
+            if(!options.noAccuracy) {
+                // Удаляем старую точность.
+                if(circle) {
+                    map.geoObjects.remove(circle);
                 }
-            });
+                this._circle = circle = new ymaps.Circle([location, accuracy]);
+                map.geoObjects.add(circle);
+            }
         },
         /**
-         * Получение адреса по координатам.
+         * Получение адреса по координатам метки.
          * @function
-         * @name GeolocationButton.getAddress
-         * @param {Number[]} point Координаты точки.
-         * @param {Function} callback Функция обратного вызова.
+         * @name GeolocationButton.getLocationInfo
+         * @param {ymaps.Placemark} point Метка для которой ищем адрес.
          */
-        getAddress: function (point, callback) {
-            ymaps.geocode(point).then(function (res) {
-                callback(null, res.geoObjects.get(0).properties.get('name'));
-            },
-            function (err) {
-                callback(err);
-            });
+        getLocationInfo: function (point) {
+            ymaps.geocode(point.geometry.getCoordinates())
+                .then(function (res) {
+                    var result = res.geoObjects.get(0);
+
+                    if(result) {
+                        point.properties.set('hintContent', result.properties.get('name'));
+                    }
+                });
         }
     });
 });
