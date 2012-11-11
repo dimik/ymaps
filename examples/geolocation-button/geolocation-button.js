@@ -36,7 +36,7 @@ ymaps.ready(function () {
             GeolocationButton.superclass.onAddToMap.apply(this, arguments);
 
             ymaps.option.presetStorage.add('geolocation#icon', {
-                iconImageHref: 'examples/maps/images/man.png',
+                iconImageHref: 'man.png',
                 iconImageOffset: [-10, -24],
                 iconImageSize: [27, 26]
             });
@@ -67,7 +67,7 @@ ymaps.ready(function () {
          */
         _onBtnClick: function (e) {
             // Меняем иконку кнопки на прелоадер.
-            this.toggleIconImage('examples/maps/images/loader.gif');
+            this.toggleIconImage('loader.gif');
 
             // Делаем кнопку ненажатой
             if(this.isSelected()) {
@@ -96,7 +96,7 @@ ymaps.ready(function () {
                 options = this._options;
 
             // Меняем иконку кнопки обратно
-            this.toggleIconImage('examples/maps/images/wifi.png');
+            this.toggleIconImage('wifi.png');
 
             // Смена центра карты (если нужно)
             if(!options.noCentering) {
@@ -120,7 +120,7 @@ ymaps.ready(function () {
                 .hide(2000);
 
             // Меняем иконку кнопки обратно.
-            this.toggleIconImage('examples/maps/images/wifi.png');
+            this.toggleIconImage('wifi.png');
 
             if(console) {
                 console.warn('GeolocationError: ' + GeolocationButton.ERRORS[error.code - 1]);
