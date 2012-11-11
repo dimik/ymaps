@@ -40,7 +40,7 @@ ymaps.ready(function () {
             ymaps.option.presetStorage.add('geolocation#icon', {
                 iconImageHref: 'man.png',
                 iconImageSize: [27, 26],
-                iconImageOffset: [-13, -13]
+                iconImageOffset: [-13, -26]
             });
 
             this.hint = new GeolocationButtonHint(this);
