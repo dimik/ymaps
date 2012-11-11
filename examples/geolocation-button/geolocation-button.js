@@ -18,7 +18,7 @@ function GeolocationButton(params) {
         // Не показывать точность определения местоположения.
         noAccuracy: false,
         // Режим получения наиболее точных данных.
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         // Максимальное время ожидания ответа (в миллисекундах).
         timeout: 10000,
         // Максимальное время жизни полученных данных (в миллисекундах).
@@ -117,14 +117,14 @@ ymaps.ready(function () {
             }
         },
         /**
-         * Выводим ошибки в хинт.
+         * Обработка ошибки геолокации.
          * @function
          * @name GeolocationButton.handleGeolocationError
-         * @param {Object} err Описание причины ошибки.
+         * @param {Object|String} err Описание ошибки.
          */
         handleGeolocationError: function (err) {
             this.hint
-                .show(err)
+                .show(err.toString())
                 .hide(2000);
         },
         /**
@@ -137,9 +137,9 @@ ymaps.ready(function () {
             this.data.set('image', image);
         },
         /**
-         * Отображение метки по координатам.
+         * Обработка результата геолокации.
          * @function
-         * @name GeolocationButton.showGeolocationResult
+         * @name GeolocationButton.handleGeolocationResult
          * @param {Object} position Результат геолокации.
          */
         handleGeolocationResult: function (position) {
