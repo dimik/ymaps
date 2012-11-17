@@ -76,7 +76,7 @@ PolylineVertexCounter.prototype.onVertexMove = function (geometry) {
         })[0],
         index;
 
-    for(index = 0; geometry.indexOf(vertices[index]) > -1; index++) /* */
+    for(index = 0; geometry.indexOf(vertices[index]) > -1; index++); /* */
 
     this.vertices[index] = moved;
     this.reIndex();
