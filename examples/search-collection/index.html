@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- Класс провайдера для стандартного ymaps.SearchControl -->
-    <script src="search-collection-provider.js" type="text/javascript"></script>
+    <script src="collection-search-provider.js" type="text/javascript"></script>
 
     <!-- Тестовые данные. Нужно заменить на свои. -->
     <script src="data.js" type="text/javascript"></script>
@@ -14,14 +14,14 @@
     <!-- Сделаем броузеры ES5 friendly -->
     <script src="/es5-shim/es5-shim.min.js" type="text/javascript"></script>
 
-    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects&lang=ru-RU" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects&lang=ru-RU" type="text/javascript"></script>
 
     <script type="text/javascript">
         ymaps.ready(init);
 
         function init() {
             var map = new ymaps.Map("map", {
-                center: [55.755768, 37.617671], // Москва
+                center: [55.755768, 37.617671],
                 zoom: 10,
                 behaviors: ["default", "scrollZoom"]
             });
@@ -29,7 +29,7 @@
             // Создаем коллекцию для точек из data.js
             var collection = new ymaps.GeoObjectCollection();
 
-            // Добавляем коллекцию на карту
+            // Добавляем коллекцию на карту.
             map.geoObjects.add(collection);
 
             // Массив points определен в файле data.js
@@ -46,7 +46,7 @@
                 noPlacemark : true
             });
 
-            // Добавляем контрол в верхний правый угол,
+            // Добавляем контрол в верхний правый угол.
             map.controls.add(search, { right : 10, top : 10 });
         }
 
