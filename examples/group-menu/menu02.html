@@ -22,7 +22,7 @@
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
                     // Выставляем масштаб карты чтобы были видны все группы.
-                    console.log(res.geoObjects.getBounds());
+                    console.log(res.geoObjects.getLength());
 
                     // Перебираем все группы.
                     res.geoObjects.each(function (group) {
