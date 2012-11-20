@@ -17,7 +17,7 @@
             });
 
             // Контейнер для меню.
-            var menu = $('<ul/>');
+            var menu = $('<ul class="menu"/>');
 
             // Перебираем все группы.
             groups.forEach(function (group) {
@@ -26,7 +26,7 @@
                     // Коллекция для геообъектов группы.
                     collection = new ymaps.GeoObjectCollection(),
                     // Контейнер для подменю.
-                    submenu = $('<ul/>');
+                    submenu = $('<ul class="submenu"/>');
 
                 // Добавляем коллекцию на карту.
                 myMap.geoObjects.add(collection);
@@ -73,14 +73,14 @@
     </script>
     <style type="text/css">
     /* Оформление меню (начало)*/
-        #menu {
+        .menu {
             width: 300px;
             list-style: none;
 
             margin: 0;
             padding: 0;
         }
-        #menu li {
+        .menu li {
             text-decoration: none;
             cursor: pointer;
             border-bottom: dashed 1px;
