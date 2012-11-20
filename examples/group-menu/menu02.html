@@ -22,15 +22,15 @@
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
 
+                    // Добавляем все группы на карту.
+                    myMap.geoObjects.add(res.geoObjects);
+
                     // Перебираем все группы.
                     res.geoObjects.each(function (collection) {
                         // Пункт меню.
                         var menuItem = $('<li><a href="#">' + collection.properties.get('name') + '</a></li>'),
                             // Контейнер для подменю.
                             submenu = $('<ul class="submenu"/>');
-
-                        // Добавляем коллекцию на карту.
-                        myMap.geoObjects.add(collection);
 
                         // Добавляем подменю.
                         menuItem
@@ -40,10 +40,10 @@
                             // По клику удаляем/добавляем коллекцию на карту и скрываем/отображаем подменю.
                             .find('a')
                             .toggle(function () {
-                                collection.options.set('visible', false);
+                                myMap.geoObjects.remove(collection);
                                 submenu.hide();
                             }, function () {
-                                collection.options.set('visible', true);
+                                myMap.geoObjects.add(collection);
                                 submenu.show();
                             });
 
