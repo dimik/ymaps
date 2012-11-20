@@ -21,6 +21,9 @@
             // Загрузка YMapsML-файла
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
+                    // Выставляем масштаб карты чтобы были видны все группы.
+                    myMap.setBounds(res.geoObjects.getBounds());
+
                     // Перебираем все группы.
                     res.geoObjects.each(function (group) {
                         // Пункт меню.
@@ -65,8 +68,6 @@
 
             // Добавляем меню в тэг BODY.
             menu.appendTo($('body'));
-            // Выставляем масштаб карты чтобы были видны все группы.
-            myMap.setBounds(myMap.geoObjects.getBounds());
         }
     </script>
     <style type="text/css">
