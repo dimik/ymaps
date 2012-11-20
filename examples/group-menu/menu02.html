@@ -39,6 +39,7 @@
                             // Добавляем пункт в меню.
                             .appendTo(menu)
                             // По клику удаляем/добавляем коллекцию на карту и скрываем/отображаем подменю.
+                            .find('a')
                             .toggle(function () {
                                 group.options.set('visible', false);
                                 submenu.hide();
@@ -56,6 +57,7 @@
                             submenuItem
                                 .appendTo(submenu)
                                 // При клике по пункту подменю открываем/закрываем баллун у метки.
+                                .find('a')
                                 .toggle(function () {
                                     placemark.balloon.open();
                                 }, function () {
