@@ -22,7 +22,8 @@
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
                     // Выставляем масштаб карты чтобы были видны все группы.
-                    console.log(res.geoObjects.getBounds());
+                    console.log(res.geoObjects.getLength());
+                    myMap.geoObjects.add(res.geoObjects);
 
                     // Перебираем все группы.
                     for(var i = 0, len = res.geoObjects.getLength(); i < len; i++) {
@@ -35,7 +36,7 @@
                             console.log(group.properties.get('name'));
 
                         // Добавляем группу на карту.
-                        myMap.geoObjects.add(group);
+                        // myMap.geoObjects.add(group);
 
                         // Добавляем подменю.
                         menuItem
