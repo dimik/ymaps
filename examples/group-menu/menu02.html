@@ -21,7 +21,8 @@
             // Загрузка YMapsML-файла
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
-                    // Выставляем масштаб карты чтобы были видны все группы.
+                    // Установка границ карты по границам области содержащей все объекты из YMapsML.
+                    myMap.setBounds(res.geoObjects.getBounds());
 
                     // Добавляем все группы на карту разом
                     myMap.geoObjects.add(res.geoObjects);
