@@ -24,7 +24,7 @@
                 // Пункт меню.
                 var menuItem = $('<li><a href="#">' + group.name + '</a></li>'),
                     // Коллекция для геообъектов группы.
-                    collection = new ymaps.GeoObjectCollection(),
+                    collection = new ymaps.GeoObjectCollection(null, { preset: group.style }),
                     // Контейнер для подменю.
                     submenu = $('<ul class="submenu"/>');
 
