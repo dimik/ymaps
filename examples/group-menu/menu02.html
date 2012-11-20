@@ -18,17 +18,18 @@
             // Контейнер для меню.
             var menu = $('<ul class="menu"/>');
 
-            // Загрузка YMapsML-файла
+            // Загрузка YMapsML-файла.
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
+                    var groups = res.geoObjects;
 
                     // Добавляем все группы на карту.
-                    myMap.geoObjects.add(res.geoObjects);
+                    myMap.geoObjects.add(groups);
 
                     // Перебираем все группы.
-                    res.geoObjects.each(function (collection) {
+                    groups.each(function (group) {
                         // Пункт меню.
-                        var menuItem = $('<li><a href="#">' + collection.properties.get('name') + '</a></li>'),
+                        var menuItem = $('<li><a href="#">' + group.properties.get('name') + '</a></li>'),
                             // Контейнер для подменю.
                             submenu = $('<ul class="submenu"/>');
 
@@ -40,17 +41,17 @@
                             // По клику удаляем/добавляем коллекцию на карту и скрываем/отображаем подменю.
                             .find('a')
                             .toggle(function () {
-                                myMap.geoObjects.remove(collection);
+                                groups.remove(group);
                                 submenu.hide();
                             }, function () {
-                                myMap.geoObjects.add(collection);
+                                groups.add(group);
                                 submenu.show();
                             });
 
                         // Перебираем элементы группы.
-                        collection.each(function (placemark) {
+                        group.each(function (item) {
                             // Пункт подменю.
-                            var submenuItem = $('<li><a href="#">' + placemark.properties.get('name') + '</a></li>');
+                            var submenuItem = $('<li><a href="#">' + item.properties.get('name') + '</a></li>');
 
                             // Добавляем пункт в подменю.
                             submenuItem
@@ -58,9 +59,9 @@
                                 // При клике по пункту подменю открываем/закрываем баллун у метки.
                                 .find('a')
                                 .toggle(function () {
-                                    placemark.balloon.open();
+                                    item.balloon.open();
                                 }, function () {
-                                    placemark.balloon.close();
+                                    item.balloon.close();
                                 });
                         });
                     });
