@@ -31,7 +31,9 @@
                             // Контейнер для подменю.
                             submenu = $('<ul class="submenu"/>');
 
-                        // Добавляем коллекцию на карту.
+                            console.log(group.properties.get('name'));
+
+                        // Добавляем группу на карту.
                         myMap.geoObjects.add(group);
 
                         // Добавляем подменю.
