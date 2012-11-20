@@ -22,7 +22,7 @@
             // Перебираем все группы.
             groups.forEach(function (group) {
                 // Пункт меню.
-                var menuItem = $('<li>' + group.name + '</li>'),
+                var menuItem = $('<li><a href="#">' + group.name + '</a></li>'),
                     // Коллекция для геообъектов группы.
                     collection = new ymaps.GeoObjectCollection(),
                     // Контейнер для подменю.
@@ -48,7 +48,7 @@
                 // Перебираем элементы группы.
                 group.items.forEach(function (item) {
                     // Пункт подменю.
-                    var submenuItem = $('<li>' + item.name + '</li>'),
+                    var submenuItem = $('<li><a href="#">' + item.name + '</a></li>'),
                         // Создаем метку.
                         placemark = new ymaps.Placemark(item.center, { balloonContent: item.name });
 
@@ -78,10 +78,6 @@
 
             margin: 0;
             padding: 0;
-        }
-        .menu li {
-            text-decoration: none;
-            cursor: pointer;
         }
         .submenu {
             list-style: none;

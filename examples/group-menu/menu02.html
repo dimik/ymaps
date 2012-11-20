@@ -29,7 +29,7 @@
                     // Перебираем все группы.
                     res.geoObjects.each(function (group) {
                         // Пункт меню.
-                        var menuItem = $('<li>' + group.properties.get('name') + '</li>'),
+                        var menuItem = $('<li><a href="#">' + group.properties.get('name') + '</a></li>'),
                             // Контейнер для подменю.
                             submenu = $('<ul class="submenu"/>');
 
@@ -50,7 +50,7 @@
                         // Перебираем элементы группы.
                         group.each(function (item) {
                             // Пункт подменю.
-                            var submenuItem = $('<li>' + item.properties.get('name') + '</li>');
+                            var submenuItem = $('<li><a href="#">' + item.properties.get('name') + '</a></li>');
 
                             // Добавляем пункт в подменю.
                             submenuItem
@@ -76,10 +76,6 @@
 
             margin: 0;
             padding: 0;
-        }
-        .menu li {
-            text-decoration: none;
-            cursor: pointer;
         }
         .submenu {
             list-style: none;
