@@ -28,6 +28,23 @@
                     // Контейнер для подменю.
                     submenu = $('<ul/>');
 
+                // Добавляем коллекцию на карту.
+                myMap.geoObjects.add(collection);
+
+                // Добавляем подменю.
+                menuItem
+                    .append(submenu)
+                    // Добавляем пункт в меню.
+                    .appendTo(menu)
+                    // По клику удаляем/добавляем коллекцию на карту и скрываем/отображаем подменю.
+                    .toggle(function () {
+                        myMap.geoObjects.remove(collection);
+                        submenu.hide();
+                    }, function () {
+                        myMap.geoObjects.add(collection);
+                        submenu.show();
+                    });
+
                 // Перебираем элементы группы.
                 group.items.forEach(function (item) {
                     // Пункт подменю.
@@ -47,23 +64,6 @@
                             placemark.balloon.close();
                         });
                 });
-
-                // Добавляем коллекцию на карту.
-                myMap.geoObjects.add(collection);
-
-                // Добавляем подменю.
-                menuItem
-                    .append(submenu)
-                    // Добавляем пункт в меню.
-                    .appendTo(menu)
-                    // По клику удаляем/добавляем коллекцию на карту и скрываем/отображаем подменю.
-                    .toggle(function () {
-                        myMap.geoObjects.remove(collection);
-                        submenu.hide();
-                    }, function () {
-                        myMap.geoObjects.add(collection);
-                        submenu.show();
-                    });
             });
             // Добавляем меню в тэг BODY.
             menu.appendTo($('body'));
@@ -71,6 +71,31 @@
             myMap.setBounds(myMap.geoObjects.getBounds());
         }
     </script>
+    <style type="text/css">
+    /* Оформление меню (начало)*/
+        #menu {
+            width: 300px;
+            list-style: none;
+
+            margin: 0;
+            padding: 0;
+        }
+        #menu li {
+            text-decoration: none;
+            cursor: pointer;
+            border-bottom: dashed 1px;
+        }
+        .submenu {
+            list-style: none;
+
+            margin: 0 0 0 20px;
+            padding: 0;
+        }
+        .submenu li {
+            font-size: 90%;
+        }
+    /* Оформление меню (конец)*/
+    </style>
 </head>
 
 <body>
