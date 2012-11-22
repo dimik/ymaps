@@ -14,20 +14,76 @@
                 center: [50.443705, 30.530946],
                 zoom: 14
             }),
+            // Эту группу не будем добавлять на карту, чтобы помещенные в нее геообъекты были не видны.
             hidden = new ymaps.GeoObjectCollection(),
-            visible;
+            // Эту группу добавим на карту.
+            visible = new ymaps.GeoObjectCollection(),
+            // Группы с геообъектами.
+            group1 = new ymaps.GeoObjectCollection({
+                properties: {
+                    id: 'group-1',
+                    name: 'Известные памятники'
+                }
+            }, {
+                preset: 'twirl#redIcon'
+            }),
+            group2 = new ymaps.GeoObjectCollection({
+                properties: {
+                    id: 'group-2',
+                    name: 'Покушайки'
+                }
+            }, {
+                preset: 'twirl#greenIcon'
+            }),
+            group3 = new ymaps.GeoObjectCollection({
+                properties: {
+                    id: 'group-3',
+                    name: 'Оригинальные музейчики'
+                }
+            }, {
+                preset: 'twirl#orangeIcon'
+            }),
+            group4 = new ymaps.GeoObjectCollection({
+                properties: {
+                    id: 'group-4',
+                    name: 'Красивости'
+                }
+            });
 
-            // Загрузка YMapsML-файла.
-            ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
-                .then(function (res) {
-                    visible = res.geoObjects;
+            // Наполняем группы геообъектами.
+            group1
+                .add(new ymaps.Placemark([50.426472, 30.563022], { id: 'group-1-1', balloonContent: 'Монумент &quot;Родина-Мать&quot;' }))
+                .add(new ymaps.Placemark([50.45351, 30.516489], { id: 'group-1-1', balloonContent: 'Памятник &quot;Богдану Хмельницкому&quot;' }))
+                .add(new ymaps.Placemark([50.454433, 30.529874], { id: 'group-1-1', balloonContent: 'Арка Дружбы народов' }));
 
-                    // Добавляем все группы на карту.
-                    myMap.geoObjects.add(visible);
+            group2
+                .add(new ymaps.Placemark([50.50955, 30.60791], { id: 'group-2-1', balloonContent: 'Ресторан &quot;Калинка-Малинка&quot;' }))
+                .add(new ymaps.Placemark([50.429083, 30.521708], { id: 'group-2-2', balloonContent: 'Бар &quot;Сало-бар&quot;' }))
+                .add(new ymaps.Placemark([50.450843, 30.498271], { id: 'group-2-3', balloonContent: 'Абсент-бар &quot;Палата №6&quot;' }))
+                .add(new ymaps.Placemark([50.454834, 30.516498], { id: 'group-2-4', balloonContent: 'Ресторан &quot;Спотыкач&quot;' }));
 
-                    // Выставляем масштаб карты чтобы были видны все группы.
-                    myMap.setBounds(myMap.geoObjects.getBounds());
-                });
+            group3
+                .add(new ymaps.Placemark([50.443334, 30.520163], { id: 'group-3-1', balloonContent: 'Музей грамзаписи и старинных музыкальных инструментов' }))
+                .add(new ymaps.Placemark([50.446977, 30.505269], { id: 'group-3-2', balloonContent: 'Музей истории медицины или Анатомический театр' }))
+                .add(new ymaps.Placemark([50.452512, 30.530889], { id: 'group-3-3', balloonContent: 'Музей воды. Водно-информационный центр' }));
+
+            group4
+                .add(new ymaps.Placemark([50.45987, 30.516174], { id: 'group-4-1', balloonContent: 'Замок Ричарда-Львиное сердце' }))
+                .add(new ymaps.Placemark([50.445049, 30.528598], { id: 'group-4-2', balloonContent: '&quot;Дом с химерами&quot;' }))
+                .add(new ymaps.Placemark([50.449156, 30.511809], { id: 'group-4-3', balloonContent: 'Дом Рыцаря' }));
+
+            // Добавляем все группы в одну коллекцию.
+            visible
+                .add(group1)
+                .add(group2)
+                .add(group3)
+                .add(group4)
+
+            // Добавляем все группы на карту.
+            myMap.geoObjects.add(visible);
+
+            // Выставляем масштаб карты чтобы были видны все группы.
+            myMap.setBounds(visible.getBounds());
 
             // Обрабатываем клики на пунктах меню.
             $('ul.menu>li>a').on('click', function (e) {
@@ -36,12 +92,12 @@
 
                 // Пункт меню на котором кликнули.
                 var target = $(e.target),
-                    // Имя группы.
-                    name = target.text(),
+                    // Идентификатор группы.
+                    id = target.attr('id'),
                     // Подменю.
                     submenu = target.closest('li').find('ul.submenu');
 
-                groupToggle(name);
+                groupToggle(id);
                 submenu.toggle();
             });
 
@@ -52,21 +108,21 @@
 
                 // Пункт подменю на котором кликнули.
                 var target = $(e.target),
-                    // Имя метки.
-                    name = target.text();
+                    // Идентификатор метки.
+                    id = target.attr('id');
 
-                itemToggle(name);
+                itemToggle(id);
             });
 
             // Ищем нужную группу и добавляем/удаляем ее с карты.
-            function groupToggle(name) {
+            function groupToggle(id) {
                 // Все группы лежат внутри одной коллекции, которую мы получили из YMapsML.
                 var it, group;
 
                 // Сначала ищем в видимой на карте коллекции.
                 it = visible.getIterator();
                 while(group = it.getNext()) {
-                    if(group.properties.get('name') === name) {
+                    if(group.properties.get('id') === id) {
                         hidden.add(group);
                         return;
                     }
@@ -75,7 +131,7 @@
                 // Если мы сюда попали, значит коллекция уже удалена и надо искать в удаленных.
                 it = hidden.getIterator();
                 while(group = it.getNext()) {
-                    if(group.properties.get('name') === name) {
+                    if(group.properties.get('id') === id) {
                         visible.add(group);
                         return;
                     }
@@ -83,7 +139,7 @@
             }
 
             // Ищем нужную метку и открываем/закрываем ее балун.
-            function itemToggle(name) {
+            function itemToggle(id) {
                 var it = visible.getIterator(),
                     group;
 
@@ -91,7 +147,7 @@
                     for(var i = 0, len = group.getLength(); i < len; i++) {
                         var placemark = group.get(i);
 
-                        if(placemark.properties.get('name') === name) {
+                        if(placemark.properties.get('id') === id) {
                             if(placemark.balloon.isOpen()) {
                                 placemark.balloon.close();
                             }
@@ -130,36 +186,36 @@
     <div id="map" style="width:800px;height:480px;"></div>
     <ul class="menu">
         <li>
-            <a href="#">Известные памятники</a>
+            <a id="group-1" href="#">Известные памятники</a>
             <ul class="submenu">
-                <li><a href="#">Монумент "Родина-Мать"</a></li>
-                <li><a href="#">Памятник "Богдану Хмельницкому"</a></li>
-                <li><a href="#">Арка Дружбы народов</a></li>
+                <li><a id="group-1-1" href="#">Монумент "Родина-Мать"</a></li>
+                <li><a id="group-1-2" href="#">Памятник "Богдану Хмельницкому"</a></li>
+                <li><a id="group-1-3" href="#">Арка Дружбы народов</a></li>
             </ul>
         </li>
         <li>
-            <a href="#">Покушайки</a>
+            <a id="group-2" href="#">Покушайки</a>
             <ul class="submenu">
-                <li><a href="#">Ресторан "Калинка-Малинка"</a></li>
-                <li><a href="#">Бар "Сало-бар"</a></li>
-                <li><a href="#">Абсент-бар "Палата №6"</a></li>
-                <li><a href="#">Ресторан "Спотыкач"</a></li>
+                <li><a id="group-2-1" href="#">Ресторан "Калинка-Малинка"</a></li>
+                <li><a id="group-2-2" href="#">Бар "Сало-бар"</a></li>
+                <li><a id="group-2-3" href="#">Абсент-бар "Палата №6"</a></li>
+                <li><a id="group-2-4" href="#">Ресторан "Спотыкач"</a></li>
             </ul>
         </li>
         <li>
-            <a href="#">Оригинальные музейчики</a>
+            <a id="group-3" href="#">Оригинальные музейчики</a>
             <ul class="submenu">
-                <li><a href="#">Музей грамзаписи и старинных музыкальных инструментов</a></li>
-                <li><a href="#">Музей истории медицины или Анатомический театр</a></li>
-                <li><a href="#">Музей воды. Водно-информационный центр</a></li>
+                <li><a id="group-3-1" href="#">Музей грамзаписи и старинных музыкальных инструментов</a></li>
+                <li><a id="group-3-2" href="#">Музей истории медицины или Анатомический театр</a></li>
+                <li><a id="group-3-3" href="#">Музей воды. Водно-информационный центр</a></li>
             </ul>
         </li>
         <li>
-            <a href="#">Красивости</a>
+            <a id="group-4" href="#">Красивости</a>
             <ul class="submenu">
-                <li><a href="#">Замок Ричарда-Львиное сердце</a></li>
-                <li><a href="#">"Дом с химерами"</a></li>
-                <li><a href="#">Дом Рыцаря</a></li>
+                <li><a id="group-4-1" href="#">Замок Ричарда-Львиное сердце</a></li>
+                <li><a id="group-4-2" href="#">"Дом с химерами"</a></li>
+                <li><a id="group-4-3" href="#">Дом Рыцаря</a></li>
             </ul>
         </li>
     </ul>
