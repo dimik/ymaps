@@ -41,7 +41,7 @@
                 groupToggle(name);
                 submenu.toggle();
             });
-            j
+
             // Обрабатываем клики на пунктах подменю.
             $('ul.submenu>li>a').on('click', function (e) {
                 // Пункт подменю на котором кликнули.
@@ -52,6 +52,7 @@
                 itemToggle(name);
             });
 
+            // Ищем нужную группу и добавляем/удаляем ее с карты.
             function groupToggle(name) {
                 // Все группы лежат внутри одной коллекции, которую мы получили из YMapsML.
                 var it, group;
@@ -75,6 +76,7 @@
                 }
             }
 
+            // Ищем нужную метку и открываем/закрываем ее балун.
             function itemToggle(name) {
                 var it = visible.getIterator(),
                     group;
