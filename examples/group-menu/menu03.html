@@ -31,6 +31,9 @@
 
             // Обрабатываем клики на пунктах меню.
             $('ul.menu>li>a').on('click', function (e) {
+                // Отменяем основное поведение (переход по ссылке)
+                e.preventDefault();
+
                 // Пункт меню на котором кликнули.
                 var target = $(e.target),
                     // Имя группы.
@@ -44,6 +47,9 @@
 
             // Обрабатываем клики на пунктах подменю.
             $('ul.submenu>li>a').on('click', function (e) {
+                // Отменяем основное поведение (переход по ссылке)
+                e.preventDefault();
+
                 // Пункт подменю на котором кликнули.
                 var target = $(e.target),
                     // Имя метки.
@@ -82,7 +88,7 @@
                     group;
 
                 while(group = it.getNext()) {
-                    for(var i = 0, len = group.getLength(); i < l; i++) {
+                    for(var i = 0, len = group.getLength(); i < len; i++) {
                         var placemark = group[i];
 
                         if(placemark.properties.get('name') === name) {
