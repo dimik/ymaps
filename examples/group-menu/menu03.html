@@ -13,24 +13,50 @@
             var myMap = new ymaps.Map('map', {
                 center: [50.443705, 30.530946],
                 zoom: 14
-            });
+            }),
+            hidden = new ymaps.GeoObjectCollection(),
+            visible;
 
             // Загрузка YMapsML-файла.
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
-                    var groups = res.geoObjects;
+                    visible = res.geoObjects;
 
                     // Добавляем все группы на карту.
-                    myMap.geoObjects.add(groups);
+                    myMap.geoObjects.add(visible);
 
                     // Выставляем масштаб карты чтобы были видны все группы.
                     myMap.setBounds(myMap.geoObjects.getBounds());
                 });
 
-            $('ul.menu li a').on('click', function (e) {
-                console.log(this);
+            // Обрабатываем клики на пунктах меню.
+            $('ul.menu>li>a').on('click', function (e) {
+                // Имя группы.
+                var name = $(e.target).text();
+
+                toggleGroup(name);
             });
 
+            function toggleGroup(name) {
+                // Все группы лежат внутри одной коллекции, которую мы получили из YMapsML.
+                var it = visible.getIterator(),
+                    group;
+
+                while(group = it.getNext()) {
+                    if(group.properties.get('name') === name) {
+                        hidden.add(group);
+                        return;
+                    }
+                }
+
+                it = hidden.getIterator();
+                while(group = it.getNext()) {
+                    if(group.properties.get('name') === name) {
+                        visible.add(group);
+                        return;
+                    }
+                }
+            }
         }
     </script>
     <style type="text/css">
