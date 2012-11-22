@@ -89,7 +89,7 @@
 
                 while(group = it.getNext()) {
                     for(var i = 0, len = group.getLength(); i < len; i++) {
-                        var placemark = group[i];
+                        var placemark = group.get(i);
 
                         if(placemark.properties.get('name') === name) {
                             if(placemark.balloon.isOpen()) {
