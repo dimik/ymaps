@@ -31,17 +31,33 @@
 
             // Обрабатываем клики на пунктах меню.
             $('ul.menu>li>a').on('click', function (e) {
-                // Имя группы.
-                var name = $(e.target).text();
+                // Пункт меню на котором кликнули.
+                var target = $(e.target),
+                    // Имя группы.
+                    name = target.text(),
+                    // Подменю.
+                    submenu = target.closest('li').find('ul.submenu');
 
-                toggleGroup(name);
+                groupToggle(name);
+                submenu.toggle();
+            });
+            j
+            // Обрабатываем клики на пунктах подменю.
+            $('ul.submenu>li>a').on('click', function (e) {
+                // Пункт подменю на котором кликнули.
+                var target = $(e.target),
+                    // Имя метки.
+                    name = target.text();
+
+                itemToggle(name);
             });
 
-            function toggleGroup(name) {
+            function groupToggle(name) {
                 // Все группы лежат внутри одной коллекции, которую мы получили из YMapsML.
-                var it = visible.getIterator(),
-                    group;
+                var it, group;
 
+                // Сначала ищем в видимой на карте коллекции.
+                it = visible.getIterator();
                 while(group = it.getNext()) {
                     if(group.properties.get('name') === name) {
                         hidden.add(group);
@@ -49,6 +65,7 @@
                     }
                 }
 
+                // Если мы сюда попали, значит коллекция уже удалена и надо искать в удаленных.
                 it = hidden.getIterator();
                 while(group = it.getNext()) {
                     if(group.properties.get('name') === name) {
@@ -57,6 +74,29 @@
                     }
                 }
             }
+
+            function itemToggle(name) {
+                var it = visible.getIterator(),
+                    group;
+
+                while(group = it.getNext()) {
+                    for(var i = 0, len = group.getLength(); i < l; i++) {
+                        var placemark = group[i];
+
+                        if(placemark.properties.get('name') === name) {
+                            if(placemark.balloon.isOpen()) {
+                                placemark.balloon.close();
+                            }
+                            else {
+                                placemark.balloon.open();
+                            }
+                            return;
+                        }
+                    }
+                }
+
+
+
         }
     </script>
     <style type="text/css">
