@@ -18,8 +18,8 @@
             hidden = new ymaps.GeoObjectCollection(),
             // Эту группу добавим на карту.
             visible = new ymaps.GeoObjectCollection(),
-            // Группы с геообъектами.
-            group1 = new ymaps.GeoObjectCollection({
+            // Упорядоченные коллекции с геообъектами.
+            group1 = new ymaps.GeoObjectArray({
                 properties: {
                     id: 'group-1',
                     name: 'Известные памятники'
@@ -27,7 +27,7 @@
             }, {
                 preset: 'twirl#redIcon'
             }),
-            group2 = new ymaps.GeoObjectCollection({
+            group2 = new ymaps.GeoObjectArray({
                 properties: {
                     id: 'group-2',
                     name: 'Покушайки'
@@ -35,7 +35,7 @@
             }, {
                 preset: 'twirl#greenIcon'
             }),
-            group3 = new ymaps.GeoObjectCollection({
+            group3 = new ymaps.GeoObjectArray({
                 properties: {
                     id: 'group-3',
                     name: 'Оригинальные музейчики'
@@ -43,7 +43,7 @@
             }, {
                 preset: 'twirl#orangeIcon'
             }),
-            group4 = new ymaps.GeoObjectCollection({
+            group4 = new ymaps.GeoObjectArray({
                 properties: {
                     id: 'group-4',
                     name: 'Красивости'
