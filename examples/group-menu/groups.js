@@ -1,7 +1,8 @@
 // Группы объектов
 var groups = [{
         name: "Известные памятники",
-        style: "twirl#redIcon",
+        preset: "twirl#redIcon",
+        style: "important",
         items: [{
                 center: [50.426472, 30.563022],
                 name: "Монумент &quot;Родина-Мать&quot;"
@@ -14,7 +15,8 @@ var groups = [{
         }]
     }, {
         name: "Покушайки",
-        style: "twirl#greenIcon",
+        preset: "twirl#greenIcon",
+        style: "success",
         items: [{
                 center: [50.50955, 30.60791],
                 name: "Ресторан &quot;Калинка-Малинка&quot;"
@@ -30,7 +32,8 @@ var groups = [{
         }]
     }, {
         name: "Оригинальные музейчики",
-        style: "twirl#orangeIcon",
+        preset: "twirl#orangeIcon",
+        style: "warning",
         items: [{
                 center: [50.443334, 30.520163],
                 name: "Музей грамзаписи и старинных музыкальных инструментов"
@@ -43,7 +46,8 @@ var groups = [{
         }]
     }, {
         name: "Красивости",
-        style: "twirl#blueIcon",
+        preset: "twirl#blueIcon",
+        style: "info",
         items: [{
                 center: [50.45987, 30.516174],
                 name: "Замок Ричарда-Львиное сердце"
