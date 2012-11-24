@@ -22,8 +22,9 @@
             // Загрузка YMapsML-файла.
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
+                    // Все содержимое YMapsML файла возвращается ввиде коллекции.
                     var groups = res.geoObjects,
-                        // Стили для заголовков групп.
+                        // Стили для DOM-представлений групп.
                         styles = {
                             "default#redPoint": "important",
                             "default#greenPoint": "success",
@@ -36,21 +37,19 @@
 
                     // Перебираем все группы.
                     groups.each(function (group) {
-                        // Заголовок группы.
                         var style = styles[group.options.get('preset')],
+                            // Имя группы.
                             name = group.properties.get('name'),
-                            header = $('<li class="nav-header"><span class="label label-' + style + '">' + name + '</span></li>');
+                            // DOM-представление группы.
+                            menuItem = $('<li class="nav-header"><span class="label label-' + style + '">' + name + '</span></li>');
 
-                        // Добавляем подменю.
-                        header
-                            // Добавляем заголовок в меню.
+                        menuItem
+                            // Добавляем пункт в меню.
                             .appendTo(menu)
+                            // Навешиваем обработчик клика по пункту меню.
                             .on('click', function (e) {
-                                // Отменяем основное поведение (переход по ссылке)
-                                e.preventDefault();
-
                                 // Скрываем/отображаем пункты меню данной группы.
-                                header
+                                $(this)
                                     .nextUntil('.nav-header')
                                     .removeClass('active')
                                     .slideToggle('fast');
@@ -66,13 +65,14 @@
 
                         // Перебираем элементы группы.
                         group.each(function (item) {
-                            // Пункт меню.
                             var name = item.properties.get('name'),
+                                // DOM-представление элемента группы.
                                 menuItem = $('<li><a href="#">' + name + '</a></li>');
 
                             // Добавляем пункт в меню.
                             menuItem
                                 .appendTo(menu)
+                                // Навешиваем обработчик клика по пункту меню.
                                 .on('click', function (e) {
                                     e.preventDefault();
 
@@ -82,11 +82,12 @@
                                         .siblings('.active')
                                         .removeClass('active');
 
-                                    // При клике открываем/закрываем баллун у метки.
+                                    // Открываем/закрываем баллун у метки.
                                     if(item.balloon.isOpen()) {
                                         item.balloon.close();
                                     }
                                     else {
+                                        // Плавно меняем центр карты на координаты метки.
                                         myMap.panTo(item.geometry.getCoordinates(), {
                                             delay: 0,
                                             callback: function () {

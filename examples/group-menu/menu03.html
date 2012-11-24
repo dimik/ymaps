@@ -78,7 +78,7 @@
                 .add(group1)
                 .add(group2)
                 .add(group3)
-                .add(group4)
+                .add(group4);
 
             // Добавляем все группы на карту.
             myMap.geoObjects.add(visible);
@@ -88,19 +88,18 @@
 
             // Обрабатываем клики на пунктах меню.
             $('.nav-header').on('click', function (e) {
-                // Отменяем основное поведение (переход по ссылке)
-                e.preventDefault();
-
+                // Скрываем/отображаем пункты меню данной группы.
                 $(this)
                     .nextUntil('.nav-header')
                     .removeClass('active')
                     .slideToggle('fast');
 
+                // Скрываем/отображаем коллекцию на карте.
                 groupToggle(this.id);
             });
 
-            // Обрабатываем клики на пунктах подменю.
-            $('li:has(a)').on('click', function (e) {
+            // Обрабатываем клики на пунктах меню эелементов группы.
+            $('li:not(.nav-header)').on('click', function (e) {
                 // Отменяем основное поведение (переход по ссылке)
                 e.preventDefault();
 

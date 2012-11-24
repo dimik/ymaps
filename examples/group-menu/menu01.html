@@ -22,23 +22,21 @@
 
             // Перебираем все группы.
             groups.forEach(function (group) {
-                // Заголовок группы.
-                var header = $('<li class="nav-header"><span class="label label-' + group.style + '">' + group.name + '</span></li>'),
-                    // Коллекция для геообъектов группы.
+                // DOM-представление группы.
+                var menuItem = $('<li class="nav-header"><span class="label label-' + group.style + '">' + group.name + '</span></li>'),
+                    // Создадим коллекцию для геообъектов группы.
                     collection = new ymaps.GeoObjectCollection(null, { preset: group.preset });
 
                 // Добавляем коллекцию на карту.
                 myMap.geoObjects.add(collection);
 
-                header
-                    // Добавляем заголовок в меню.
+                menuItem
+                    // Добавляем пункт в меню.
                     .appendTo(menu)
+                    // Навешиваем обработчик клика по пункту меню.
                     .on('click', function (e) {
-                        // Отменяем основное поведение (переход по ссылке)
-                        e.preventDefault();
-
                         // Скрываем/отображаем пункты меню данной группы.
-                        header
+                        $(this)
                             .nextUntil('.nav-header')
                             .removeClass('active')
                             .slideToggle('fast');
@@ -54,7 +52,7 @@
 
                 // Перебираем элементы группы.
                 group.items.forEach(function (item) {
-                    // Пункт меню.
+                    // DOM-представление элемента группы.
                     var menuItem = $('<li><a href="#">' + item.name + '</a></li>'),
                         // Создаем метку.
                         placemark = new ymaps.Placemark(item.center, { balloonContent: item.name });
@@ -62,10 +60,10 @@
                     // Добавляем метку в коллекцию.
                     collection.add(placemark);
 
-                    // Добавляем пункт в меню.
                     menuItem
+                        // Добавляем пункт в меню.
                         .appendTo(menu)
-                        // При клике по пункту подменю открываем/закрываем баллун у метки.
+                        // Навешиваем обработчик клика по пункту меню.
                         .on('click', function (e) {
                             // Отменяем основное поведение (переход по ссылке)
                             e.preventDefault();
@@ -76,11 +74,12 @@
                                 .siblings('.active')
                                 .removeClass('active');
 
-                            // При клике открываем/закрываем баллун у метки.
+                            // Открываем/закрываем баллун у метки.
                             if(placemark.balloon.isOpen()) {
                                 placemark.balloon.close();
                             }
                             else {
+                                // Плавно меняем центр карты на координаты метки.
                                 myMap.panTo(placemark.geometry.getCoordinates(), {
                                     delay: 0,
                                     callback: function () {
