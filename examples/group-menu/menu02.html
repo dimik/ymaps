@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Примеры. Создание меню для групп геообъектов из исходного javascript-массива.</title>
+    <title>Примеры. Создание меню для отображения коллекций геообъектов.</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
     <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -16,87 +17,126 @@
             });
 
             // Контейнер для меню.
-            var menu = $('<ul class="menu"/>');
+            var menu = $('<ul class="nav nav-list"/>');
 
             // Загрузка YMapsML-файла.
             ymaps.geoXml.load("http://api.yandex.ru/maps/doc/ymapsml/1.x/examples/xml/menufromymapsml.xml")
                 .then(function (res) {
-                    var groups = res.geoObjects;
+                    var groups = res.geoObjects,
+                        // Стили для заголовков групп.
+                        styles = {
+                            "default#redPoint": "important",
+                            "default#greenPoint": "success",
+                            "default#orangePoint": "warning",
+                            "undefined": "info"
+                        };
 
                     // Добавляем все группы на карту.
                     myMap.geoObjects.add(groups);
 
                     // Перебираем все группы.
                     groups.each(function (group) {
-                        // Пункт меню.
-                        var menuItem = $('<li><a href="#">' + group.properties.get('name') + '</a></li>'),
-                            // Контейнер для подменю.
-                            submenu = $('<ul class="submenu"/>');
+                        // Заголовок группы.
+                        var style = styles[group.options.get('preset')],
+                            name = group.properties.get('name'),
+                            header = $('<li class="nav-header"><span class="label label-' + style + '">' + name + '</span></li>');
 
                         // Добавляем подменю.
-                        menuItem
-                            .append(submenu)
-                            // Добавляем пункт в меню.
+                        header
+                            // Добавляем заголовок в меню.
                             .appendTo(menu)
-                            // По клику удаляем/добавляем коллекцию на карту и скрываем/отображаем подменю.
-                            .find('a')
-                            .toggle(function () {
-                                groups.remove(group);
-                                submenu.hide();
-                            }, function () {
-                                groups.add(group);
-                                submenu.show();
+                            .on('click', function (e) {
+                                // Отменяем основное поведение (переход по ссылке)
+                                e.preventDefault();
+
+                                // Скрываем/отображаем пункты меню данной группы.
+                                header
+                                    .nextUntil('.nav-header')
+                                    .removeClass('active')
+                                    .slideToggle('fast');
+
+                                // Скрываем/отображаем коллекцию на карте.
+                                if(group.getParent()) {
+                                    groups.remove(group);
+                                }
+                                else {
+                                    groups.add(group);
+                                }
                             });
 
                         // Перебираем элементы группы.
                         group.each(function (item) {
-                            // Пункт подменю.
-                            var submenuItem = $('<li><a href="#">' + item.properties.get('name') + '</a></li>');
+                            // Пункт меню.
+                            var name = item.properties.get('name'),
+                                menuItem = $('<li><a href="#">' + name + '</a></li>');
 
-                            // Добавляем пункт в подменю.
-                            submenuItem
-                                .appendTo(submenu)
-                                // При клике по пункту подменю открываем/закрываем баллун у метки.
-                                .find('a')
-                                .toggle(function () {
-                                    item.balloon.open();
-                                }, function () {
-                                    item.balloon.close();
+                            // Добавляем пункт в меню.
+                            menuItem
+                                .appendTo(menu)
+                                .on('click', function (e) {
+                                    e.preventDefault();
+
+                                    // Выставляем/убираем класс active.
+                                    menuItem
+                                        .toggleClass('active')
+                                        .siblings('.active')
+                                        .removeClass('active');
+
+                                    // При клике открываем/закрываем баллун у метки.
+                                    if(item.balloon.isOpen()) {
+                                        item.balloon.close();
+                                    }
+                                    else {
+                                        myMap.panTo(item.geometry.getCoordinates(), {
+                                            delay: 0,
+                                            callback: function () {
+                                                item.balloon.open();
+                                            }
+                                        });
+                                    }
                                 });
                         });
                     });
 
-                    // Добавляем меню в тэг BODY.
-                    menu.appendTo($('body'));
+                    // Добавляем меню в сайдбар.
+                    menu.appendTo($('#sidebar'));
                     // Выставляем масштаб карты чтобы были видны все группы.
                     myMap.setBounds(myMap.geoObjects.getBounds());
                 });
         }
     </script>
     <style type="text/css">
-    /* Оформление меню (начало)*/
-        .menu {
-            list-style: none;
-
-            margin: 0;
-            padding: 0;
+        .hero-unit {
+            background-color: #FFF;
         }
-        .submenu {
-            list-style: none;
-
-            margin: 0 0 0 20px;
-            padding: 0;
+        .well {
+            padding: 15px 0;
+            height: 500px;
         }
-        .submenu li {
-            font-size: 90%;
+        .label {
+            cursor: pointer;
         }
-    /* Оформление меню (конец)*/
+        #map {
+            width: 800px;
+            height: 500px;
+        }
     </style>
 </head>
 
 <body>
-    <div id="map" style="width:800px;height:480px;"/>
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="lead">Создание меню для отображения коллекций геообъектов (из YMapsML-файла)</p>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div id="map" class="span8"></div>
+                <div id="sidebar" class="well span4"></div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
-
