@@ -26,10 +26,10 @@
                     var groups = res.geoObjects,
                         // Стили для DOM-представлений групп.
                         styles = {
-                            "default#redPoint": "important",
-                            "default#greenPoint": "success",
-                            "default#orangePoint": "warning",
-                            "undefined": "info"
+                            "red": "important",
+                            "green": "success",
+                            "orange": "warning",
+                            "blue": "info"
                         };
 
                     // Добавляем все группы на карту.
@@ -37,7 +37,9 @@
 
                     // Перебираем все группы.
                     groups.each(function (group) {
-                        var style = styles[group.options.get('preset')],
+                        // Определяем стиль для группы.
+                        var preset = group.options.get('preset') || 'twirl#blueIcon',
+                            style = styles[preset.match(/#([a-z]+)[A-Z]/)[1]],
                             // Имя группы.
                             name = group.properties.get('name'),
                             // DOM-представление группы.
