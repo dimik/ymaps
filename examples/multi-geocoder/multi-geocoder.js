@@ -4,17 +4,19 @@
  * Аналогичная разработка для первой версии АПИ.
  * @see http://api.yandex.ru/maps/doc/jsapi/1.x/examples/multiplygeocoding.html
  * @example
- * var multiGeocoder = new MultiGeocoder({ boundedBy : map.getBounds() });
- * multiGeocoder
- *     .geocode(['Москва, Льва Толстого 16', [55.7, 37.5], 'Санкт-Петербург'])
- *         .then(
- *             function (res) {
- *                 map.geoObjects.add(res.geoObjects);
- *             },
- *             function (err) {
- *                 console.log(err);
- *             }
- *         );
+
+   var multiGeocoder = new MultiGeocoder({ boundedBy : map.getBounds() });
+
+   multiGeocoder
+       .geocode(['Москва, Льва Толстого 16', [55.7, 37.5], 'Санкт-Петербург'])
+           .then(
+               function (res) {
+                   map.geoObjects.add(res.geoObjects);
+               },
+               function (err) {
+                   console.log(err);
+               }
+           );
  */
 
 /**
@@ -62,4 +64,3 @@ MultiGeocoder.prototype.geocode = function (requests, options) {
 
     return promise;
 };
-
