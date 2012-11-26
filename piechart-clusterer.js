@@ -4,14 +4,15 @@
  * @class
  * @augments ymaps.Clusterer
  * @name PieChartClusterer
- * @param {Object} options Опции кластеризатора.
+ * @param {Object} [options] Опции кластеризатора.
  */
 function PieChartClusterer(options) {
     PieChartClusterer.superclass.constructor.apply(this, arguments);
 }
 
 /**
- * Константы
+ * Соответствие цветов иконок АПИ с RRGGBB[AA] форматом.
+ * @constant
  */
 PieChartClusterer.COLORS = {
     "blue"       : "0A6CC8",
@@ -32,18 +33,29 @@ PieChartClusterer.COLORS = {
     "black"      : "000000"
 };
 
+/**
+ * Размеры иконок для всех размеров кластеров согласно опции "numbers".
+ * @constant
+ */
 PieChartClusterer.SIZES = [
     [65, 65],
     [80, 80],
     [95, 95]
 ];
 
+/**
+ * Массив, описывающий граничные значения для размеров кластеров.
+ * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/Cluster.xml
+ * @constant
+ */
 PieChartClusterer.NUMBERS = [10, 100];
 
-/**
- * Методы
- */
-var methods = {
+var PieChartClustererMethods = {
+    /**
+     * Это перекрытие для базоваго метода ymaps.Clusterer,
+     * рекомендованный разработчиками способ изменения вида кластера.
+     * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/Clusterer.xml#createCluster
+     */
     createCluster: function (center, geoObjects) {
         var cluster = PieChartClusterer.superclass.createCluster.call(this, center, geoObjects);
 
@@ -105,5 +117,5 @@ var methods = {
  * @augments ymaps.Clusterer
  */
 ymaps.ready(function () {
-    ymaps.util.augment(PieChartClusterer, ymaps.Clusterer, methods);
+    ymaps.util.augment(PieChartClusterer, ymaps.Clusterer, PieChartClustererMethods);
 });
