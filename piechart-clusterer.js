@@ -1,9 +1,11 @@
 /**
  * Кластеризатор с составными иконками кластеров.
+ * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/Clusterer.xml
  * @class
  * @augments ymaps.Clusterer
  * @name PieChartClusterer
  * @param {Object} options Опции кластеризатора.
+ */
 function PieChartClusterer(options) {
     PieChartClusterer.superclass.constructor.apply(this, arguments);
 }
@@ -38,6 +40,9 @@ PieChartClusterer.SIZES = [
 
 PieChartClusterer.NUMBERS = [10, 100];
 
+/**
+ * Методы
+ */
 PieChartClusterer.prototype = {
     constructor: PieChartClusterer,
 
