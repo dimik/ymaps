@@ -93,7 +93,7 @@ var methods = {
         });
 
         return 'http://chart.googleapis.com/chart?cht=pc&chs=' + size[0] + 'x' + size[1]
-            + '&chd=t:1|' + values.join(',') + '&chco=FFFFFF,' + (keys.length === 1 ? [keys[0], keys[0]].join('|') : keys.join('|')) + '&chf=bg,s,00000000';
+            + '&chd=t:1|' + values.join(',') + '&chco=FFFFFF,' + (keys.length === 1 ? [keys[0], keys[0]].join('|') : keys.join('|')) + '&chf=a,s,000000AA|bg,s,00000000';
     },
 
     getPresetColor: function (geoObject) {
