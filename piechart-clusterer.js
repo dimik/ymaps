@@ -43,9 +43,7 @@ PieChartClusterer.NUMBERS = [10, 100];
 /**
  * Методы
  */
-PieChartClusterer.prototype = {
-    constructor: PieChartClusterer,
-
+var methods = {
     createCluster: function (center, geoObjects) {
         var cluster = PieChartClusterer.superclass.createCluster.call(this, center, geoObjects);
 
@@ -107,5 +105,5 @@ PieChartClusterer.prototype = {
  * @augments ymaps.Clusterer
  */
 ymaps.ready(function () {
-    ymaps.util.augment(PieChartClusterer, ymaps.Clusterer);
+    ymaps.util.augment(PieChartClusterer, ymaps.Clusterer, methods);
 });
