@@ -30,7 +30,7 @@
 
             var placemarks = generator.fromBounds(myMap.getBounds());
 
-            var clusterer = new PieChartClusterer();
+            var clusterer = new PieChartClusterer({clusterIconOpacity: 0.7});
             clusterer.add(placemarks);
             myMap.geoObjects.add(clusterer);
         });
