@@ -50,6 +50,12 @@ PieChartClusterer.SIZES = [
  */
 PieChartClusterer.NUMBERS = [10, 100];
 
+/**
+ * Прозрачность иконки кластера.
+ * @constant
+ */
+PieChartClusterer.OPACITY = 0.6;
+
 var PieChartClustererMethods = {
     /**
      * Это перекрытие для базоваго метода ymaps.Clusterer,
@@ -98,14 +104,16 @@ var PieChartClustererMethods = {
 
     formatClusterIconHref: function (size, colors) {
         var values = [],
-            keys = Object.keys(colors);
+            keys = Object.keys(colors),
+            opacity = Math.floor(this.options.get('clusterIconOpacity', PieChartClusterer.OPACITY) * 255).toString(16);
 
         keys.forEach(function (key, index) {
             values[index] = colors[key];
         });
 
-        return 'http://chart.googleapis.com/chart?cht=pc&chs=' + size[0] + 'x' + size[1]
-            + '&chd=t:1|' + values.join(',') + '&chco=FFFFFF,' + (keys.length === 1 ? [keys[0], keys[0]].join('|') : keys.join('|')) + '&chf=a,s,000000AA|bg,s,00000000';
+        return 'http://chart.googleapis.com/chart?cht=pc&chs=' + size[0] + 'x' + size[1] +
+            '&chd=t:1|' + values.join(',') + '&chco=FFFFFF,' + (keys.length < 2 ? [keys[0], keys[0]].join('|') : keys.join('|')) +
+            '&chf=a,s,000000' + (opacity.length < 2 ? '0' + opacity : opacity) + '|bg,s,00000000';
     },
 
     getPresetColor: function (geoObject) {
