@@ -94,7 +94,7 @@ var PieChartClustererMethods = {
         var reducer = ymaps.util.bind(function (colors, geoObject) {
             var color = PieChartClusterer.COLORS[this.getPresetColor(geoObject)];
 
-            colors[color] = colors[color] ? colors[color] + 1 : 1;
+            colors[color] = colors[color] + 1 || 1;
 
             return colors;
         }, this);
