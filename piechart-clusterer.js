@@ -14,7 +14,7 @@ function PieChartClusterer(options) {
  * Соответствие цветов иконок АПИ с RRGGBB[AA] форматом.
  * @constant
  */
-PieChartClusterer.COLORS = {
+PieChartClusterer.COLOURS = {
     "blue"       : "0A6CC8",
     "darkblue"   : "3D4AE9",
     "darkgreen"  : "158B02",
@@ -78,7 +78,7 @@ var PieChartClustererMethods = {
             var size = icons[i] && icons[i].size ||
                     PieChartClusterer.SIZES[i] || PieChartClusterer.SIZES[PieChartClusterer.SIZES.length - 1],
                 offset = icons[i] && icons[i].offset || [-Math.floor(size[0] / 2), -Math.floor(size[1] / 2)],
-                href = this.formatClusterIconHref(size, this.getClusterIconColors(geoObjects));
+                href = this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects));
 
             icons[i] = {
                 href: href,
@@ -90,25 +90,25 @@ var PieChartClustererMethods = {
         return icons;
     },
 
-    getClusterIconColors: function (geoObjects) {
-        var reducer = ymaps.util.bind(function (colors, geoObject) {
-            var color = PieChartClusterer.COLORS[this.getPresetColor(geoObject)];
+    getClusterIconColours: function (geoObjects) {
+        var reducer = ymaps.util.bind(function (colours, geoObject) {
+            var colour = PieChartClusterer.COLOURS[this.getPresetColour(geoObject)];
 
-            colors[color] = colors[color] + 1 || 1;
+            colours[colour] = colours[colour] + 1 || 1;
 
-            return colors;
+            return colours;
         }, this);
 
         return geoObjects.reduce(reducer, {});
     },
 
-    formatClusterIconHref: function (size, colors) {
+    formatClusterIconHref: function (size, colours) {
         var values = [],
-            keys = Object.keys(colors),
+            keys = Object.keys(colours),
             opacity = Math.floor(this.options.get('clusterIconOpacity', PieChartClusterer.OPACITY) * 255).toString(16);
 
         keys.forEach(function (key, index) {
-            values[index] = colors[key];
+            values[index] = colours[key];
         });
 
         return 'http://chart.googleapis.com/chart?cht=pc&chs=' + size[0] + 'x' + size[1] +
@@ -116,7 +116,7 @@ var PieChartClustererMethods = {
             '&chf=a,s,000000' + (opacity.length < 2 ? '0' + opacity : opacity) + '|bg,s,00000000';
     },
 
-    getPresetColor: function (geoObject) {
+    getPresetColour: function (geoObject) {
         return geoObject.options.get('preset', 'twirl#blueIcon').match(/#([a-z]+)[A-Z]/)[1];
     }
 };
