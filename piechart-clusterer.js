@@ -79,7 +79,7 @@ PieChartClusterer.URL_TEMPLATE = [
  * Преобразование значения прозрачности иконки кластера из диапазона [0..1] в [00..FF].
  * @static
  * @function
- * @name dec2hex
+ * @name PieChartClusterer.dec2hex
  * @param {Number} dec Прозрачность в диапазоне от 0 до 1.
  * @returns {String} Hex представление прозрачности в диапазоне от 00 до FF.
  */
