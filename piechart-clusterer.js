@@ -149,8 +149,8 @@ ymaps.ready(function () {
             if(icons) {
                 var sizes = [], icon, i = 0;
 
-                while(icon = icons[i] && icon.size) {
-                    sizes[i++] = size;
+                while((icon = icons[i]) && icon.size) {
+                    sizes[i++] = icon.size;
                 }
 
                 return sizes;
