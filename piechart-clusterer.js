@@ -54,7 +54,7 @@ PieChartClusterer.NUMBERS = [10, 100];
  * Прозрачность иконки кластера.
  * @constant
  */
-PieChartClusterer.OPACITY = 0.6;
+PieChartClusterer.OPACITY = 0.7;
 
 var PieChartClustererMethods = {
     /**
@@ -65,55 +65,78 @@ var PieChartClustererMethods = {
     createCluster: function (center, geoObjects) {
         var cluster = PieChartClusterer.superclass.createCluster.call(this, center, geoObjects);
 
-        cluster.options.set('icons', this.getClusterIcons(geoObjects));
+        cluster.options.set({
+            icons: this.getClusterIcons(geoObjects),
+            numbers: this.getClusterNumbers()
+        });
 
         return cluster;
     },
 
+    getClusterNumbers: function () {
+        return this.options.get('clusterNumbers', PieChartClusterer.NUMBERS);
+    },
+
     getClusterIcons: function (geoObjects) {
-        var numbers = this.options.get('clusterNumbers') || PieChartClusterer.NUMBERS,
-            icons = this.options.get('clusterIcons') || [];
+        var icons = this.options.get('clusterIcons'),
+            size, i = 0, result = [];
 
-        for(var i = 0, len = numbers.length + 1; i < len; i++) {
-            var size = icons[i] && icons[i].size ||
-                    PieChartClusterer.SIZES[i] || PieChartClusterer.SIZES[PieChartClusterer.SIZES.length - 1],
-                offset = icons[i] && icons[i].offset || [-Math.floor(size[0] / 2), -Math.floor(size[1] / 2)],
-                href = this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects));
-
-            icons[i] = {
-                href: href,
+        while(size = icons[i] && icons[i].size || PieChartClusterer.SIZES[i]) {
+            result[i++] = {
+                href: this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects)),
                 size: size,
-                offset: offset
+                offset: [-Math.floor(size[0] / 2), -Math.floor(size[1] / 2)]
             };
         }
 
-        return icons;
+        return result;
     },
 
     getClusterIconColours: function (geoObjects) {
-        var reducer = ymaps.util.bind(function (colours, geoObject) {
-            var colour = PieChartClusterer.COLOURS[this.getPresetColour(geoObject)];
+        var count = geoObjects.length,
+            colours = {},
+            colour, geoObject;
+
+        while(geoObject = geoObjects[count--]) {
+            colour = PieChartClusterer.COLOURS[this.getPresetColour(geoObject)];
 
             colours[colour] = colours[colour] + 1 || 1;
+        }
 
-            return colours;
-        }, this);
-
-        return geoObjects.reduce(reducer, {});
+        return colours;
     },
 
     formatClusterIconHref: function (size, colours) {
-        var values = [],
-            keys = Object.keys(colours),
-            opacity = Math.floor(this.options.get('clusterIconOpacity', PieChartClusterer.OPACITY) * 255).toString(16);
+        var dec2hex = function (dec) {
+                hex = Math.floor(dec * 255).toString(16);
 
-        keys.forEach(function (key, index) {
-            values[index] = colours[key];
+                return hex.length < 2 && '0' + hex || hex;
+            },
+            opacity = this.options.get('clusterIconOpacity', PieChartClusterer.OPACITY),
+            url = ['http://chart.googleapis.com/chart?cht=pc',
+                'chs=#{width}x#{height}',
+                'chd=t:1|#{data}',
+                'chco=FFFFFF,#{colors}',
+                'chf=a,s,000000#{opacity}|bg,s,00000000'
+            ],
+            values = [],
+            keys = [], key, i = 0;
+
+        for(key = keys[i] in colours) {
+            values[i++] = colours[key];
+        }
+
+        var model = {
+            width: size[0],
+            height: size[1],
+            data: values.join(','),
+            colours: (keys.length < 2 ? [keys[0], keys[0]] : keys).join('|'),
+            opacity: dec2hex(opacity)
+        };
+
+        return url.join('&').replace(/#{(\w+)}/g, function (s, key) {
+            return model[key];
         });
-
-        return 'http://chart.googleapis.com/chart?cht=pc&chs=' + size[0] + 'x' + size[1] +
-            '&chd=t:1|' + values.join(',') + '&chco=FFFFFF,' + (keys.length < 2 ? [keys[0], keys[0]].join('|') : keys.join('|')) +
-            '&chf=a,s,000000' + (opacity.length < 2 ? '0' + opacity : opacity) + '|bg,s,00000000';
     },
 
     getPresetColour: function (geoObject) {
