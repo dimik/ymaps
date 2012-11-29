@@ -121,7 +121,7 @@ ymaps.ready(function () {
          * Возвращает количество геообъектов каждого цвета.
          * @function
          * @name PieChartClusterer.getClusterIconColors
-         * @param {Array} geoObjects Массив геообъектов.
+         * @param {ymaps.GeoObject[]} geoObjects Массив геообъектов кластера.
          * @returns {Object} Соотношение имен цветов и количества геообъектов данного цвета.
          */
         getClusterIconColours: function (geoObjects) {
