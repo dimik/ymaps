@@ -32,6 +32,8 @@ RandomPointsGenerator.generate = function (count) {
  */
 RandomPointsGenerator.prototype.generate = function (count) {
     this.count = count;
+
+    return this;
 };
 
 /**
