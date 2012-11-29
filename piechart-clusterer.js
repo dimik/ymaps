@@ -12,6 +12,7 @@ function PieChartClusterer(options) {
 
 /**
  * Соответствие цветов иконок АПИ с RRGGBB[AA] форматом.
+ * @static
  * @constant
  */
 PieChartClusterer.COLOURS = {
@@ -36,6 +37,7 @@ PieChartClusterer.COLOURS = {
 /**
  * Размеры иконок для всех размеров кластеров.
  * Элементов в этом массиве должно быть на 1 больше, чем элементов в массиве 'NUMBERS'.
+ * @static
  * @constant
  */
 PieChartClusterer.SIZES = [
@@ -47,15 +49,45 @@ PieChartClusterer.SIZES = [
 /**
  * Массив, описывающий граничные значения для размеров кластеров.
  * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/Cluster.xml
+ * @static
  * @constant
  */
 PieChartClusterer.NUMBERS = [10, 100];
 
 /**
  * Прозрачность иконки кластера.
+ * @static
  * @constant
  */
 PieChartClusterer.OPACITY = 0.7;
+
+/**
+ * Шаблон урла иконки кластера.
+ * @static
+ * @constant
+ */
+PieChartClusterer.URL_TEMPLATE = [
+    'http://chart.googleapis.com/chart?cht=pc',
+    'chs=#{width}x#{height}', // Размеры чарта.
+    'chd=t:1|#{data}', // Данные чарта.
+    'chco=FFFFFF,#{colours}', // Цвета сегментов.
+    'chf=a,s,000000#{opacity}|bg,s,00000000' // Background.
+].join('&');
+
+
+/**
+ * Преобразование значения прозрачности иконки кластера из диапазона [0..1] в [00..FF].
+ * @static
+ * @function
+ * @name dec2hex
+ * @param {Number} dec Прозрачность в диапазоне от 0 до 1.
+ * @returns {String} Hex представление прозрачности в диапазоне от 00 до FF.
+ */
+PieChartClusterer.dec2hex = function (dec) {
+    var hex = Math.floor(dec * 255).toString(16);
+
+    return hex.length < 2 && '0' + hex || hex;
+};
 
 /**
  * Наследуемся после готовности АПИ.
@@ -73,7 +105,7 @@ ymaps.ready(function () {
          * @param {ymaps.GeoObject[]} geoObjects Массив геообъектов кластера.
          */
         createCluster: function (center, geoObjects) {
-            var cluster = PieChartClusterer.superclass.createCluster.call(this, center, geoObjects);
+            var cluster = PieChartClusterer.superclass.createCluster.apply(this, arguments);
 
             // Выставляем кластеру нужные опции.
             cluster.options.set({
@@ -93,6 +125,16 @@ ymaps.ready(function () {
          */
         getClusterNumbers: function () {
             return this.options.get('clusterNumbers', PieChartClusterer.NUMBERS);
+        },
+
+        /**
+         * Получение опции 'clusterIconOpacity' - определяет значение прозрачности иконки кластера.
+         * @function
+         * @name PieChartClusterer.getClusterIconOpacity
+         * @returns {Number} Значение прозрачности иконок в диапазоне от 0 до 1.
+         */
+        getClusterIconOpacity: function () {
+            return this.options.get('clusterIconOpacity', PieChartClusterer.OPACITY);
         },
 
         /**
@@ -126,16 +168,16 @@ ymaps.ready(function () {
          */
         getClusterIconColours: function (geoObjects) {
             var count = geoObjects.length,
-                colours = {},
+                countByColour = {},
                 colour, geoObject;
 
             while(geoObject = geoObjects[--count]) {
                 colour = PieChartClusterer.COLOURS[this.getPresetColour(geoObject)];
 
-                colours[colour] = colours[colour] + 1 || 1;
+                countByColour[colour] = countByColour[colour] + 1 || 1;
             }
 
-            return colours;
+            return countByColour;
         },
 
         /**
@@ -148,23 +190,8 @@ ymaps.ready(function () {
          * @returns {String} Урл иконки кластера.
          */
         formatClusterIconHref: function (size, colours) {
-            // Преобразование значения прозрачности иконки кластера из диапазона [0..1] в [00..FF]
-            var dec2hex = function (dec) {
-                    var hex = Math.floor(dec * 255).toString(16);
-
-                    return hex.length < 2 && '0' + hex || hex;
-                },
-                // Прозрачность иконки.
-                opacity = this.options.get('clusterIconOpacity', PieChartClusterer.OPACITY),
-                // Шаблон урла.
-                url = ['http://chart.googleapis.com/chart?cht=pc',
-                    'chs=#{width}x#{height}',
-                    'chd=t:1|#{data}',
-                    'chco=FFFFFF,#{colours}',
-                    'chf=a,s,000000#{opacity}|bg,s,00000000'
-                ],
-                // Количество геообъектов каждого цвета.
-                values = [],
+            // Количество геообъектов каждого цвета.
+            var values = [],
                 // Цвета геообъектов.
                 keys = [], key,
                 i = 0;
@@ -179,10 +206,10 @@ ymaps.ready(function () {
                 height: size[1],
                 data: values.join(','),
                 colours: (keys.length < 2 ? [keys[0], keys[0]] : keys).join('|'),
-                opacity: dec2hex(opacity)
+                opacity: PieChartClusterer.dec2hex(this.getClusterIconOpacity())
             };
 
-            return url.join('&').replace(/#{(\w+)}/g, function (s, key) {
+            return PieChartClusterer.URL_TEMPLATE.replace(/#{(\w+)}/g, function (s, key) {
                 return model[key];
             });
         },
