@@ -5,13 +5,14 @@
  * @param {Number} count Количество меток которые надо создать.
  * @example
    var placemarks = RandomPointsGenerator.generate(200)
-        .fromBounds(myMap.getBounds());
+        .atBounds(myMap.getBounds());
  */
 function RandomPointsGenerator(count) {
     this.count = count || 0;
 }
 
 /**
+ * Статический метод для удобства инстанцирования.
  * @static
  * @function
  * @name RandomPointsGenerator.generate
@@ -23,13 +24,24 @@ RandomPointsGenerator.generate = function (count) {
 };
 
 /**
+ * Устанавливает количество маркеров для генерации.
+ * @function
+ * @name RandomPointsGenerator.generate
+ * @param {Number} count Количество меток которые надо создать.
+ * @returns {RandomPointsGenerator} Экземпляр генератора маркеров.
+ */
+RandomPointsGenerator.generate = function (count) {
+    this.count = count;
+};
+
+/**
  * Генерит случайным образом маркеры в области bounds.
  * @function
- * @name RandomPointsGenerator.pointsByBounds
+ * @name RandomPointsGenerator.atBounds
  * @param {Number[][]} bounds Область видимости маркеров.
  * @returns {ymaps.Placemark[]} Массив маркеров.
  */
-RandomPointsGenerator.prototype.fromBounds = function (bounds) {
+RandomPointsGenerator.prototype.atBounds = function (bounds) {
     // протяженность области просмотра в градусах
     var span = [bounds[1][0] - bounds[0][0], bounds[1][1] - bounds[0][1]],
         points = [];
@@ -40,6 +52,28 @@ RandomPointsGenerator.prototype.fromBounds = function (bounds) {
 
     return points;
 };
+
+/**
+ * TODO
+ * Генерит случайным образом маркеры внутри окружности с данным центром и радиусом.
+ * @function
+ * @name RandomPointsGenerator.atCenterAndRadius
+ * @param {Number[]} center Координаты центра окружности.
+ * @param {Number} radius Радиус окружности в метрах.
+ * @returns {ymaps.Placemark[]} Массив маркеров.
+ */
+RandomPointsGenerator.prototype.atCenterAndRadius = function (center, radius) {};
+
+/**
+ * TODO
+ * Генерит случайным образом маркеры внутри области с данным центром и линейными размерами.
+ * @function
+ * @name RandomPointsGenerator.atCenterAndSize
+ * @param {Number[]} center Координаты центра области.
+ * @param {Number[]} size Линейные размеры области в метрах.
+ * @returns {ymaps.Placemark[]} Массив маркеров.
+ */
+RandomPointsGenerator.prototype.atCenterAndSize = function (center, size) {};
 
 /**
  * Создает маркер по координатам.
@@ -55,19 +89,19 @@ RandomPointsGenerator.prototype.createMarker = function (coordinates, index) {
             type: "Point",
             coordinates: coordinates
         },
-        properties: this.getData(index)
-    }, this.getOptions(index));
+        properties: this.getPointData(index)
+    }, this.getPointOptions(index));
 };
 
 /**
  * Метод для перекрытия. Возвращает объект с данными,
  * который передается как поле properties в конструктор геообъекта.
  * @function
- * @name RandomPointsGenerator.getData
+ * @name RandomPointsGenerator.getPointData
  * @param {Number} index Индекс маркера.
  * @returns {Object} Данные метки.
  */
-RandomPointsGenerator.prototype.getData = function (index) {
+RandomPointsGenerator.prototype.getPointData = function (index) {
     return {};
 };
 
@@ -75,14 +109,14 @@ RandomPointsGenerator.prototype.getData = function (index) {
  * Метод для перекрытия. Возвращает объект с опциями,
  * который передается как параметр options в конструктор геообъекта.
  * @function
- * @name RandomPointsGenerator.getOptions
+ * @name RandomPointsGenerator.getPointOptions
  * @param {Number} index Индекс маркера.
  * @returns {Object} Опции метки.
  * @example
    var generator = RandomPointsGenerator.generate(200);
 
    // Перекрываем метод для создания меток со случайным хначением опции preset.
-   generator.getOptions = function (i) {
+   generator.getPointOptions = function (i) {
        var presets = ['twirl#blueIcon', 'twirl#orangeIcon', 'twirl#darkblueIcon', 'twirl#pinkIcon'];
 
        return {
@@ -90,6 +124,6 @@ RandomPointsGenerator.prototype.getData = function (index) {
        };
    };
  */
-RandomPointsGenerator.prototype.getOptions = function (index) {
+RandomPointsGenerator.prototype.getPointOptions = function (index) {
     return {};
 };
