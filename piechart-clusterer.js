@@ -122,8 +122,8 @@ var PieChartClustererMethods = {
             values = [],
             keys = [], key, i = 0;
 
-        for(key = keys[i] in colours) {
-            values[i++] = colours[key];
+        for(keys[i] in colours) {
+            values[i] = colours[keys[i++]];
         }
 
         var model = {
