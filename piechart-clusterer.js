@@ -97,7 +97,7 @@ var PieChartClustererMethods = {
             colours = {},
             colour, geoObject;
 
-        while(geoObject = geoObjects[count--]) {
+        while(geoObject = geoObjects[--count]) {
             colour = PieChartClusterer.COLOURS[this.getPresetColour(geoObject)];
 
             colours[colour] = colours[colour] + 1 || 1;
