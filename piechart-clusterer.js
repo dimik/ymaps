@@ -138,6 +138,18 @@ ymaps.ready(function () {
         },
 
         /**
+         * Получение размера иконки кластера.
+         * @function
+         * @name PieChartClusterer.getClusterIconSize
+         * @param {Array} size Список всех размеров иконок кластера.
+         * @param {Number} index Интересующий индекс в списке размеров иконок.
+         * @returns {Number[]} Ширина и высота иконки.
+         */
+        getClusterIconSize: function (icons, index) {
+            return icons && icons[index] && icons[index].size || PieChartClusterer.SIZES[index];
+        },
+
+        /**
          * Получение опции 'clusterIcons' - определяет внешний вид каждой группы иконок кластера.
          * Элементов в этом массиве должно быть на 1 больше, чем элементов в массиве опции 'clusterNumbers'.
          * @function
@@ -148,12 +160,12 @@ ymaps.ready(function () {
             var icons = this.options.get('clusterIcons'),
                 size, i = 0, result = [];
 
-            while(size = icons && icons[i] && icons[i].size || PieChartClusterer.SIZES[i]) {
-                result[i++] = {
+            while(size = this.getClusterIconSize(icons, i++)) {
+                result.push({
                     href: this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects)),
                     size: size,
                     offset: [-Math.floor(size[0] / 2), -Math.floor(size[1] / 2)]
-                };
+                });
             }
 
             return result;
