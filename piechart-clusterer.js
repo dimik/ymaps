@@ -138,15 +138,25 @@ ymaps.ready(function () {
         },
 
         /**
-         * Получение размера иконки кластера.
+         * Получение размеров иконок кластеров.
          * @function
-         * @name PieChartClusterer.getClusterIconSize
-         * @param {Array} size Список всех размеров иконок кластера.
-         * @param {Number} index Интересующий индекс в списке размеров иконок.
-         * @returns {Number[]} Ширина и высота иконки.
+         * @name PieChartClusterer.getClusterIconSizes
+         * @returns {Number[][]} Ширина и высота иконок.
          */
-        getClusterIconSize: function (icons, index) {
-            return icons && icons[index] && icons[index].size || PieChartClusterer.SIZES[index];
+        getClusterIconSizes: function () {
+            var icons = this.options.get('clusterIcons');
+
+            if(icons) {
+                var sizes = [], icon, i = 0;
+
+                while(icon = icons[i] && icon.size) {
+                    sizes[i++] = size;
+                }
+
+                return sizes;
+            }
+
+            return PieChartClusterer.SIZES;
         },
 
         /**
@@ -157,18 +167,18 @@ ymaps.ready(function () {
          * @returns {Array} Опция кластера.
          */
         getClusterIcons: function (geoObjects) {
-            var icons = this.options.get('clusterIcons'),
-                size, i = 0, result = [];
+            var sizes = this.getClusterIconSizes(),
+                size, i = 0, icons = [];
 
-            while(size = this.getClusterIconSize(icons, i++)) {
-                result.push({
+            while(size = sizes[i]) {
+                icons[i++] = {
                     href: this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects)),
                     size: size,
                     offset: [-Math.floor(size[0] / 2), -Math.floor(size[1] / 2)]
-                });
+                };
             }
 
-            return result;
+            return icons;
         },
 
         /**
