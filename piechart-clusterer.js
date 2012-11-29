@@ -150,7 +150,7 @@ ymaps.ready(function () {
         formatClusterIconHref: function (size, colours) {
             // Преобразование значения прозрачности иконки кластера из диапазона [0..1] в [00..FF]
             var dec2hex = function (dec) {
-                    hex = Math.floor(dec * 255).toString(16);
+                    var hex = Math.floor(dec * 255).toString(16);
 
                     return hex.length < 2 && '0' + hex || hex;
                 },
