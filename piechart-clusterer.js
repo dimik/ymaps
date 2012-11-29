@@ -81,7 +81,7 @@ var PieChartClustererMethods = {
         var icons = this.options.get('clusterIcons'),
             size, i = 0, result = [];
 
-        while(size = icons[i] && icons[i].size || PieChartClusterer.SIZES[i]) {
+        while(size = icons && icons[i] && icons[i].size || PieChartClusterer.SIZES[i]) {
             result[i++] = {
                 href: this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects)),
                 size: size,
