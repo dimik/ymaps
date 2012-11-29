@@ -30,7 +30,7 @@ RandomPointsGenerator.generate = function (count) {
  * @param {Number} count Количество меток которые надо создать.
  * @returns {RandomPointsGenerator} Экземпляр генератора маркеров.
  */
-RandomPointsGenerator.generate = function (count) {
+RandomPointsGenerator.prototype.generate = function (count) {
     this.count = count;
 };
 
