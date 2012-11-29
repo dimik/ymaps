@@ -67,7 +67,7 @@ PieChartClusterer.OPACITY = 0.7;
  * @constant
  */
 PieChartClusterer.URL_TEMPLATE = [
-    'http://chart.googleapis.com/chart?cht=pc',
+    '//chart.googleapis.com/chart?cht=pc',
     'chs=#{width}x#{height}', // Размеры чарта.
     'chd=t:1|#{data}', // Данные чарта.
     'chco=FFFFFF,#{colours}', // Цвета сегментов.
