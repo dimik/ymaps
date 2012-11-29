@@ -91,6 +91,7 @@ PieChartClusterer.dec2hex = function (dec) {
 
 /**
  * Наследуемся после готовности АПИ.
+ * @lends PieChartClusterer.prototype
  * @augments ymaps.Clusterer
  */
 ymaps.ready(function () {
