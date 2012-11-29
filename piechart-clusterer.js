@@ -147,10 +147,10 @@ ymaps.ready(function () {
             var icons = this.options.get('clusterIcons');
 
             if(icons) {
-                var sizes = [], icon, i = 0;
+                var sizes = [], size, i = 0;
 
-                while((icon = icons[i]) && icon.size) {
-                    sizes[i++] = icon.size;
+                while(size = icons[i] && icons[i].size) {
+                    sizes[i++] = size;
                 }
 
                 return sizes;
