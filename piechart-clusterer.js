@@ -116,7 +116,7 @@ var PieChartClustererMethods = {
             url = ['http://chart.googleapis.com/chart?cht=pc',
                 'chs=#{width}x#{height}',
                 'chd=t:1|#{data}',
-                'chco=FFFFFF,#{colors}',
+                'chco=FFFFFF,#{colours}',
                 'chf=a,s,000000#{opacity}|bg,s,00000000'
             ],
             values = [],
