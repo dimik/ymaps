@@ -17,10 +17,10 @@
                 behaviors: ["default", "scrollZoom"]
             });
 
-            var generator = RandomPointsGenerator.generate(200);
+            var generator = new RandomPointsGenerator();
 
             // Перекрываем метод генератора меток для создания случайных пресетов 4-х типов.
-            generator.getOptions = function (i) {
+            generator.getPointOptions = function (i) {
                 var presets = ['twirl#blueIcon', 'twirl#orangeIcon', 'twirl#greenIcon', 'twirl#pinkIcon'];
 
                 return {
@@ -28,10 +28,13 @@
                 };
             };
 
-            var placemarks = generator.fromBounds(myMap.getBounds());
+            // Создаем 200 меток внутри области видимости карты.
+            var points = generator.generate(200).atBounds(myMap.getBounds()),
+                clusterer = PieChartClusterer();
 
-            var clusterer = new PieChartClusterer({clusterIconOpacity: 0.7});
-            clusterer.add(placemarks);
+            // Добавляем метки в кластеризатор.
+            clusterer.add(points);
+            // Добавляем кластеризатор на карту.
             myMap.geoObjects.add(clusterer);
         });
     </script>
