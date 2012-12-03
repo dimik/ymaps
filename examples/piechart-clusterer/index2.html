@@ -119,7 +119,7 @@
                     .find('tr[id^=item]')
                     .each(function (i, item) {
                         $(item).html($.tmpl(rowTemplate, {
-                            i: i,
+                            i: $(item).find('td:first').text() - 1,
                             point: findPointById(points, item.id)
                         }, {
                             isShown: isShown,
