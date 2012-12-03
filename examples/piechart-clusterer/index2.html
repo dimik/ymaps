@@ -70,46 +70,61 @@
             // Добавляем кластеризатор на карту.
             myMap.geoObjects.add(clusterer);
 
-            // Контейнер для меню.
+            // Контейнер для таблицы.
             var sidebar = $('#sidebar'),
-                sidebarTemplate = $('#sidebarTemplate').template('sidebarTemplate');
+                sidebarTemplate = $('#sidebarTemplate').template('sidebarTemplate'),
+                rowTemplate = $('#rowTemplate').template('rowTemplate');
+                isShown = function (point) {
+                    return { value: clusterer.getObjectState(point).isShown };
+                },
+                isClustered = function (point) {
+                    return { value: clusterer.getObjectState(point).isClustered };
+                },
+                findPointById = function (points, id) {
+                    var i = 0, point;
 
-            // Рендерим шаблон в сайдбар.
-            sidebar.html($.tmpl(sidebarTemplate, {
-                clusterer: clusterer,
-                groups: groups
-            }));
+                    while(point = points[i++]) {
+                        if(point.properties.get('id') === id) {
+                            return point;
+                        }
+                    }
 
-            // По клику на элемент в таблице будем фокусировать центр карты по ее координатам.
-            sidebar.on('click', 'tr', function (e) {
-                var id = this.id,
-                    point = points.filter(function (point) { return point.properties.get('id') === id; })[0],
-                    state = clusterer.getObjectState(point);
+                    return null;
+                };
 
-                myMap.panTo((state.isClustered && state.cluster.geometry || point.geometry).getCoordinates());
-            });
+            sidebar
+                // Рендерим шаблон в сайдбар.
+                .html($.tmpl(sidebarTemplate, {
+                    clusterer: clusterer,
+                    groups: groups
+                }, {
+                    isShown: isShown,
+                    isClustered: isClustered
+                }))
+                // По клику на описание геообъекта в таблице
+                // будем фокусировать центр карты на координаты центра геообъекта.
+                .on('click', 'tr', function (e) {
+                    var point = findPointById(points, this.id),
+                        state = clusterer.getObjectState(point),
+                        activeObject = state.cluster || point;
 
-            sidebar.find('a[data-toggle=tab]:first').tab('show');
+                    myMap.panTo(activeObject.geometry.getCoordinates());
+                })
+                // Включаем первый таб
+                .find('a[data-toggle=tab]:first').tab('show');
 
-            // Получение разных лабелей для true и false значений.
-            function getStateLabel(val) {
-                return '<span class="label label-' + (val && 'success' || 'important') + '">' + val + '</span>';
-            }
-
-            // При перестроении кластеров обновляем статус геообъектов в кластеризаторе.
+            // При перестроении кластеров обновляем статус геообъектов.
             clusterer.events.add('objectsaddtomap', function () {
                 sidebar
                     .find('tr[id^=item]')
-                    .each(function (it) {
-                        var id = this.id,
-                            point = points.filter(function (point) {
-                                return point.properties.get('id') === id;
-                            })[0],
-                            state = clusterer.getObjectState(point),
-                            coloumns = $(this).find('td');
-
-                        coloumns.eq(2).html(getStateLabel(state.isShown));
-                        coloumns.eq(3).html(getStateLabel(state.isClustered));
+                    .each(function (i, item) {
+                        $(item).html($.tmpl(rowTemplate, {
+                            i: i,
+                            point: findPointById(points, item.id)
+                        }, {
+                            isShown: isShown,
+                            isClustered: isClustered
+                        }).html());
                     });
             });
         });
@@ -119,7 +134,10 @@
             {{tmpl(groups) "#tabTemplate"}}
         </ul>
         <div class="tab-content">
-            {{tmpl(groups, { clusterer: clusterer }) "#tabPaneTemplate"}}
+            {{tmpl(groups, {
+                isShown: $item.isShown,
+                isClustered: $item.isClustered
+            }) "#tabPaneTemplate"}}
         </div>
     </script>
     <script id="tabTemplate" type="text/x-jquery-tmpl">
@@ -142,7 +160,13 @@
                 </thead>
                 <tbody>
                 {{each(i, point) points}}
-                    {{tmpl({ point: point, i: i }, { clusterer: $item.clusterer }) "#rowTemplate"}}
+                    {{tmpl({
+                        i: i,
+                        point: point
+                    }, {
+                        isShown: $item.isShown,
+                        isClustered: $item.isClustered
+                    }) "#rowTemplate"}}
                 {{/each}}
                 </tbody>
             </table>
@@ -152,9 +176,12 @@
         <tr id="${point.properties.get("id")}">
             <td>${i + 1}</td>
             <td>${point.properties.get("title")}</td>
-            <td>${$item.clusterer.getObjectState(point).isShown}</td>
-            <td>${$item.clusterer.getObjectState(point).isClustered}</td>
+            <td>{{tmpl($item.isShown(point)) "#statusLabelsTemplate"}}</td>
+            <td>{{tmpl($item.isClustered(point)) "#statusLabelsTemplate"}}</td>
         </tr>
+    </script>
+    <script id="statusLabelsTemplate" type="text/x-jquery-tmpl">
+        <span class="label label-{{if value}}success{{else}}important{{/if}}">${value}</span>
     </script>
     <style type="text/css">
         .hero-unit {
