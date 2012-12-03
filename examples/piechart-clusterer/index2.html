@@ -74,11 +74,13 @@
             var sidebar = $('#sidebar'),
                 sidebarTemplate = $('#sidebarTemplate').template('sidebarTemplate');
 
+            // Рендерим шаблон в сайдбар.
             sidebar.html($.tmpl(sidebarTemplate, {
                 clusterer: clusterer,
                 groups: groups
             }));
 
+            // По клику на элемент в таблице будем фокусировать центр карты по ее координатам.
             sidebar.on('click', 'tr', function (e) {
                 var id = this.id,
                     point = points.filter(function (point) { return point.properties.get('id') === id; })[0],
@@ -89,10 +91,12 @@
 
             sidebar.find('a[data-toggle=tab]:first').tab('show');
 
-            function viewState(val) {
+            // Получение разных лабелей для true и false значений.
+            function getStateLabel(val) {
                 return '<span class="label label-' + (val && 'success' || 'important') + '">' + val + '</span>';
             }
 
+            // При перестроении кластеров обновляем статус геообъектов в кластеризаторе.
             clusterer.events.add('objectsaddtomap', function () {
                 sidebar
                     .find('tr[id^=item]')
@@ -104,8 +108,8 @@
                             state = clusterer.getObjectState(point),
                             coloumns = $(this).find('td');
 
-                        coloumns.eq(2).html(viewState(state.isShown));
-                        coloumns.eq(3).html(viewState(state.isClustered));
+                        coloumns.eq(2).html(getStateLabel(state.isShown));
+                        coloumns.eq(3).html(getStateLabel(state.isClustered));
                     });
             });
         });
@@ -115,7 +119,7 @@
             {{tmpl(groups) "#tabTemplate"}}
         </ul>
         <div class="tab-content">
-            {{tmpl(groups) "#tabPaneTemplate"}}
+            {{tmpl(groups, { clusterer: clusterer }) "#tabPaneTemplate"}}
         </div>
     </script>
     <script id="tabTemplate" type="text/x-jquery-tmpl">
@@ -138,16 +142,19 @@
                 </thead>
                 <tbody>
                 {{each(i, point) points}}
-                    <tr id="${point.properties.get("id")}">
-                        <td>${i + 1}</td>
-                        <td>${point.properties.get("title")}</td>
-                        <td>${$item.parent.data.clusterer.getObjectState(point).isShown}</td>
-                        <td>${$item.parent.data.clusterer.getObjectState(point).isClustered}</td>
-                    </tr>
+                    {{tmpl({ point: point, i: i }, { clusterer: $item.clusterer }) "#rowTemplate"}}
                 {{/each}}
                 </tbody>
             </table>
         </div>
+    </script>
+    <script id="rowTemplate" type="text/x-jquery-tmpl">
+        <tr id="${point.properties.get("id")}">
+            <td>${i + 1}</td>
+            <td>${point.properties.get("title")}</td>
+            <td>${$item.clusterer.getObjectState(point).isShown}</td>
+            <td>${$item.clusterer.getObjectState(point).isClustered}</td>
+        </tr>
     </script>
     <style type="text/css">
         .hero-unit {
