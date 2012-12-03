@@ -116,10 +116,10 @@
             // При перестроении кластеров обновляем статус геообъектов.
             clusterer.events.add('objectsaddtomap', function () {
                 sidebar
-                    .find('.tab-content')
-                    .each(function (group) {
+                    .find('.tab-pane')
+                    .each(function (i, group) {
                         $(group)
-                            .find('tr')
+                            .find('tr:gt(0)')
                             .each(function (i, item) {
                                 $(item).html($.tmpl(rowTemplate, {
                                     i: i,
