@@ -87,6 +87,8 @@
                 myMap.panTo((state.isClustered && state.cluster.geometry || point.geometry).getCoordinates());
             });
 
+            sidebar.find('a[data-toggle=tab]:first').tab('show');
+
             clusterer.events.add('objectsaddtomap', function () {
                 sidebar
                     .find('tr[id^=item]')
