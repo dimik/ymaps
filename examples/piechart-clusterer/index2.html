@@ -58,7 +58,6 @@
 
                     return {
                         id: 'group-' + index,
-                        active: !!index,
                         title: presetTitles[color],
                         style: presetStyles[color],
                         points: $.grep(points, function (point) { return point.options.get('preset') === preset; })
@@ -78,8 +77,9 @@
             sidebar.html($.tmpl(sidebarTemplate, {
                 clusterer: clusterer,
                 groups: groups
-            }))
-            .on('click', 'tr', function (e) {
+            }));
+
+            sidebar.on('click', 'tr', function (e) {
                 var id = this.id,
                     point = points.filter(function (point) { return point.properties.get('id') === id; })[0],
                     state = clusterer.getObjectState(point);
@@ -88,6 +88,10 @@
             });
 
             sidebar.find('a[data-toggle=tab]:first').tab('show');
+
+            function viewState(val) {
+                return '<span class="label label-' + (val && 'success' || 'important') + '">' + val + '</span>';
+            }
 
             clusterer.events.add('objectsaddtomap', function () {
                 sidebar
@@ -100,8 +104,8 @@
                             state = clusterer.getObjectState(point),
                             coloumns = $(this).find('td');
 
-                        coloumns.eq(2).text(state.isShown);
-                        coloumns.eq(3).text(state.isClustered);
+                        coloumns.eq(2).html(viewState(state.isShown));
+                        coloumns.eq(3).html(viewState(state.isClustered));
                     });
             });
         });
