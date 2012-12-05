@@ -20,12 +20,35 @@
 
             var myBalloonLayout = ymaps.templateLayoutFactory.createClass(
                     '<div class="popover top">' +
+                        '<a class="close" href="#">&times;</a>' +
                         '<div class="arrow"></div>' +
                         '<div class="popover-inner">' +
                             '$[[options.contentLayout]]' +
                         '</div>' +
-                    '</div>'
-                ),
+                    '</div>', {
+                    build: function () {
+                        this.constructor.superclass.build.call(this);
+
+                        this.element = $(this.getParentElement()).children('.popover');
+                        this.setOffset();
+                        $('.close', this.element).on('click', $.proxy(this.onCloseClick, this));
+                    },
+                    clear: function () {
+                        $('.close', this.element).off('click');
+
+                        this.constructor.superclass.clear.call(this);
+                    },
+                    setOffset: function () {
+                        this.getData().geoObject.options.set({
+                            balloonOffset: [-this.element.width() / 2, -this.element.height() / 2]
+                        });
+                    },
+                    onCloseClick: function (e) {
+                        e.preventDefault();
+
+                        this.getData().geoObject.balloon.close();
+                    }
+                }),
                 myBalloonContentLayout = ymaps.templateLayoutFactory.createClass(
                     '<h3 class="popover-title">$[properties.name]</h3>' +
                     '<div class="popover-content">$[properties.description]</div>'
@@ -35,6 +58,7 @@
                 name: 'Заголовок балуна',
                 description: 'Контент балуна'
             }, {
+                balloonShadow: false,
                 balloonLayout: myBalloonLayout,
                 balloonContentLayout: myBalloonContentLayout
             });
@@ -42,6 +66,15 @@
             myMap.geoObjects.add(myPlacemark);
         });
     </script>
+    <style type="text/css">
+        .popover {
+            display: block;
+        }
+        .popover .close {
+            position: relative;
+            right: 5px;
+        }
+    </style>
 </head>
 
 <body>
