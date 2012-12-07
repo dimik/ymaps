@@ -126,7 +126,7 @@
                 // будем фокусировать центр карты на координаты центра геообъекта.
                 .on('click', 'tr', function (e) {
                     var groupId = $(this).closest('.tab-pane').attr('id'),
-                        point = findGroupsById(groupId).findPointById(this.id),
+                        point = findGroupById(groupId).findPointById(this.id),
                         state = clusterer.getObjectState(point),
                         activeObject = state.cluster || point;
 
