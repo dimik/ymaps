@@ -41,6 +41,7 @@
 
             // Создаем 200 меток внутри области видимости карты.
             var points = generator.generate(200).atBounds(myMap.getBounds()),
+                clusterer = new PieChartClusterer(),
                 // Стили для DOM-представлений групп.
                 presetStyles = {
                     "red": "important",
@@ -63,10 +64,26 @@
                         id: 'group-' + index,
                         title: presetTitles[color],
                         style: presetStyles[color],
-                        points: $.grep(points, function (point) { return point.options.get('preset') === preset; })
+                        visible: true,
+                        toggle: function () {
+                            this.visible = !this.visible;
+                            clusterer[this.visible ? 'add' : 'remove'](this.points);
+                        },
+                        points: $.grep(points, function (point) { return point.options.get('preset') === preset; }),
+                        // Поиск метки в массиве по идентификатору.
+                        findPointById: function (id) {
+                            var i = 0, point;
+
+                            while(point = this.points[i++]) {
+                                if(point.properties.get('id') === id) {
+                                    return point;
+                                }
+                            }
+
+                            return null;
+                        }
                     };
-                }),
-                clusterer = new PieChartClusterer();
+                });
 
             // Добавляем метки в кластеризатор.
             clusterer.add(points);
@@ -84,13 +101,12 @@
                 isClustered = function (point) {
                     return { value: clusterer.getObjectState(point).isClustered };
                 },
-                // Поиск метки в массиве по идегтификатору.
-                findPointById = function (points, id) {
-                    var i = 0, point;
+                findGroupById = function (id) {
+                    var i = 0, group;
 
-                    while(point = points[i++]) {
-                        if(point.properties.get('id') === id) {
-                            return point;
+                    while(group = groups[i++]) {
+                        if(group.id === id) {
+                            return group;
                         }
                     }
 
@@ -109,11 +125,18 @@
                 // По клику на описание геообъекта в таблице
                 // будем фокусировать центр карты на координаты центра геообъекта.
                 .on('click', 'tr', function (e) {
-                    var point = findPointById(points, this.id),
+                    var groupId = $(this).closest('.tab-pane').attr('id'),
+                        point = findGroupsById(groupId).findPointById(this.id),
                         state = clusterer.getObjectState(point),
                         activeObject = state.cluster || point;
 
                     myMap.panTo(activeObject.geometry.getCoordinates());
+                })
+                .on('click', '[name=visible]', function (e) {
+                    var id = $(e.target).closest('.tab-pane').attr('id'),
+                        group = findGroupById(id);
+
+                    group.toggle();
                 })
                 // Включаем первый таб
                 .find('a[data-toggle=tab]:first').tab('show');
@@ -128,7 +151,7 @@
                             .each(function (i, item) {
                                 $(item).html($.tmpl(rowTemplate, {
                                     i: i,
-                                    point: findPointById(points, item.id)
+                                    point: findGroupById(group.id).findPointById(item.id)
                                 }, {
                                     isShown: isShown,
                                     isClustered: isClustered
@@ -161,6 +184,16 @@
     <!-- Шаблон содержимого таба. -->
     <script id="tabPaneTemplate" type="text/x-jquery-tmpl">
         <div class="tab-pane" id="${id}">
+            <form class="form-inline">
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" name="visible"{{if visible}} checked{{/if}}> Отображение группы
+                        </label>
+                    </div>
+                    <div class="controls">Объектов в группе (${points.length})</div>
+                </div>
+            </form>
             <table class="table table-hover table-striped table-bordered table-condensed">
                 <thead>
                     <tr>
