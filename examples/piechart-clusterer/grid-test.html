@@ -60,13 +60,18 @@
                 for (var i = 64; i < worldSize; i = i + 64) {
                     var line = new ymaps.geometry.pixel.LineString([[i, 0], [i, worldSize]]),
                         overlay = new ymaps.overlay.staticGraphics.Polyline(line);
-                    if (i % (64 * 6) == 0) {
+                    if (i % (64 * 8) == 0) {
                         overlay.options.set({
                             strokeColor: '#ff0000',
                             opacity: 0.8,
-                            strokeWidth: 5
+                            strokeWidth: 2
                         });
-
+                    } else {
+                        overlay.options.set({
+                            strokeColor: '#0000ff',
+                            opacity: 0.8,
+                            strokeWidth: 2
+                        });
                     }
                     overlay.setMap(myMap);
                 }
@@ -75,11 +80,17 @@
                 for (var i = 64; i < worldSize; i = i + 64) {
                     var line = new ymaps.geometry.pixel.LineString([[0, i], [worldSize, i]]),
                         overlay = new ymaps.overlay.staticGraphics.Polyline(line);
-                    if (i % (64 * 6) == 0) {
+                    if (i % (64 * 8) == 0) {
                         overlay.options.set({
                             strokeColor: '#ff0000',
                             opacity: 0.8,
-                            strokeWidth: 5
+                            strokeWidth: 2
+                        });
+                    } else {
+                        overlay.options.set({
+                            strokeColor: '#0000ff',
+                            opacity: 0.8,
+                            strokeWidth: 2
                         });
                     }
                     overlay.setMap(myMap);
