@@ -12,7 +12,7 @@ MapLocation.prototype._onStateChange = function (e) {
     e.get('target').events.fire('statechange', {
         oldState: this,
         newState: new MapLocation({
-            center: e.get('newCenter').map(function (i) { return i.toFixed(6); }) || this.get('center'),
+            center: (e.get('newCenter') || this.get('center')).map(MapLocation.toCoords),
             zoom: e.get('newZoom') >= 0 ? e.get('newZoom') : this.get('zoom'),
             type: e.get('newType') || this.get('type')
         })
@@ -56,8 +56,12 @@ MapLocation.fromString = function (location) {
     });
 
     return new MapLocation({
-        center: (params.center || '0,0').split(',').map(Number),
+        center: (params.center || '0,0').split(',').map(MapLocation.toCoords),
         zoom: Number(params.zoom || '0'),
         type: params.type || 'yandex#map'
     });
+};
+
+MapLocation.toCoords = function (i) {
+    return Number(i).toFixed(6);
 };
