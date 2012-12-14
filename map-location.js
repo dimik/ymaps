@@ -1,4 +1,11 @@
 /**
+ * @fileOverview
+ * Класс для создания ссылки на карту.
+ * @example
+ * @see http://dimik.github.com/ymaps/examples/map-location/#center=55.74009108312381,37.6006885988358&zoom=10&type=yandex%23map
+ */
+
+/**
  * Класс для создания ссылки на карту.
  * @class
  * @name MapLocation
