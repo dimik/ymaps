@@ -12,7 +12,7 @@ MapLocation.prototype._onStateChange = function (e) {
     e.get('target').events.fire('statechange', {
         oldState: this,
         newState: new MapLocation({
-            center: e.get('newCenter') || this.get('center').map(function (i) { return i.toFixed(6) }),
+            center: e.get('newCenter').map(function (i) { return i.toFixed(6) }) || this.get('center'),
             zoom: e.get('newZoom') >= 0 ? e.get('newZoom') : this.get('zoom'),
             type: e.get('newType') || this.get('type')
         })
