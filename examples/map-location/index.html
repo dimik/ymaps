@@ -9,7 +9,7 @@
     <script src="map-location.js" type="text/javascript"></script>
     <script type="text/javascript">
         ymaps.ready(function () {
-            var mapLocation = MapLocation.fromString(window.location.hash),
+            var mapLocation = MapLocation.fromString(document.location.hash),
                 state = $.extend({}, mapLocation.getState(), { behaviors: ['default', 'scrollZoom']}),
                 myMap = new ymaps.Map("YMapsID", state);
 
@@ -18,7 +18,7 @@
             myMap.controls.add('typeSelector');
 
             myMap.events.add('statechange', function (e) {
-                window.location.hash = e.get('newState');
+                document.location.hash = e.get('newState');
             });
         });
 
