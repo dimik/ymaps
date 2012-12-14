@@ -9,19 +9,36 @@
     <script src="map-location.js" type="text/javascript"></script>
     <script type="text/javascript">
         ymaps.ready(function () {
-            var mapLocation = MapLocation.fromString(document.location.hash),
-                state = $.extend({}, mapLocation.getState(), { behaviors: ['default', 'scrollZoom']}),
-                myMap = new ymaps.Map("YMapsID", state);
-
-            mapLocation.setMap(myMap);
+            var initialState = MapLocationState.fromString(document.location.hash),
+                myMap = new ymaps.Map("YMapsID", initialState.getData()),
+                mapLocation = new MapLocation(myMap, initialState);
 
             myMap.controls.add('typeSelector');
+            myMap.behaviors.enable('scrollZoom');
 
-            myMap.events.add('statechange', function (e) {
-                document.location.hash = e.get('newState');
+            myMap.events.add('locationstatechange', function (e) {
+                var state = e.get('newState'),
+                    hash = '#' + state;
+
+                if('history' in window) {
+                    window.history.pushState(state.getData(), null, hash);
+                }
+                else {
+                    document.location.hash = hash;
+                }
+            });
+
+            $(window).on('popstate', function (e) {
+                var state = e.originalEvent.state;
+
+                if(state) {
+                    mapLocation.setState(state);
+                }
+                else {
+                    window.history.replaceState(initialState.getData());
+                }
             });
         });
-
     </script>
     <style type="text/css">
         #YMapsID {
