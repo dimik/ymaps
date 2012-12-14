@@ -52,7 +52,7 @@ MapLocation.fromString = function (location) {
     location.replace(/[^?&#]+(?=&|$)/g, function (s) {
         var param = s.split('=');
 
-        params[param[0]] = param[1];
+        params[decodeURI(param[0])] = decodeURI(param[1]);
     });
 
     return new MapLocation({
