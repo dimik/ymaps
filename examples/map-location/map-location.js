@@ -40,7 +40,7 @@ MapLocation.prototype.toString = function () {
         params = [];
 
     for(var param in state) {
-        params.push(encodeURI(param) + '=' + encodeURI(state[param]));
+        params.push(encodeURI(param) + '=' + encodeURIComponent(state[param]));
     }
 
     return params.join('&');
@@ -52,7 +52,7 @@ MapLocation.fromString = function (location) {
     location.replace(/[^?&#]+(?=&|$)/g, function (s) {
         var param = s.split('=');
 
-        params[decodeURI(param[0])] = decodeURI(param[1]);
+        params[decodeURI(param[0])] = decodeURIComponent(param[1]);
     });
 
     return new MapLocation({
