@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример использования HTML5 Drag and Drop и Яндекс.Карт</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    <script src="drag-scroll-behavior.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            // Создание экземпляра карты и его привязка к созданному контейнеру.
+            var myMap = new ymaps.Map("YMapsID", {
+                    center: [55.755768, 37.617671], // Москва
+                    zoom: 10,
+                    behaviors: ["default", "scrollZoom"]
+                }),
+                // DOM-контейнер карты.
+                $mapContainer = $(myMap.container.getElement());
+
+            // Добавляем поведение в хранилище.
+            ymaps.behavior.storage.add('dragScroll', DragScrollBehavior);
+            // Включаем скролл карты при перетаскивании.
+            myMap.behaviors.enable('dragScroll');
+
+            /**
+             * Добавим свойство dataTransfer в объект-событие,
+             * чтобы не доставать его каждый раз из e.originalEvent.
+             */
+            $.event.props.push('dataTransfer');
+
+            $('.icon').on('dragstart', function (e) {
+                // Будем перетаскивать в режиме копирования (броузер добавит "+" при перетаскивании)
+                e.dataTransfer.effectAllowed = 'copy';
+                // Кладем в данные идентификатор метки.
+                e.dataTransfer.setData('Text', this.id);
+                // Будем перетаскивать за хвостик иконки и сделаем ее прозрачной.
+                var dragIcon = $(this).clone().css('opacity', '0.3');
+                e.dataTransfer.setDragImage(dragIcon[0], this.width / 2, this.height);
+            });
+
+            $mapContainer
+                .on('dragover', function (e) {
+                    // Эта инструкция разрешает перетаскивание.
+                    e.preventDefault();
+                    // dropEffect должен совпадать с effectAllowed.
+                    e.dataTransfer.dropEffect = 'copy';
+                })
+                .on('drop', function (e) {
+                    e.stopPropagation();
+
+                    // Находим DOM-элемент иконки по идентификатору из данных.
+                    var icon = $('#' + e.dataTransfer.getData('TEXT')),
+                        // Размеры иконки.
+                        width = icon.width(), height = icon.height(),
+                        // Геокоординаты метки.
+                        coordinates = pageToGeo([e.originalEvent.pageX, e.originalEvent.pageY]),
+                        // Объект опций метки.
+                        options = {
+                            iconImageHref: icon.attr('src'),
+                            iconImageSize: [width, height],
+                            iconImageOffset: [-(width / 2), -height],
+                            draggable: true
+                        };
+
+                    // Создаем метку и добавляем ее на карту.
+                    myMap.geoObjects.add(createPlacemark(coordinates, options));
+                });
+
+                // Создаем метку.
+                function createPlacemark(coordinates, options) {
+                    var placemark = new ymaps.Placemark(coordinates);
+
+                    placemark.options.set(options);
+                    // Геокодируем координаты метки.
+                    geocodePlacemark(placemark);
+
+                    placemark.events
+                        // По окончании перетаскивания геокодируем координаты метки.
+                        .add('dragend', function (e) {
+                            geocodePlacemark(placemark);
+                        })
+                        // При открытии балуна выключаем перетаскивание.
+                        .add('balloonopen', function (e) {
+                            placemark.options.set('draggable', false);
+                        });
+
+                    return placemark;
+                }
+
+                // Геокодирование координат метки.
+                function geocodePlacemark(placemark) {
+                    ymaps.geocode(placemark.geometry.getCoordinates(), { results: 1 })
+                        .then(function (res) {
+                            var first = res.geoObjects.get(0),
+                                text = first.properties.get('text');
+
+                            // Выставляем содержимое балуна метки.
+                            placemark.properties.set('balloonContentBody', text);
+                        });
+                }
+
+                // Преобразуем пиксельные координаты позиции иконки на странице в геокоординаты.
+                function pageToGeo(coords) {
+                    var projection = myMap.options.get('projection');
+
+                    return projection.fromGlobalPixels(
+                        myMap.converter.pageToGlobal(coords), myMap.getZoom()
+                    );
+                }
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+        .icon {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Native HTML5 Drag and Drop и Яндекс.Карты.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12" style="text-align: center;">
+            <img class="icon" id="icon01" src="info.png" draggable="true"/>
+            <img class="icon" id="icon02" src="photo.png" draggable="true"/>
+            <img class="icon" id="icon03" src="police.png" draggable="true"/>
+            <img class="icon" id="icon04" src="racing.png" draggable="true"/>
+            <img class="icon" id="icon05" src="restaurant.png" draggable="true"/>
+            <img class="icon" id="icon06" src="sailboat-tourism.png" draggable="true"/>
+            <img class="icon" id="icon07" src="skiing.png" draggable="true"/>
+            <img class="icon" id="icon08" src="zoo.png" draggable="true"/>
+        </div>
+    </div>
+</body>
+
+</html>
