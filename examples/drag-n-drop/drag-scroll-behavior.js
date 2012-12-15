@@ -85,7 +85,7 @@ DragScrollBehavior.prototype = {
 
                 self._map.panTo(coords, {
                     delay: 0,
-                    timing: 'linear',
+                    timing: 'linear'
                     // callback: ymaps.util.bind(self._moveCancel, self)
                 });
 
