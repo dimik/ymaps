@@ -86,10 +86,10 @@ DragScrollBehavior.prototype = {
                 self._map.panTo(coords, {
                     delay: 0,
                     timing: 'linear'
-                    // callback: ymaps.util.bind(self._moveCancel, self)
+                    // callback: ymaps.util.bind(self._clearMove, self)
                 });
 
-                self._moveCancel();
+                self._clearMove();
             }, 30);
         }
     },
@@ -97,9 +97,9 @@ DragScrollBehavior.prototype = {
      * Отмена обработчика по таймауту.
      * @private
      * @function
-     * @name DragScrollBehavior._moveCancel
+     * @name DragScrollBehavior._clearMove
      */
-    _moveCancel: function () {
+    _clearMove: function () {
         if(this._timeoutId) {
             window.clearTimeout(this._timeoutId);
             this._timeoutId = null;
