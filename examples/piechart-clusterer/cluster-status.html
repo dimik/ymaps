@@ -35,7 +35,8 @@
                 return {
                     id: 'item-' + (i + 1),
                     title: 'Метка ' + (i + 1),
-                    balloonContent: 'Метка ' + (i + 1)
+                    clusterCaption: 'Метка ' + (i + 1),
+                    balloonContentBody: 'Содержимое балуна метки ' + (i + 1)
                 };
             };
 
@@ -111,6 +112,18 @@
                     }
 
                     return null;
+                },
+                openBalloon = function (point) {
+                    var state = clusterer.getObjectState(point),
+                        cluster = state.isClustered && state.cluster;
+
+                    if(cluster) {
+                        cluster.state.set('activeObject', point);
+                        cluster.balloon.open();
+                    }
+                    else {
+                        point.balloon.open();
+                    }
                 };
 
             sidebar
@@ -126,11 +139,20 @@
                 // будем фокусировать центр карты на координаты центра геообъекта.
                 .on('click', 'tr', function (e) {
                     var groupId = $(this).closest('.tab-pane').attr('id'),
-                        point = findGroupById(groupId).findPointById(this.id),
-                        state = clusterer.getObjectState(point),
-                        activeObject = state.cluster || point;
+                        point = findGroupById(groupId).findPointById(this.id);
 
-                    myMap.panTo(activeObject.geometry.getCoordinates());
+                    myMap.panTo(point.geometry.getCoordinates(), {
+                        callback: function () {
+                            if(isShown(point)) {
+                                openBalloon(point);
+                            }
+                            else {
+                                clusterer.events.once('objectsaddtomap', function () {
+                                    openBalloon(point);
+                                });
+                            }
+                        }
+                    });
                 })
                 .on('click', '[name=visible]', function (e) {
                     var id = $(e.target).closest('.tab-pane').attr('id'),
