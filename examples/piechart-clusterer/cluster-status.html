@@ -163,8 +163,8 @@
                 // Включаем первый таб
                 .find('a[data-toggle=tab]:first').tab('show');
 
-            // При перестроении кластеров обновляем статус геообъектов.
-            clusterer.events.add('objectsaddtomap', function () {
+            // При смене центра или масштаба карты обновляем статус геообъектов.
+            myMap.events.add('boundschange', function () {
                 sidebar
                     .find('.tab-pane')
                     .each(function (i, group) {
