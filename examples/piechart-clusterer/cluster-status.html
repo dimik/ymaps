@@ -143,7 +143,7 @@
 
                     myMap.panTo(point.geometry.getCoordinates(), {
                         callback: function () {
-                            if(isShown(point)) {
+                            if(isShown(point) && point.getMap()) {
                                 openBalloon(point);
                             }
                             else {
