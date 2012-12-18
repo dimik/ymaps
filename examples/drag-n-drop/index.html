@@ -47,7 +47,8 @@
                     e.dataTransfer.dropEffect = 'copy';
                 })
                 .on('drop', function (e) {
-                    e.stopPropagation();
+                    // не работает в FF =) поэтому делаем return false вконце
+                    // e.stopPropagation();
 
                     // Находим DOM-элемент иконки по идентификатору из данных.
                     var icon = $('#' + e.dataTransfer.getData('TEXT')),
@@ -65,6 +66,8 @@
 
                     // Создаем метку и добавляем ее на карту.
                     myMap.geoObjects.add(createPlacemark(coordinates, options));
+
+                    return false;
                 });
 
                 // Создаем метку.
