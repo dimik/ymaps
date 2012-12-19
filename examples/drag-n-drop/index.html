@@ -34,9 +34,12 @@
                 e.dataTransfer.effectAllowed = 'copy';
                 // Кладем в данные идентификатор метки.
                 e.dataTransfer.setData('Text', this.id);
-                // Будем перетаскивать за хвостик иконки и сделаем ее прозрачной.
-                var dragIcon = $(this).clone().css('opacity', '0.3');
-                e.dataTransfer.setDragImage(dragIcon[0], this.width / 2, this.height);
+                // Перетаскиваем за хвостик иконки
+                // и сделаем ее прозрачной если это не FF.
+                var dragIcon = $.browser.mozilla ? this :
+                    $(this).clone().css('opacity', '0.3').get(0);
+
+                e.dataTransfer.setDragImage(dragIcon, this.width / 2, this.height);
             });
 
             $mapContainer
