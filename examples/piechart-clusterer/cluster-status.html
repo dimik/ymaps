@@ -95,12 +95,8 @@
             var sidebar = $('#sidebar'),
                 sidebarTemplate = $('#sidebarTemplate').template('sidebarTemplate'),
                 rowTemplate = $('#rowTemplate').template('rowTemplate');
-                // Методы для использования в шаблонах.
-                isShown = function (point) {
-                    return { value: clusterer.getObjectState(point).isShown };
-                },
-                isClustered = function (point) {
-                    return { value: clusterer.getObjectState(point).isClustered };
+                getState = function (point) {
+                    return clusterer.getObjectState(point);
                 },
                 findGroupById = function (id) {
                     var i = 0, group;
@@ -114,7 +110,7 @@
                     return null;
                 },
                 openBalloon = function (point) {
-                    var state = clusterer.getObjectState(point),
+                    var state = getState(point),
                         cluster = state.isClustered && state.cluster;
 
                     if(cluster) {
@@ -132,8 +128,7 @@
                     clusterer: clusterer,
                     groups: groups
                 }, {
-                    isShown: isShown,
-                    isClustered: isClustered
+                    getState: getState
                 }))
                 // По клику на описание геообъекта в таблице
                 // будем фокусировать центр карты на координаты центра геообъекта.
@@ -143,7 +138,7 @@
 
                     myMap.panTo(point.geometry.getCoordinates(), {
                         callback: function () {
-                            if(isShown(point) && point.getMap()) {
+                            if(getState(point).isShown && point.getMap()) {
                                 openBalloon(point);
                             }
                             else {
@@ -175,8 +170,7 @@
                                     i: i,
                                     point: findGroupById(group.id).findPointById(item.id)
                                 }, {
-                                    isShown: isShown,
-                                    isClustered: isClustered
+                                    getState: getState
                                 }).html());
                             });
                     });
@@ -190,8 +184,7 @@
         </ul>
         <div class="tab-content">
             {{tmpl(groups, {
-                isShown: $item.isShown,
-                isClustered: $item.isClustered
+                getState: $item.getState
             }) "#tabPaneTemplate"}}
         </div>
     </script>
@@ -231,8 +224,7 @@
                         i: i,
                         point: point
                     }, {
-                        isShown: $item.isShown,
-                        isClustered: $item.isClustered
+                        getState: $item.getState
                     }) "#rowTemplate"}}
                 {{/each}}
                 </tbody>
@@ -244,13 +236,13 @@
         <tr id="${point.properties.get("id")}">
             <td>${i + 1}</td>
             <td>${point.properties.get("title")}</td>
-            <td>{{tmpl($item.isShown(point)) "#statusLabelsTemplate"}}</td>
-            <td>{{tmpl($item.isClustered(point)) "#statusLabelsTemplate"}}</td>
+            {{tmpl($item.getState(point)) "#statusLabelsTemplate"}}
         </tr>
     </script>
     <!-- Шаблон статуса геообъекта. -->
     <script id="statusLabelsTemplate" type="text/x-jquery-tmpl">
-        <span class="label label-{{if value}}success{{else}}important{{/if}}">${value}</span>
+        <td><span class="label label-{{if isShown}}success{{else}}important{{/if}}">${isShown}</span></td>
+        <td><span class="label label-{{if isClustered}}success{{else}}important{{/if}}">${isClustered}</span></td>
     </script>
     <style type="text/css">
         .hero-unit {
