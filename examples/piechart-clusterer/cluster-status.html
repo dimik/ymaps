@@ -138,13 +138,19 @@
 
                     myMap.panTo(point.geometry.getCoordinates(), {
                         callback: function () {
-                            if(getState(point).isShown && point.getMap()) {
+                            if(getState(point).isShown || point.getMap()) {
                                 openBalloon(point);
                             }
                             else {
                                 clusterer.events.once('objectsaddtomap', function () {
                                     openBalloon(point);
                                 });
+                                /*
+                                clusterer.events.add('objectsaddtomap', function onObjectsAddToMap() {
+                                    clusterer.events.remove('objectsaddtomap', onObjectsAddToMap);
+                                    openBalloon(point);
+                                });
+                                */
                             }
                         }
                     });
