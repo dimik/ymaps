@@ -145,7 +145,7 @@
                             var state = getState(point),
                                 cluster = state.cluster;
 
-                            if(state.isShown && (point.getMap() || cluster.getMap())) {
+                            if(state.isShown && (point.getMap() || (cluster && cluster.getMap()))) {
                                 openBalloon(point);
                             }
                             else {
