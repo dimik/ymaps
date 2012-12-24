@@ -67,8 +67,12 @@
                         style: presetStyles[color],
                         visible: true,
                         toggle: function () {
-                            this.visible = !this.visible;
-                            clusterer[this.visible ? 'add' : 'remove'](this.points);
+                            if(this.visible = !this.visible) {
+                                clusterer.add(this.points);
+                            }
+                            else {
+                                clusterer.remove(this.points);
+                            }
                         },
                         points: $.grep(points, function (point) { return point.options.get('preset') === preset; }),
                         // Поиск метки в массиве по идентификатору.
@@ -138,7 +142,10 @@
 
                     myMap.panTo(point.geometry.getCoordinates(), {
                         callback: function () {
-                            if(getState(point).isShown || point.getMap()) {
+                            var state = getState(point),
+                                cluster = state.cluster;
+
+                            if(state.isShown && (point.getMap() || cluster.getMap())) {
                                 openBalloon(point);
                             }
                             else {
