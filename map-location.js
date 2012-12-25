@@ -1,8 +1,44 @@
 /**
  * @fileOverview
  * Класс для создания ссылки на карту.
- * @example
  * @see http://dimik.github.com/ymaps/examples/map-location/#center=55.74009108312381,37.6006885988358&zoom=10&type=yandex%23map
+ * @example
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    <script src="map-location.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var initialState = MapLocationState.fromString(document.location.hash),
+                myMap = new ymaps.Map("YMapsID", initialState.getData()),
+                mapLocation = new MapLocation(myMap, initialState);
+
+            myMap.controls.add('typeSelector');
+            myMap.behaviors.enable('scrollZoom');
+
+            myMap.events.add('locationstatechange', function (e) {
+                var state = e.get('newState'),
+                    hash = '#' + state;
+
+                if('history' in window) {
+                    window.history.pushState(state.getData(), null, hash);
+                }
+                else {
+                    document.location.hash = hash;
+                }
+            });
+
+            $(window).on('popstate', function (e) {
+                var state = e.originalEvent.state;
+
+                if(state) {
+                    mapLocation.setState(state);
+                }
+                else {
+                    window.history.replaceState(initialState.getData());
+                }
+            });
+        });
+    </script>
  */
 
 /**
@@ -31,6 +67,11 @@ MapLocation.prototype._onStateChange = function (e) {
         this._silent = false;
     }
     else {
+        this._state = new MapLocationState({
+            center: (e.get('newCenter') || oldState.get('center')).map(MapLocationState.toFixedNumber),
+            zoom: e.get('newZoom') != null ? e.get('newZoom') : oldState.get('zoom'),
+            type: e.get('newType') || oldState.get('type')
+        });
         /**
          * @event
          * @name ymaps.Map#locationstatechange
@@ -39,11 +80,7 @@ MapLocation.prototype._onStateChange = function (e) {
          */
         this._map.events.fire('locationstatechange', {
             oldState: oldState,
-            newState: (this._state = new MapLocationState({
-                center: (e.get('newCenter') || oldState.get('center')).map(MapLocationState.toCoords),
-                zoom: e.get('newZoom') >= 0 ? e.get('newZoom') : oldState.get('zoom'),
-                type: e.get('newType') || oldState.get('type')
-            }))
+            newState: this._state
         });
     }
 };
@@ -63,6 +100,9 @@ MapLocation.prototype.getState = function () {
  * @function
  * @name MapLocation.setState
  * @param {Object} data Данные состояния.
+ * @param {Number[]} [data.center] Массив координат центра карты.
+ * @param {Number} [data.zoom] Масштаб карты.
+ * @param {String} [data.type] Тип карты.
  * @returns {MapLocation} Экземпляр класса для чайнинга.
  */
 MapLocation.prototype.setState = function (data) {
@@ -71,6 +111,7 @@ MapLocation.prototype.setState = function (data) {
 
     this._silent = true;
 
+    // Если тип карты не изменился значит изменился центр или масштаб.
     if(data.type === state.get('type')) {
         map.setCenter(data.center, data.zoom);
         state
@@ -165,7 +206,7 @@ MapLocationState.fromString = function (location) {
     });
 
     return new MapLocationState({
-        center: params.center.split(',').map(MapLocationState.toCoords),
+        center: params.center.split(',').map(MapLocationState.toFixedNumber),
         zoom: Number(params.zoom),
         type: params.type || 'yandex#map'
     });
@@ -179,6 +220,6 @@ MapLocationState.fromString = function (location) {
  * @param {String|Number} i
  * @returns {Number} Число с 6-ю цифрами поле точки.
  */
-MapLocationState.toCoords = function (i) {
+MapLocationState.toFixedNumber = function (i) {
     return Number(i).toFixed(6);
 };
