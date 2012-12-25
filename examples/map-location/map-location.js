@@ -24,6 +24,11 @@ MapLocation.prototype._onStateChange = function (e) {
         this._silent = false;
     }
     else {
+        this._state = new MapLocationState({
+            center: (e.get('newCenter') || oldState.get('center')).map(MapLocationState.toFixedNumber),
+            zoom: e.get('newZoom') != null ? e.get('newZoom') : oldState.get('zoom'),
+            type: e.get('newType') || oldState.get('type')
+        });
         /**
          * @event
          * @name ymaps.Map#locationstatechange
@@ -32,11 +37,7 @@ MapLocation.prototype._onStateChange = function (e) {
          */
         this._map.events.fire('locationstatechange', {
             oldState: oldState,
-            newState: (this._state = new MapLocationState({
-                center: (e.get('newCenter') || oldState.get('center')).map(MapLocationState.toCoords),
-                zoom: e.get('newZoom') >= 0 ? e.get('newZoom') : oldState.get('zoom'),
-                type: e.get('newType') || oldState.get('type')
-            }))
+            newState: this._state
         });
     }
 };
@@ -56,6 +57,9 @@ MapLocation.prototype.getState = function () {
  * @function
  * @name MapLocation.setState
  * @param {Object} data Данные состояния.
+ * @param {Number[]} [data.center] Массив координат центра карты.
+ * @param {Number} [data.zoom] Масштаб карты.
+ * @param {String} [data.type] Тип карты.
  * @returns {MapLocation} Экземпляр класса для чайнинга.
  */
 MapLocation.prototype.setState = function (data) {
@@ -64,6 +68,7 @@ MapLocation.prototype.setState = function (data) {
 
     this._silent = true;
 
+    // Если тип карты не изменился значит изменился центр или масштаб.
     if(data.type === state.get('type')) {
         map.setCenter(data.center, data.zoom);
         state
@@ -158,7 +163,7 @@ MapLocationState.fromString = function (location) {
     });
 
     return new MapLocationState({
-        center: params.center.split(',').map(MapLocationState.toCoords),
+        center: params.center.split(',').map(MapLocationState.toFixedNumber),
         zoom: Number(params.zoom),
         type: params.type || 'yandex#map'
     });
@@ -172,6 +177,6 @@ MapLocationState.fromString = function (location) {
  * @param {String|Number} i
  * @returns {Number} Число с 6-ю цифрами поле точки.
  */
-MapLocationState.toCoords = function (i) {
+MapLocationState.toFixedNumber = function (i) {
     return Number(i).toFixed(6);
 };
