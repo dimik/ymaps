@@ -51,7 +51,7 @@
 function MapLocation(map, state) {
     this._map = map;
     this._state = state;
-    this._silent = false;
+    this._freeze = false;
 
     map.events.add(['boundschange', 'typechange'], this._onStateChange, this);
 }
@@ -63,8 +63,8 @@ function MapLocation(map, state) {
 MapLocation.prototype._onStateChange = function (e) {
     var oldState = this._state;
 
-    if(this._silent) {
-        this._silent = false;
+    if(this._freeze) {
+        this._freeze = false;
     }
     else {
         this._state = new MapLocationState({
@@ -109,7 +109,8 @@ MapLocation.prototype.setState = function (data) {
     var map = this._map,
         state = this._state;
 
-    this._silent = true;
+    // Не кидаем событие "locationstatechange"
+    this._freeze = true;
 
     // Если тип карты не изменился значит изменился центр или масштаб.
     if(data.type === state.get('type')) {
