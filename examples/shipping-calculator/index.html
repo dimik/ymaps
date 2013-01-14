@@ -21,37 +21,72 @@ function init() {
             noPlacemark: true
         });
 
-    var calculator = new ShippingCalculator(myMap, myMap.getCenter());
-
     var tarifs = [{
             name: "Москва",
+            area: {
+                type: "Polygon",
+                url: "http://maps.yandex.ru/export/usermaps/Ik1vpVgikUAKRVdtokML99zzhBLlN7BK/",
+                has: function (step) {
+                    return this.geometry.contains(step.end_location) && !step.street.match(/МКАД/ig);
+                }
+            },
             cost: 20
         }, {
             name: "Московская область",
-            cost: 40,
-            pattern: "МКАД"
+            area: {
+                type: "Polygon",
+                url: "http://maps.yandex.ru/export/usermaps/K7PmDPE5MeWZw-O-x6zhZ1zboyf5YDR6/",
+                has: function (step) {
+                    return this.geometry.contains(step.end_location) || step.street.match(/МКАД/ig);
+                }
+            },
+            cost: 40
         }];
+
+    var calculator = new ShippingCalculator(myMap, myMap.getCenter(), tarifs);
 
     myMap.controls.add(search, { right: 5, top: 5 });
 
-    search.events.add('resultselect', function (e) {
-        var results = search.getResultsArray(),
-            selected = e.get('resultIndex'),
-            point = results[selected].geometry.getCoordinates();
+    calculator.ready(function () {
+        search.events.add('resultselect', function (e) {
+            var results = search.getResultsArray(),
+                selected = e.get('resultIndex'),
+                point = results[selected].geometry.getCoordinates();
 
-        calculator.setDestination(point);
+                calculator.setDestination(point);
+        });
     });
 }
 
-function ShippingCalculator(map, origin) {
+function ShippingCalculator(map, origin, tarifs) {
     this._map = map;
     this._routeService = new DirectionsService({ avoidTrafficJams: true });
     this._routeRenderer = new DirectionsRenderer({ draggable: true, map: map });
     this._origin = origin;
+    this._tarifs = tarifs;
 }
 
 ShippingCalculator.prototype = {
     constructor: ShippingCalculator,
+    ready: function (cb) {
+        var map = this._map,
+            tarifs = this._tarifs,
+            count = tarifs.length;
+
+        tarifs.forEach(function (tarif) {
+            ymaps.geoXml.load(tarif.area.url)
+                .then(function (res) {
+                    var geometry = res.geoObjects.get(0).geometry;
+
+                    geometry.setMap(map);
+                    geometry.options.setParent(map.options);
+                    tarif.area.geometry = geometry;
+                    if(--count == 0) {
+                        cb();
+                    }
+                });
+        });
+    },
     _onDestinationChange: function (e) {
         this.setDestination(e.get('coordPosition'));
     },
@@ -60,6 +95,7 @@ ShippingCalculator.prototype = {
 
         this._routeService.route(request, function (result) {
             self._routeRenderer.setDirections(result);
+            self.calculate(result.routes[0]);
         });
     },
     setDestination: function (position) {
@@ -75,12 +111,52 @@ ShippingCalculator.prototype = {
             destination: position // this._destination.geometry.getCoordinates()
         });
     },
-    calculate: function (len) {
+    calculate: function (route) {
         // Константы.
-        var DELIVERY_TARIF = 20,
-            MINIMUM_COST = 500;
+        var coordSystem = this._map.options.get('projection').getCoordSystem(),
+            MINIMUM_COST = 300,
+            tarifs = this._tarifs,
+            tarif, i = 0,
+            results = tarifs.map(function (tarif) {
+                return {
+                    name: tarif.name,
+                    distance: 0,
+                    cost: 0
+                };
+            });
 
-        return Math.max(len * DELIVERY_TARIF, MINIMUM_COST);
+        route.legs.forEach(function (leg) {
+            leg.steps.forEach(function (step) {
+                while(tarif = tarifs[i]) {
+                    var distance = 0;
+
+                    console.log(tarif.area.has(step), !tarif.area.geometry.contains(step.start_location), tarif.name, step.street);
+                    if(tarif.area.has(step)) {
+                        distance = step.distance;
+                    }
+                    else if(!tarif.area.geometry.contains(step.start_location)) {
+                        distance = step.path.reduce(function (distance, point, index, path) {
+                            return tarif.area.geometry.contains(point) ?
+                                distance + coordSystem.getDistance(path[index - 1] || point, point) :
+                                distance;
+                        }, distance);
+
+                        if(results[i - 1]) {
+                            console.log('diff', step.distance - distance);
+                            results[i - 1].distance += (step.distance - distance) / 1000;
+                        }
+                    }
+                    results[i].distance += (distance /= 1000);
+                    results[i].cost += distance * tarif.cost;
+                    break;
+
+                    i += 1;
+                }
+            });
+        });
+
+        console.log(results);
+        // return Math.max(len * DELIVERY_TARIF, MINIMUM_COST);
     }
 };
 
