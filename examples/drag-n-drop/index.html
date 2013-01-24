@@ -33,13 +33,15 @@
                 // Будем перетаскивать в режиме копирования (броузер добавит "+" при перетаскивании)
                 e.dataTransfer.effectAllowed = 'copy';
                 // Кладем в данные идентификатор метки.
-                e.dataTransfer.setData('Text', this.id);
+                e.dataTransfer.setData('TEXT', this.id);
                 // Перетаскиваем за хвостик иконки
                 // и сделаем ее прозрачной если это не FF.
-                var dragIcon = $.browser.mozilla || $.browser.opera ? this :
-                    $(this).clone().css('opacity', '0.3').get(0);
+                if(typeof e.dataTransfer.setDragImage === 'function') {
+                    var dragIcon = $.browser.mozilla || $.browser.opera ? this :
+                        $(this).clone().css('opacity', '0.3').get(0);
 
-                e.dataTransfer.setDragImage(dragIcon, this.width / 2, this.height);
+                    e.dataTransfer.setDragImage(dragIcon, this.width / 2, this.height);
+                }
             });
 
             $mapContainer
