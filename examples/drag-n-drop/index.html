@@ -8,72 +8,73 @@
     <script src="https://raw.github.com/dimik/ymaps/master/drag-scroll-behavior.js" type="text/javascript"></script>
     <script src="//api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
     <script type="text/javascript">
-        ymaps.ready(function () {
-            // Создание экземпляра карты и его привязка к созданному контейнеру.
-            var myMap = new ymaps.Map("YMapsID", {
-                    center: [55.755768, 37.617671], // Москва
-                    zoom: 10,
-                    behaviors: ["default", "scrollZoom"]
-                }),
-                // DOM-контейнер карты.
-                $mapContainer = $(myMap.container.getElement());
+        $(function () {
+            ymaps.ready(function () {
+                // Создание экземпляра карты и его привязка к созданному контейнеру.
+                var myMap = new ymaps.Map("YMapsID", {
+                        center: [55.755768, 37.617671], // Москва
+                        zoom: 10,
+                        behaviors: ["default", "scrollZoom"]
+                    }),
+                    // DOM-контейнер карты.
+                    $mapContainer = $(myMap.container.getElement());
 
-            // Добавляем поведение в хранилище.
-            ymaps.behavior.storage.add('dragScroll', DragScrollBehavior);
-            // Включаем скролл карты при перетаскивании.
-            myMap.behaviors.enable('dragScroll');
+                // Добавляем поведение в хранилище.
+                ymaps.behavior.storage.add('dragScroll', DragScrollBehavior);
+                // Включаем скролл карты при перетаскивании.
+                myMap.behaviors.enable('dragScroll');
 
-            /**
-             * Добавим свойство dataTransfer в объект-событие,
-             * чтобы не доставать его каждый раз из e.originalEvent.
-             */
-            $.event.props.push('dataTransfer');
+                /**
+                 * Добавим свойство dataTransfer в объект-событие,
+                 * чтобы не доставать его каждый раз из e.originalEvent.
+                 */
+                $.event.props.push('dataTransfer');
 
-            $('.icon').on('dragstart', function (e) {
-                // Будем перетаскивать в режиме копирования (броузер добавит "+" при перетаскивании)
-                e.dataTransfer.effectAllowed = 'copy';
-                // Кладем в данные идентификатор метки.
-                e.dataTransfer.setData('TEXT', this.id);
-                // Перетаскиваем за хвостик иконки
-                // и сделаем ее прозрачной если это не FF.
-                if(typeof e.dataTransfer.setDragImage === 'function') {
-                    var dragIcon = $.browser.mozilla || $.browser.opera ? this :
-                        $(this).clone().css('opacity', '0.3').get(0);
+                $('.icon').on('dragstart', function (e) {
+                    // Будем перетаскивать в режиме копирования (броузер добавит "+" при перетаскивании)
+                    e.dataTransfer.effectAllowed = 'copy';
+                    // Кладем в данные идентификатор метки.
+                    e.dataTransfer.setData('TEXT', this.id);
+                    // Перетаскиваем за хвостик иконки
+                    // и сделаем ее прозрачной если это не FF.
+                    if(typeof e.dataTransfer.setDragImage === 'function') {
+                        var dragIcon = $.browser.mozilla || $.browser.opera ? this :
+                            $(this).clone().css('opacity', '0.3').get(0);
 
-                    e.dataTransfer.setDragImage(dragIcon, this.width / 2, this.height);
-                }
-            });
-
-            $mapContainer
-                .on('dragover', function (e) {
-                    // Эта инструкция разрешает перетаскивание.
-                    e.preventDefault();
-                    // dropEffect должен совпадать с effectAllowed.
-                    e.dataTransfer.dropEffect = 'copy';
-                })
-                .on('drop', function (e) {
-                    // не работает в FF =) поэтому делаем return false вконце
-                    // e.stopPropagation();
-
-                    // Находим DOM-элемент иконки по идентификатору из данных.
-                    var icon = $('#' + e.dataTransfer.getData('TEXT')),
-                        // Размеры иконки.
-                        width = icon.width(), height = icon.height(),
-                        // Геокоординаты метки.
-                        coordinates = pageToGeo([e.originalEvent.pageX, e.originalEvent.pageY]),
-                        // Объект опций метки.
-                        options = {
-                            iconImageHref: icon.attr('src'),
-                            iconImageSize: [width, height],
-                            iconImageOffset: [-(width / 2), -height],
-                            draggable: true
-                        };
-
-                    // Создаем метку и добавляем ее на карту.
-                    myMap.geoObjects.add(createPlacemark(coordinates, options));
-
-                    return false;
+                        e.dataTransfer.setDragImage(dragIcon, this.width / 2, this.height);
+                    }
                 });
+
+                $mapContainer
+                    .on('dragover', function (e) {
+                        // Эта инструкция разрешает перетаскивание.
+                        e.preventDefault();
+                        // dropEffect должен совпадать с effectAllowed.
+                        e.dataTransfer.dropEffect = 'copy';
+                    })
+                    .on('drop', function (e) {
+                        // не работает в FF =) поэтому делаем return false вконце
+                        // e.stopPropagation();
+
+                        // Находим DOM-элемент иконки по идентификатору из данных.
+                        var icon = $('#' + e.dataTransfer.getData('TEXT')),
+                            // Размеры иконки.
+                            width = icon.width(), height = icon.height(),
+                            // Геокоординаты метки.
+                            coordinates = pageToGeo([e.originalEvent.pageX, e.originalEvent.pageY]),
+                            // Объект опций метки.
+                            options = {
+                                iconImageHref: icon.attr('src'),
+                                iconImageSize: [width, height],
+                                iconImageOffset: [-(width / 2), -height],
+                                draggable: true
+                            };
+
+                        // Создаем метку и добавляем ее на карту.
+                        myMap.geoObjects.add(createPlacemark(coordinates, options));
+
+                        return false;
+                    });
 
                 // Создаем метку.
                 function createPlacemark(coordinates, options) {
@@ -116,6 +117,7 @@
                         myMap.converter.pageToGlobal(coords), myMap.getZoom()
                     );
                 }
+            });
         });
     </script>
     <style type="text/css">
