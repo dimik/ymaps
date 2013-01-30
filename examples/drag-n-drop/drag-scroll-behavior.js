@@ -17,9 +17,6 @@ function DragScrollBehavior() {
     this.options = new ymaps.option.Manager();
     // Менеджер событий
     this.events = new ymaps.event.Manager();
-
-    this._lastDiffX = null;
-    this._lastDiffY = null;
 }
 
 DragScrollBehavior.prototype = {
@@ -35,7 +32,6 @@ DragScrollBehavior.prototype = {
      */
     enable: function () {
         this._$mapContainer.on('dragover', $.proxy(this._onDragOver, this));
-        this._$mapContainer.on('drop', $.proxy(this._onDrop, this));
     },
     /**
      * Выключает поведение.
@@ -44,9 +40,7 @@ DragScrollBehavior.prototype = {
      * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/IBehavior.xml#disable
      */
     disable: function () {
-        this._$mapContainer
-            .off('dragover')
-            .off('drop');
+        this._$mapContainer.off('dragover');
     },
     /**
      * Устанавливает поведению родителя.
@@ -84,51 +78,20 @@ DragScrollBehavior.prototype = {
      */
     _onDragOver: function (e) {
         if(!this._timeoutId) {
-            var self = this,
-                event = e.originalEvent,
-                mapCenterX = this._$mapContainer.width() / 2,
-                mapCenterY = this._$mapContainer.height() / 2,
-                diffX = Math.abs(mapCenterX - (event.offsetX || event.layerX)),
-                diffY = Math.abs(mapCenterY - (event.offsetY || event.layerY)),
-                // Имперический порог сдвига.
-                boundary = 3;
+            var self = this;
 
-            if(this._lastDiffX == null && this._lastDiffY == null) {
-                this._lastDiffX = diffX;
-                this._lastDiffY = diffY;
+            this._timeoutId = window.setTimeout(function () {
+                var coords = self._pageToGeo([e.originalEvent.pageX, e.originalEvent.pageY]);
 
-                return;
-            }
+                self._map.panTo(coords, {
+                    delay: 0,
+                    timing: 'linear'
+                    // callback: ymaps.util.bind(self._clearMove, self)
+                });
 
-            if(diffX > this._lastDiffX + boundary || diffY > this._lastDiffY + boundary) {
-                this._timeoutId = window.setTimeout(function () {
-                    var coords = self._pageToGeo([event.pageX, event.pageY]);
-
-                    self._map.panTo(coords, {
-                        delay: 0,
-                        timing: 'linear'
-                        // callback: ymaps.util.bind(self._clearMove, self)
-                    });
-
-                    self._clearMove();
-                }, 30);
-            }
-
-            this._lastDiffX = diffX;
-            this._lastDiffY = diffY;
+                self._clearMove();
+            }, 30);
         }
-    },
-    /**
-     * Обработчик события "drop".
-     * @see http://www.w3.org/TR/2011/WD-html5-20110113/dnd.html#event-drop
-     * @private
-     * @function
-     * @name DragScrollBehavior._onDrop
-     * @param {Object} e Объект-событие jQuery.
-     */
-    _onDrop: function () {
-        this._lastDiffX = null;
-        this._lastDiffY = null;
     },
     /**
      * Отмена обработчика по таймауту.
