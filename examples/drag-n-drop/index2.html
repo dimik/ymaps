@@ -39,7 +39,9 @@
                 var dragIcon = $.browser.mozilla || $.browser.opera ? this :
                     $(this).clone().css('opacity', '0.3').get(0);
 
-                e.dataTransfer.setDragImage(dragIcon, this.width / 2, this.height);
+                if(typeof e.dataTransfer.setDragImage === 'function') {
+                    e.dataTransfer.setDragImage(dragIcon, this.width / 2, this.height);
+                }
             });
 
             $mapContainer

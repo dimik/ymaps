@@ -8,6 +8,7 @@
 <script src="https://raw.github.com/dimik/ymaps/master/multi-geocoder.js" type="text/javascript"></script>
 <script src="https://raw.github.com/dimik/ymaps/master/directions-renderer.js" type="text/javascript"></script>
 <script src="https://raw.github.com/dimik/ymaps/master/directions-service.js" type="text/javascript"></script>
+<script src="tarifs.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 function init() {
@@ -23,40 +24,17 @@ function init() {
             noPlacemark: true
         });
 
-    var tarifs = [{
-            name: "Москва",
-            area: {
-                type: "Polygon",
-                url: "http://maps.yandex.ru/export/usermaps/Ik1vpVgikUAKRVdtokML99zzhBLlN7BK/",
-                has: function (step) {
-                    return this.geometry.contains(step.end_location) && !step.street.match(/МКАД/ig);
-                }
-            },
-            cost: 20
-        }, {
-            name: "Московская область",
-            area: {
-                type: "Polygon",
-                url: "http://maps.yandex.ru/export/usermaps/K7PmDPE5MeWZw-O-x6zhZ1zboyf5YDR6/",
-                has: function (step) {
-                    return this.geometry.contains(step.end_location) || step.street.match(/МКАД/ig);
-                }
-            },
-            cost: 40
-        }];
 
     var calculator = new ShippingCalculator(myMap, myMap.getCenter(), tarifs);
 
     myMap.controls.add(search, { right: 5, top: 5 });
 
-    calculator.ready(function () {
-        search.events.add('resultselect', function (e) {
-            var results = search.getResultsArray(),
-                selected = e.get('resultIndex'),
-                point = results[selected].geometry.getCoordinates();
+    search.events.add('resultselect', function (e) {
+        var results = search.getResultsArray(),
+            selected = e.get('resultIndex'),
+            point = results[selected].geometry.getCoordinates();
 
-                calculator.setDestination(point);
-        });
+            calculator.setDestination(point);
     });
 }
 
@@ -66,29 +44,19 @@ function ShippingCalculator(map, origin, tarifs) {
     this._routeRenderer = new DirectionsRenderer({ draggable: true, map: map });
     this._origin = origin;
     this._tarifs = tarifs;
+
+    tarifs.forEach(function (tarif) {
+        var geometry = new ymaps.geometry.Polygon(tarif.coordinates);
+
+        geometry.setMap(map);
+        geometry.options.setParent(map.options);
+
+        tarif.geometry = geometry;
+    });
 }
 
 ShippingCalculator.prototype = {
     constructor: ShippingCalculator,
-    ready: function (cb) {
-        var map = this._map,
-            tarifs = this._tarifs,
-            count = tarifs.length;
-
-        tarifs.forEach(function (tarif) {
-            ymaps.geoXml.load(tarif.area.url)
-                .then(function (res) {
-                    var geometry = res.geoObjects.get(0).geometry;
-
-                    geometry.setMap(map);
-                    geometry.options.setParent(map.options);
-                    tarif.area.geometry = geometry;
-                    if(--count == 0) {
-                        cb();
-                    }
-                });
-        });
-    },
     _onDestinationChange: function (e) {
         this.setDestination(e.get('coordPosition'));
     },
@@ -96,7 +64,7 @@ ShippingCalculator.prototype = {
         var self = this;
 
         this._routeService.route(request, function (result) {
-            self._routeRenderer.setDirections(result);
+            // self._routeRenderer.setDirections(result);
             self.calculate(result.routes[0]);
         });
     },
@@ -110,15 +78,75 @@ ShippingCalculator.prototype = {
 
         this.getDirections({
             origin: this._origin,
-            destination: position // this._destination.geometry.getCoordinates()
+            destination: position
         });
+    },
+    _getDistance: function (tarif, step) {
+        var geometry = tarif.geometry;
+            coordSystem = this._map.options.get('projection').getCoordSystem();
+
+        console.log(tarif.name, step.street, tarif.test(step), geometry.contains(step.start_location), geometry.contains(step.end_location));
+
+        if(tarif.test(step)) {
+            this._map.geoObjects.add(new ymaps.Polyline(step.path, {}, {
+                strokeColor: tarif.name == 'Москва' && '#ff0000' || '#00ff00',
+                strokeWidth: 2
+            }));
+            return step.distance;
+        }
+        else if(geometry.contains(step.start_location) || geometry.contains(step.end_location)) {
+            var self = this;
+
+            return step.distance - step.path.reduce(function (distance, point, index, path) {
+                if(tarif.geometry.contains(point)) {
+                    self._map.geoObjects.add(new ymaps.Polyline([path[index - 1] || point, point], {}, {
+                        strokeColor: tarif.name == 'Москва' && '#ff0000' || '#00ff00',
+                        strokeWidth: 2
+                    }));
+                }
+                return tarif.geometry.contains(point) ?
+                    distance + coordSystem.getDistance(path[index - 1] || point, point) :
+                    distance;
+            }, 0);
+        }
+
+        return 0;
+    },
+    getRoutesByTarifs: function (result) {
+        var tarifs = this._tarifs,
+            routes = [],
+            legs = [];
+
+        tarifs.forEach(function (tarif) {
+            var route = { distance: 0, bounds: null },
+                leg = { steps: [] };
+
+            result.routes[0].legs[0].steps.forEach(function (step) {
+                if(tarif.test(step)) {
+                    leg.steps.push(step);
+                }
+                else {
+                    var path = [];
+
+                    step.path.forEach(function (point) {
+                        if(tarif.geometry.contains(point)) {
+                            path.push(point);
+                        }
+                    });
+                }
+            }, this);
+
+            this._map.geoObjects.add(new ymaps.Polyline(points, {}, { strokeColor: tarif.color }));
+        }, this);
+
+        console.log(results);
+        // return Math.max(len * DELIVERY_TARIF, MINIMUM_COST);
     },
     calculate: function (route) {
         // Константы.
-        var coordSystem = this._map.options.get('projection').getCoordSystem(),
             MINIMUM_COST = 300,
             tarifs = this._tarifs,
-            tarif, i = 0,
+            leg = legs[0],
             results = tarifs.map(function (tarif) {
                 return {
                     name: tarif.name,
@@ -127,35 +155,26 @@ ShippingCalculator.prototype = {
                 };
             });
 
-        route.legs.forEach(function (leg) {
+        console.log(route);
+
+        tarifs.forEach(function (tarif) {
+            var points = [];
+
             leg.steps.forEach(function (step) {
-                while(tarif = tarifs[i]) {
-                    var distance = 0;
-
-                    console.log(tarif.area.has(step), !tarif.area.geometry.contains(step.start_location), tarif.name, step.street);
-                    if(tarif.area.has(step)) {
-                        distance = step.distance;
-                    }
-                    else if(!tarif.area.geometry.contains(step.start_location)) {
-                        distance = step.path.reduce(function (distance, point, index, path) {
-                            return tarif.area.geometry.contains(point) ?
-                                distance + coordSystem.getDistance(path[index - 1] || point, point) :
-                                distance;
-                        }, distance);
-
-                        if(results[i - 1]) {
-                            console.log('diff', step.distance - distance);
-                            results[i - 1].distance += (step.distance - distance) / 1000;
-                        }
-                    }
-                    results[i].distance += (distance /= 1000);
-                    results[i].cost += distance * tarif.cost;
-                    break;
-
-                    i += 1;
+                if(tarif.test(step)) {
+                    points = points.concat(step.path);
                 }
-            });
-        });
+                else {
+                    step.path.forEach(function (point) {
+                        if(tarif.geometry.contains(point)) {
+                            points.push(point);
+                        }
+                    });
+                }
+            }, this);
+
+            this._map.geoObjects.add(new ymaps.Polyline(points, {}, { strokeColor: tarif.color }));
+        }, this);
 
         console.log(results);
         // return Math.max(len * DELIVERY_TARIF, MINIMUM_COST);
