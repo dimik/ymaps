@@ -33,7 +33,7 @@
                     build: function () {
                         this.constructor.superclass.build.call(this);
 
-                        this.$element = $(this.getParentElement()).children('.popover');
+                        this.$element = $(this.getParentElement()).find('.popover');
                         this.setElementOffset();
 
                         this.$element.find('.close').on('click', $.proxy(this.onCloseClick, this));
