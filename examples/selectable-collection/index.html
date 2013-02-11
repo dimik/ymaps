@@ -15,54 +15,75 @@
         SelectableCollection.superclass.constructor.apply(this, arguments);
 
         this._rect = null;
-        this._selected = new ymaps.GeoObjectCollection(null, { preset: 'twirl#redIcon' });
+        this._selected = new ymaps.GeoObjectCollection(null, SelectableCollection.markerOptions);
 
         this.state.events.add('change', function (e) {
             var selecting = this.state.get('selecting');
 
             if(selecting != null) {
-                selecting ? this._attachHandlers() : this._detachHandlers();
+                if(selecting) {
+                    this._attachHandlers();
+                }
+                else {
+                    this._detachHandlers();
+                }
             }
         }, this);
     }
 
+    SelectableCollection.markerOptions = { preset: 'twirl#redIcon' };
+    SelectableCollection.rectangleOptions = { fill: false };
+
     ymaps.ready(function () {
         ymaps.util.augment(SelectableCollection, ymaps.GeoObjectCollection, {
             _attachHandlers: function () {
-                this.getMap().events.add('mousedown', this._onMapMouseDown, this);
-                this.getMap().events.add('mousemove', this._onMapMouseMove, this);
+                this._map = this.getMap();
+                this._map.geoObjects.add(this._selected);
+
+                this._map.events.add('mousedown', this._onMapMouseDown, this);
+                this._map.events.add('mousemove', this._onMapMouseMove, this);
+                this._map.geoObjects.add(this._selected);
             },
             _detachHandlers: function () {
-                this.getMap().events.remove('mousedown', this._onMapMouseDown, this);
-                this.getMap().events.remove('mousemove', this._onMapMouseDown, this);
+                this._map.events.remove('mousedown', this._onMapMouseDown, this);
+                this._map.events.remove('mousemove', this._onMapMouseDown, this);
+                this._map.geoObjects.remove(this._selected);
             },
             _onMapMouseDown: function (e) {
-                var map = this.getMap(),
-                    coords = this._pageToGeo(e.get('position'));
+                var coords = this._pageToGeo(e.get('position'));
 
-                this._rect = new ymaps.Rectangle([coords, coords]);
-                map.geoObjects.add(this._rect);
+                this._rect = new ymaps.Rectangle([coords, coords], SelectableCollection.rectangleOptions);
+                this._map.geoObjects.add(this._rect);
 
-                this.getMap().events.once('mouseup', this._onMapMouseUp, this);
+                this._map.events.once('mouseup', this._onMapMouseUp, this);
             },
             _onMapMouseMove: function (e) {
                 if(!this._rect) {
                     return;
                 }
 
-                var map = this.getMap(),
-                    oldCoords = this._rect.geometry.getCoordinates(),
+                var oldCoords = this._rect.geometry.getCoordinates(),
                     newCoords = [oldCoords[0], this._pageToGeo(e.get('position'))];
 
                 this._rect.geometry.setCoordinates(newCoords);
+                this.each(this._isSelected, this);
+                this._selected.each(this._isSelected, this);
+            },
+            _isSelected: function (geoObject) {
+                if(this._rect.geometry.contains(geoObject.geometry.getCoordinates())) {
+                    this._selected.add(geoObject);
+                }
+                else {
+                    this.add(geoObject);
+                }
             },
             _onMapMouseUp: function (e) {
-                var map = this.getMap();
-
                 console.log('uppppp'); // не срабатывает если слушаем mousemove.
 
-                map.geoObjects.remove(this._rect);
-                this._rect = null;
+                if(this._rect) {
+                    this._map.geoObjects.remove(this._rect);
+                    this._rect = null;
+                }
             },
             /**
              * Преобразует пиксельные координаты страницы в геокоординаты.
@@ -75,8 +96,6 @@
             _pageToGeo: function (coords) {
                 var map = this.getMap(),
                     projection = map.options.get('projection');
-
-                console.log(coords);
 
                 return projection.fromGlobalPixels(
                     map.converter.pageToGlobal(coords), map.getZoom()
@@ -96,9 +115,14 @@
         myMap.geoObjects.add(myCollection);
 
         myCollection
-            .add(new ymaps.Placemark([55.751574, 37.573856]));
+            .add(new ymaps.Placemark([55.751574, 37.523856]))
+            .add(new ymaps.Placemark([55.781574, 37.563856]))
+            .add(new ymaps.Placemark([55.731574, 37.543856]))
+            .add(new ymaps.Placemark([55.761574, 37.593856]))
+            .add(new ymaps.Placemark([55.711574, 37.513856]))
+            .add(new ymaps.Placemark([55.791574, 37.533856]));
 
-        myCollection.state.set({ selecting: true });
+        myCollection.state.set('selecting', true);
     });
     </script>
     <style type="text/css">
