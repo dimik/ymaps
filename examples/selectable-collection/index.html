@@ -52,7 +52,7 @@
             _onMapMouseDown: function (e) {
                 var coords = this._pageToGeo(e.get('position'));
 
-                this._rect = new ymaps.Rectangle([coords, coords], SelectableCollection.rectangleOptions);
+                this._rect = new ymaps.Rectangle([coords, coords], null, SelectableCollection.rectangleOptions);
                 this._map.geoObjects.add(this._rect);
 
                 this._map.events.once('mouseup', this._onMapMouseUp, this);
