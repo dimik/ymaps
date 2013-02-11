@@ -34,7 +34,7 @@
                         this.constructor.superclass.build.call(this);
 
                         this.$element = $(this.getParentElement()).find('.popover');
-                        this.setElementOffset();
+                        this.applyElementOffset();
 
                         this.$element.find('.close').on('click', $.proxy(this.onCloseClick, this));
                     },
@@ -60,7 +60,7 @@
                     onSublayoutSizeChange: function () {
                         MyBalloonLayout.superclass.onSublayoutSizeChange.apply(this, arguments);
 
-                        this.setElementOffset();
+                        this.applyElementOffset();
                         this.events.fire('boundschange');
                     },
 
@@ -68,9 +68,9 @@
                      * Сдвигаем балун чтобы "хвостик" указывал на точку привязки.
                      * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/IBalloonLayout.xml#event-userclose
                      * @function
-                     * @name setElementOffset
+                     * @name applyElementOffset
                      */
-                    setElementOffset: function () {
+                    applyElementOffset: function () {
                         this.$element.css({
                             left: -(this.$element[0].offsetWidth / 2),
                             top: -(this.$element[0].offsetHeight + this.$element.find('.arrow')[0].offsetHeight)
