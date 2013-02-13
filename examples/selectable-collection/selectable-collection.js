@@ -4,7 +4,6 @@ function SelectableCollection() {
     this._selectedArea = null;
     this._selected = new ymaps.GeoObjectCollection(null, SelectableCollection.markerOptions);
     this.state.events.add('change', this._onCollectionStateChange, this);
-    this.state.events.add('change', this._onCollectionStateChange, this);
     this.events.add('mapchange', this._onMapChange, this);
 }
 
