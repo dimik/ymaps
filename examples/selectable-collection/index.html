@@ -2,126 +2,35 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Примеры. Создание метки с диалогом подтверждения.</title>
+    <title>Примеры. Выделение меток прямоугольником с помощью мыши.</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
     <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug" type="text/javascript"></script>
+    <script src="selectable-collection.js" type="text/javascript"></script>
+    <script src="points-generator.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-    function SelectableCollection() {
-        SelectableCollection.superclass.constructor.apply(this, arguments);
-
-        this._rect = null;
-        this._selected = new ymaps.GeoObjectCollection(null, SelectableCollection.markerOptions);
-
-        this.state.events.add('change', function (e) {
-            var selecting = this.state.get('selecting');
-
-            if(selecting != null) {
-                if(selecting) {
-                    this._attachHandlers();
-                }
-                else {
-                    this._detachHandlers();
-                }
-            }
-        }, this);
-    }
-
-    SelectableCollection.markerOptions = { preset: 'twirl#redIcon' };
-    SelectableCollection.rectangleOptions = { fill: false };
-
-    ymaps.ready(function () {
-        ymaps.util.augment(SelectableCollection, ymaps.GeoObjectCollection, {
-            _attachHandlers: function () {
-                this._map = this.getMap();
-                this._map.geoObjects.add(this._selected);
-
-                this._map.events.add('mousedown', this._onMapMouseDown, this);
-                this._map.events.add('mousemove', this._onMapMouseMove, this);
-                this._map.geoObjects.add(this._selected);
-            },
-            _detachHandlers: function () {
-                this._map.events.remove('mousedown', this._onMapMouseDown, this);
-                this._map.events.remove('mousemove', this._onMapMouseDown, this);
-                this._map.geoObjects.remove(this._selected);
-            },
-            _onMapMouseDown: function (e) {
-                var coords = this._pageToGeo(e.get('position'));
-
-                this._rect = new ymaps.Rectangle([coords, coords], null, SelectableCollection.rectangleOptions);
-                this._map.geoObjects.add(this._rect);
-
-                this._map.events.once('mouseup', this._onMapMouseUp, this);
-            },
-            _onMapMouseMove: function (e) {
-                if(!this._rect) {
-                    return;
-                }
-
-                var oldCoords = this._rect.geometry.getCoordinates(),
-                    newCoords = [oldCoords[0], this._pageToGeo(e.get('position'))];
-
-                this._rect.geometry.setCoordinates(newCoords);
-                this.each(this._isSelected, this);
-                this._selected.each(this._isSelected, this);
-            },
-            _isSelected: function (geoObject) {
-                if(this._rect.geometry.contains(geoObject.geometry.getCoordinates())) {
-                    this._selected.add(geoObject);
-                }
-                else {
-                    this.add(geoObject);
-                }
-            },
-            _onMapMouseUp: function (e) {
-                console.log('uppppp'); // не срабатывает если слушаем mousemove.
-
-                if(this._rect) {
-                    this._map.geoObjects.remove(this._rect);
-                    this._rect = null;
-                }
-            },
-            /**
-             * Преобразует пиксельные координаты страницы в геокоординаты.
-             * @private
-             * @function
-             * @name DragScrollBehavior._pageToGeo
-             * @param {Number[]} coords Пиксельные координаты мыши при перетаскивании.
-             * @returns {Number[]} Геокоординаты в текущей проекции карты.
-             */
-            _pageToGeo: function (coords) {
-                var map = this.getMap(),
-                    projection = map.options.get('projection');
-
-                return projection.fromGlobalPixels(
-                    map.converter.pageToGlobal(coords), map.getZoom()
-                );
-            }
-        });
-    });
-
     ymaps.ready(function () {
         var myMap = new ymaps.Map('YMapsID', {
                 center: [55.751574, 37.573856],
                 zoom: 9,
                 behaviors: ['scrollZoom']
             }),
-            myCollection = new SelectableCollection();
+            myCollection = new SelectableCollection(),
+            generator = new RandomPointsGenerator(),
+            // Создаем 100 меток внутри области видимости карты.
+            points = generator.generate(100).atBounds(myMap.getBounds());
 
+        // Добавляем коллекцию на карту.
         myMap.geoObjects.add(myCollection);
 
-        myCollection
-            .add(new ymaps.Placemark([55.751574, 37.523856]))
-            .add(new ymaps.Placemark([55.781574, 37.563856]))
-            .add(new ymaps.Placemark([55.731574, 37.543856]))
-            .add(new ymaps.Placemark([55.761574, 37.593856]))
-            .add(new ymaps.Placemark([55.711574, 37.513856]))
-            .add(new ymaps.Placemark([55.791574, 37.533856]));
+        // Добавляем метки в коллекцию.
+        points.forEach(myCollection.add, myCollection);
 
+        // Включаем выделение меток.
         myCollection.state.set('selecting', true);
     });
     </script>
@@ -130,26 +39,12 @@
             width: 900px;
             height: 400px;
         }
-        .popover {
-            display: block;
-            width: 260px;
-            height: 100px;
-            padding: 10px;
-        }
-        .popover .close {
-            position: absolute;
-            right: 5px;
-            top: 1px;
-        }
-        .btn-success {
-            margin-left: 5px;
-        }
     </style>
 </head>
 <body>
     <div class="hero-unit">
         <div class="container">
-            <p>Создание метки с диалогом подтверждения.</p>
+            <p>Выделение меток прямоугольником с помощью мыши.</p>
             <div id="YMapsID"></div>
         </div>
     </div>
