@@ -54,8 +54,8 @@ ymaps.ready(function () {
             this._selectedArea = new ymaps.Rectangle([coords, coords], null, SelectableCollection.rectangleOptions);
             this._map.geoObjects.add(this._selectedArea);
 
-            this._map.events.once('mouseup', this._onMapMouseUp, this);
-            this._map.geoObjects.events.once('mouseup', this._onMapMouseUp, this);
+            this._map.events.add('mouseup', this._onMapMouseUp, this);
+            this._map.geoObjects.events.add('mouseup', this._onMapMouseUp, this);
         },
         _onMapMouseMove: function (e) {
             if(!this._selectedArea) {
@@ -82,6 +82,9 @@ ymaps.ready(function () {
                 this._map.geoObjects.remove(this._selectedArea);
                 this._selectedArea = null;
             }
+            // Отписываемся от всех mouseup-ов.
+            this._map.geoObjects.events.remove('mouseup', this._onMapMouseUp, this);
+            this._map.events.remove('mouseup', this._onMapMouseUp, this);
         }
     });
 });
