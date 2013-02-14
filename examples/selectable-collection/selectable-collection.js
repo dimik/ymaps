@@ -56,6 +56,7 @@ ymaps.ready(function () {
 
             this._map.events.add('mouseup', this._onMapMouseUp, this);
             this._map.geoObjects.events.add('mouseup', this._onMapMouseUp, this);
+            this._selected.each(this._isSelected, this);
         },
         _onMapMouseMove: function (e) {
             if(!this._selectedArea) {
@@ -70,7 +71,9 @@ ymaps.ready(function () {
             this._selected.each(this._isSelected, this);
         },
         _isSelected: function (geoObject) {
-            if(this._selectedArea.geometry.contains(geoObject.geometry.getCoordinates())) {
+            var coords = geoObject.geometry.getCoordinates();
+
+            if(this._selectedArea && this._selectedArea.geometry.contains(coords)) {
                 this._selected.add(geoObject);
             }
             else {
