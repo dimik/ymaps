@@ -28,7 +28,9 @@
         myMap.geoObjects.add(myCollection);
 
         // Добавляем метки в коллекцию.
-        points.forEach(myCollection.add, myCollection);
+        $.each(points, function (i, point) {
+            myCollection.add(point);
+        });
 
         // Включаем выделение меток.
         myCollection.state.set('selecting', true);
