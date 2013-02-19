@@ -57,7 +57,7 @@
                 '</div>', {
                 build: function () {
                     // Сначала вызываем метод build родительского класса.
-                    MainContentLayout.superclass.build.call(this);
+                    MyBalloonMainContentLayout.superclass.build.call(this);
 
                     // Нужно отслеживать, какой из пунктов левого меню выбран,
                     // чтобы обновлять содержимое правой части.
@@ -72,7 +72,7 @@
                     // Снимаем слушателей изменения полей.
                     this.stateListener.removeAll();
                     // А затем вызываем метод clear родительского класса.
-                    MainContentLayout.superclass.clear.call(this);
+                    MyBalloonMainContentLayout.superclass.clear.call(this);
                 },
 
                 onStateChange: function () {
