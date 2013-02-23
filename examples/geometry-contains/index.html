@@ -4,7 +4,7 @@
     <title>Пример определения попадания точки в область</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <script src="http://api-maps.yandex.ru/2.0.18/?load=package.standard,package.geoObjects&lang=ru-RU" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects&lang=ru-RU" type="text/javascript"></script>
 
     <script type="text/javascript">
         var myMap, myPointsColection, myGeoObjectsCollection;
@@ -23,8 +23,7 @@
 
             myGeoObjectsCollection
                 // Добавляем круг в коллекцию
-                // TODO: раскомментировать когда починят contains у круга
-                // .add(new ymaps.Circle([myMap.getCenter(), 10000], { pointColor: 'red' }, { strokeColor: "FF0000AA" }))
+                .add(new ymaps.Circle([myMap.getCenter(), 10000], { pointColor: 'red' }, { strokeColor: "FF0000AA" }))
                 // Добавляем прямоугольник в коллекцию
                 .add(new ymaps.Rectangle(myMap.getBounds(), { pointColor: 'green' }, { strokeColor: "00FF00AA" }))
                 // Добавляем полигон в коллекцию
@@ -91,4 +90,3 @@
 </body>
 
 </html>
-
