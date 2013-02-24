@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Получение контента балуна с помощью AJAX.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Подключение jQuery -->
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <!-- Подключение АПИ Яндекс.карт -->
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    <!-- Файл с данными для примера -->
+    <script src="data.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(init);
+
+        function init() {
+            var map = new ymaps.Map("YMapsID", {
+                    center: [62.42, 94.26], // Центр России
+                    zoom: 3
+                });
+
+            var myBalloonContentBodyLayout = ymaps.templateLayoutFactory.createClass(
+                    '<div>$[properties.body]</div>'
+                );
+
+            points.forEach(function (point) {
+                var coordinates = point.coords,
+                    properties = {
+                        name : point.name, // Это поле нам нужно передавать в AJAX запросе к серверу
+                        body : 'Идет загрузка данных для точки: <b>' + point.name + '</b>...' // Текст для индикации процесса загрузки (будет заменен на контент когда данные загрузятся)
+                    },
+                    options = {
+                        balloonContentBodyLayout : myBalloonContentBodyLayout
+                    },
+                    placemark = new ymaps.Placemark(coordinates, properties, options);
+
+                map.geoObjects.add(placemark);
+
+                placemark.events.add('click', onClick);
+            });
+
+        }
+
+        // Обработчик клика по метке.
+        function onClick(e) {
+            var placemark = e.get('target'),
+                map = placemark.getMap(), // Ссылка на карту.
+                bounds = map.getBounds(), // Область показа карты.
+                name = placemark.properties.get('name'); // Получаем данные для запроса из свойств метки.
+
+            setTimeout(function () { // Имитация задержки при загрузке данных
+                $.ajax('http://geocode-maps.yandex.ru/1.x/', {
+                    data : {
+                        "geocode" : name,
+                        "results" : 1,
+                        "format" : "json"
+                    },
+                    dataType : 'jsonp',
+                    success : function (json) {
+                        var geoObject = json.response.GeoObjectCollection.featureMember[0].GeoObject, // Первый результат.
+                            envelope = geoObject.boundedBy.Envelope, // Область показа объекта.
+                            text = geoObject.metaDataProperty.GeocoderMetaData.text, // Описание объекта.
+                            lowerCorner = $.map(envelope.lowerCorner.split(' '), Number).reverse(), // Левый нижний угол области показа.
+                            upperCorner = $.map(envelope.upperCorner.split(' '), Number).reverse(); // Правый верхний угол области показа.
+
+                        var content = $('<div><h3>' + text + '</h3></div>')
+                            .append(
+                                $('<a href="#" style="float:left">Увеличить</a>')
+                                    .bind('click', function (e) {
+                                        e.preventDefault();
+                                        map.setBounds([lowerCorner, upperCorner]);
+                                    })
+                            )
+                            .append(
+                                $('<a href="#" style="float:right">Вернуться</a>')
+                                    .bind('click', function (e) {
+                                        e.preventDefault();
+                                        map.setBounds(bounds);
+                                        placemark.balloon.close();
+                                    })
+                            )
+
+                        // Обновляем поле "body" у properties метки
+                        placemark.properties.set('body', content[0]);
+                    }
+                });
+            }, 3000);
+        }
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Получение контента балуна с помощью AJAX.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
