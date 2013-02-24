@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Смена значка метки при наведении.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        // Как только будет загружен API и готов DOM, выполняем инициализацию
+        ymaps.ready(init);
+
+        function init () {
+            var myMap = new ymaps.Map("YMapsID", {
+                center: [55.751574, 37.573856],
+                zoom: 9,
+                behaviors: ['default', 'scrollZoom']
+            }),
+            myPlacemark = new ymaps.Placemark(myMap.getCenter());
+
+            myMap.geoObjects.add(myPlacemark);
+
+            // Вариант с 2-мя обработчиками
+            myPlacemark.events.add('mouseenter', function (e) {
+                e.get('target') // myPlacemark
+                    .options.set('preset', 'twirl#greenIcon');
+            });
+            myPlacemark.events.add('mouseleave', function (e) {
+                e.get('target') // myPlacemark
+                    .options.unset('preset');
+            });
+
+            /*
+            // Вариант с одним обработчиком
+            myPlacemark.events.add(['mouseenter', 'mouseleave'], function (e) {
+                if(e.get('type') === 'mouseenter') {
+                    e.get('target').options.set('preset', 'twirl#greenIcon');
+                }
+                else {
+                    e.get('target').options.unset('preset');
+                }
+            });
+            */
+        }
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Смена значка метки при наведении.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
