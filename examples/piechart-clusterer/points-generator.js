@@ -56,7 +56,6 @@ RandomPointsGenerator.prototype.atBounds = function (bounds) {
 };
 
 /**
- * TODO
  * Генерит случайным образом маркеры внутри окружности с данным центром и радиусом.
  * @function
  * @name RandomPointsGenerator.atCenterAndRadius
@@ -64,7 +63,19 @@ RandomPointsGenerator.prototype.atBounds = function (bounds) {
  * @param {Number} radius Радиус окружности в метрах.
  * @returns {ymaps.Placemark[]} Массив маркеров.
  */
-RandomPointsGenerator.prototype.atCenterAndRadius = function (center, radius) {};
+RandomPointsGenerator.prototype.atCenterAndRadius = function (center, radius) {
+    var coordSystem = ymaps.coordSystem.geo,
+        distance, direction, coords, points = [];
+
+    for(var i = 0; i < this.count; i++) {
+        direction = [Math.random() - Math.random(), Math.random() - Math.random()];
+        distance = radius * Math.random();
+        coords = coordSystem.solveDirectProblem(center, direction, distance).endPoint;
+        points[i] = this.createMarker(coords, i);
+    }
+
+    return points;
+};
 
 /**
  * TODO
