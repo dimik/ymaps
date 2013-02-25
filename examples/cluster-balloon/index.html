@@ -8,50 +8,16 @@
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js" type="text/javascript"></script>
     <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug" type="text/javascript"></script>
     <script src="points-generator.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-var id = new function() {
-    /* Префикс, имеет три применения:
-         * как префикс при генерации уникальных id, он призван давать уникальность при каждом запуске страницы
-         * как имя свойства в котором хранятся id выданный объекту
-         * как id для window
-    */
-    var prefix = 'id_' + (new Date()).getTime() + Math.round(Math.random() * 10000),
-        counterId = 0;
-
-    function gen() {
-        return prefix + (++counterId);
-    }
-
-    /**
-     * @ignore
-     * Генерирует случайный ID. Возвращает результат в виде строки символов.
-     * @returns {String} ID
-     * @example
-     * util.id.gen(); // -> 'id_45654654654654'
-     */
-    this.gen = gen;
-
-
-    /**
-     * @ignore
-     * Генерирует id и присваивает его свойству id переданного объекта. Если свойство id объекта существует,
-     * то значение этого свойства не изменяется. Возвращает значение id в виде строки.
-     * @param {Object} object Объект
-     * @returns {String} ID
-     */
-    this.get = function(object) {
-        return object === window ? prefix : object[prefix] || (object[prefix] =  gen());
-    };
-};
-
     ymaps.ready(function () {
         var myMap = new ymaps.Map('YMapsID', {
                 center: [55.751574, 37.573856],
                 zoom: 9,
-                behaviors: ['scrollZoom']
+                behaviors: ['default', 'scrollZoom']
             }),
             generator = new RandomPointsGenerator(),
             MyBalloonLayout = ymaps.templateLayoutFactory.createClass(
@@ -60,23 +26,102 @@ var id = new function() {
                     '<div class="arrow"></div>' +
                     '<div class="popover-inner">' +
                         '<div class="tabbable tabs-left">' +
-                            '$[[options.sidebarLayout]]' +
-                            '<div class="tab-content">' +
-                                '$[[options.mainContentLayout]]' +
-                            '</div>' +
+                            '<ul class="nav nav-tabs"></ul>' +
+                            '<div class="tab-content"></div>' +
                         '</div>' +
                     '</div>' +
                 '</div>', {
                 build: function () {
                     var state = this.getData().state;
 
+                    this.geoObjects = this.getData().properties.get('geoObjects', [null]);
+                    this.activeObject = state.get('activeObject', this.geoObjects[0]);
+                    this.activeObjectIndex = this._findActiveObjectIndex();
+
                     if(!state.get('activeObject')) {
-                        state.set('activeObject', this.getData().properties.get('geoObjects', [null])[0]);
+                        state.set('activeObject', this.activeObject);
                     }
+                    this._loadMainContent(this.activeObject);
+                    // this._setActiveObject(this.activeObject);
+
                     this.constructor.superclass.build.call(this);
 
-                    this.$element = $(this.getParentElement()).find('.popover');
+                    this.$element = $('.popover', this.getParentElement());
+                    this.$closeButton = $('.close', this.getParentElement());
+                    this.$sidebar = $('.nav', this.getParentElement());
+                    this.$mainContent = $('.tab-content', this.getParentElement());
+                    this.sidebarTemplate = $('#sidebarTemplate').template('sidebarTemplate'),
+                    this.mainContentTemplate = $('#mainContentTemplate').template('mainContentTemplate'),
+                    // this.sidebarItemTemplate = $('#sidebarItemTemplate').template('sidebarItemTemplate');
                     this._applyElementOffset();
+                    this._createSidebarItems();
+                    this._attachListeners();
+                },
+                clear: function () {
+                    this._detachListeners();
+                    this._clearSidebarItems();
+                    this.constructor.superclass.clear.call(this);
+                },
+                _attachListeners: function () {
+                    this.$closeButton
+                        .on('click', $.proxy(this._onCloseButtonClick, this));
+                    this.$sidebar
+                        .delegate('li', 'click', $.proxy(this._onSidebarItemClick, this));
+                },
+                _detachListeners: function () {
+                    this.$closeButton.off('click');
+                    this.$sidebar.undelegate('li', 'click');
+                },
+                _onCloseButtonClick: function (e) {
+                    e.preventDefault();
+
+                    this.events.fire('userclose');
+                },
+                _onSidebarItemClick: function (e) {
+                    e.preventDefault();
+
+                    var index = this.$sidebar.children().index(e.currentTarget);
+
+                    this.activeObjectIndex = index > -1 ? index : 0;
+                    this._setActiveObject(this.geoObjects[this.activeObjectIndex]);
+                },
+                _findActiveObjectIndex: function () {
+                    var index = $.inArray(this.activeObject, this.geoObjects);
+
+                    return index > -1 ? index : 0;
+                },
+                _setActiveObject: function (activeObject) {
+                    if(this.activeObject !== activeObject) {
+                        this.activeObject = activeObject;
+                        this.getData().state.set('activeObject', activeObject);
+                        this._createSidebarItems();
+                        this._loadMainContent(activeObject);
+                    }
+                },
+                /*
+                _setActiveItem: function (activeObject) {
+                    var index = $.inArray(activeObject, this.geoObjects);
+
+                    this.$sidebar.children()
+                        .find('.active')
+                        .removeClass('active')
+                        .end()
+                        .eq(index > -1 ? index : 0)
+                        .addClass('active');
+                },
+                */
+                _loadMainContent: function (geoObject) {
+                    ymaps.geocode(geoObject.geometry.getCoordinates())
+                        .then($.proxy(this._onContentLoaded, this));
+                },
+                _onContentLoaded: function (res) {
+                    var data = res.geoObjects.get(0).properties.getAll(),
+                        address = data.metaDataProperty.GeocoderMetaData.AddressDetails;
+
+                    this.$mainContent.html($.tmpl(mainContentTemplate, {
+                        data: data,
+                        address: address
+                    }));
                 },
                 /**
                  * Сдвигаем балун чтобы "хвостик" указывал на точку привязки.
@@ -90,168 +135,17 @@ var id = new function() {
                         left: -(this.$element[0].offsetWidth / 2),
                         top: -(this.$element[0].offsetHeight + this.$element.find('.arrow')[0].offsetHeight)
                     });
+                },
+                _createSidebarItems: function () {
+                    this.$sidebar.html($.tmpl(sidebarTemplate, {
+                        geoObjects: this.geoObjects,
+                        activeIndex: this._findActiveObjectIndex()
+                    }));
+                },
+                _clearSidebarItems: function () {
+                    this.$sidebar.empty();
                 }
-            }),
-            MyBalloonMainContentLayout = ymaps.templateLayoutFactory.createClass(
-                '<div class="tab-pane active">' +
-                '</div>', {
-                build: function () {
-                    // Сначала вызываем метод build родительского класса.
-                    MyBalloonMainContentLayout.superclass.build.call(this);
-
-                    // Нужно отслеживать, какой из пунктов левого меню выбран,
-                    // чтобы обновлять содержимое правой части.
-                    this.stateListener = this.getData().state.events.group()
-                        .add('change', this.onStateChange, this);
-                    // Запоминаем текущий активный объект.
-                    this.activeObject = this.getData().state.get('activeObject');
-                    this.applyContent();
-                },
-
-                clear: function () {
-                    // Снимаем слушателей изменения полей.
-                    this.stateListener.removeAll();
-                    // А затем вызываем метод clear родительского класса.
-                    MyBalloonMainContentLayout.superclass.clear.call(this);
-                },
-
-                onStateChange: function () {
-                    // При изменении одного из полей состояния
-                    // проверяем, не сменился ли активный объект.
-                    var newActiveObject = this.getData().state.get('activeObject');
-                    if (newActiveObject != this.activeObject) {
-                        // Если объект изменился, нужно обновить
-                        // содержимое правой части.
-                        this.activeObject = newActiveObject;
-                        this.applyContent();
-                    }
-                },
-
-                applyContent: function () {
-                    // Чтобы было удобнее формировать текстовый шаблон,
-                    // создадим внутренний макет, в который будем передавать
-                    // модифицированный dataSet.
-                    var subLayout = new MainContentSubLayout({
-                            // Поскольку внутренний макет будет отображать
-                            // информацию какого-то геообъекта,
-                            // будем передавать во входном хэше данные и опции
-                            // текущего активного геообъекта.
-                            options: this.options,
-                            properties: this.activeObject.properties
-                        });
-
-                    // Прикрепляем внутренний макет к внешнему.
-                    subLayout.setParentElement(this.getParentElement());
-                }
-            }),
-            // Внутрений подмакет правой части балуна кластера.
-            MainContentSubLayout = ymaps.templateLayoutFactory.createClass(
-                // Мы можем использовать поля properties геообъекта,
-                // так как будем передавать properties в конструктор макета.
-                '<h3>$[properties.name]</h3>' +
-                '<div class="row-fluid">' +
-                    '$[properties.text]' +
-                '</div>'
-            ),
-            MyBalloonSidebarLayout = ymaps.templateLayoutFactory.createClass(
-                '<ul class="nav nav-tabs">' +
-                    '$[[options.sidebarItemLayout]]' +
-                '</ul>', {
-                build: function () {
-                    this.constructor.superclass.build.call(this);
-                    this._sidelistElement = $('ul.nav', this.getParentElement());
-                    this._createElements();
-                    this._setupStateMonitors();
-                },
-                clear: function() {
-                    this._clearStateMonitors();
-                    this._clearElements();
-                    this.constructor.superclass.clear.call(this);
-                },
-                _createElements: function() {
-                    var properties = this.getData().properties,
-                        geoObjects = properties.get('geoObjects', []),
-                        selectedGeoObject = this.getData().state.get('activeObject', null);
-
-                    this._listElements = [];
-                    this._itemListeners = {};
-
-                    for(var i = 0, l = geoObjects.length; i < l; i++) {
-                        var SidebarItemLayout = this.getData().options.get('sidebarItemLayout'),
-                            isSelected = selectedGeoObject ? geoObjects[i] == selectedGeoObject : i == 0,
-                            listElement = new SidebarItemLayout({
-                                data: new ymaps.data.Manager({
-                                    isFirst: i == 0,
-                                    itemNumber: i,
-                                    isSelected: isSelected,
-                                    geoObject: geoObjects[i]
-                                }),
-                                properties: geoObjects[i].properties,
-                                options: this.getData().options,
-                                parentLayout: this
-                            });
-
-                        if(isSelected) {
-                            this._selectedItem = listElement;
-                        }
-
-                        this._setupItemListeners(listElement);
-
-                        listElement.setParentElement(this._sidelistElement[0]);
-                        this._listElements[i] = listElement;
-                    }
-                },
-                _setupStateMonitors: function () {
-                    this._stateMonitor = new ymaps.Monitor(this.getData().state);
-                    this._stateMonitor
-                        .add('activeObject', this._onActiveObjectChange, this);
-                },
-                _clearStateMonitors: function () {
-                    this._stateMonitor.removeAll();
-                    this._stateMonitor = null;
-                },
-                _onActiveObjectChange: function (newValue, oldvalue) {
-                    if (newValue != this._selectedItem.getData().data.get('geoObject')) {
-                        this._selectedItem.getData().data.set('isSelected', false);
-
-                        var geoObjects = this.getData().properties.get('geoObjects', []),
-                            selectedItemIndex = ymaps.util.array.indexOf(geoObjects, newValue);
-
-                        if(selectedIndex == -1) {
-                            selectedIndex = 0;
-                        }
-
-                        var newSelectedItem = this._listElements[selectedIndex];
-
-                        newSelectedItem.getData().data.set('isSelected', true);
-                        this._selectedItem = newSelectedItem;
-                    }
-                },
-                _clearElements: function() {
-                    for(var i = 0, l = this._listElements.length; i < l; i++) {
-                        this._clearItemListeners(this._listElements[i]);
-                        this._listElements[i].setParentElement(null);
-                    }
-                },
-                _setupItemListeners: function (item) {
-                    this._itemListeners[id.get(item)] = item.events.group()
-                        .add('click', function () {
-                            this._selectedItem.getData().data.set('isSelected', false);
-                            item.getData().data.set('isSelected', true);
-                            this._selectedItem = item;
-                            this.getData().state.set('activeObject', item.getData().data.get('geoObject'));
-                        }, this);
-                },
-                _clearItemListeners: function (item) {
-                    this._itemListeners[id.get(item)].removeAll();
-                    delete this._itemListeners[id.get(item)];
-                }
-            }),
-            MyBalloonSidebarItemLayout = ymaps.templateLayoutFactory.createClass(
-                '<li[if data.isSelected] class="active"[endif]>' +
-                    '<a href="#" data-toggle="tab">$[properties.name]</a>' +
-                '</li>'
-            );
+            });
 
             // Перекрываем метод генератора меток для создания подписей к маркерам.
             generator.getPointData = function (i) {
@@ -270,14 +164,7 @@ var id = new function() {
                     clusterDisableClickZoom: true,
                     // Если нужно задать опции для балуна кластера, то к названию
                     // опции приписываются сразу 2 префикса - 'cluster' и 'balloon'.
-                    clusterBalloonLayout: MyBalloonLayout,
-                    clusterBalloonMainContentLayout: MyBalloonMainContentLayout,
-                    clusterBalloonSidebarLayout: MyBalloonSidebarLayout,
-                    clusterBalloonSidebarItemLayout: MyBalloonSidebarItemLayout,
-                    // Настроим ширину левой части балуна кластера
-                    clusterBalloonSidebarWidth: 100,
-                    // и ширину балуна целиком.
-                    clusterBalloonWidth: 300
+                    clusterBalloonLayout: MyBalloonLayout
                 });
 
 
@@ -287,6 +174,34 @@ var id = new function() {
             myMap.geoObjects.add(clusterer);
     });
     </script>
+    <!-- Шаблон содержимого сайдбара. -->
+    <script id="sidebarTemplate" type="text/x-jquery-tmpl">
+        {{each(i, geoObject) geoObjects}}
+            {{tmpl({
+                i: i,
+                geoObject: geoObject,
+                activeIndex: activeIndex
+            }) "#sidebarItemTemplate"}}
+        {{/each}}
+    </script>
+    <!-- Шаблон элемента сайдбара. -->
+    <script id="sidebarItemTemplate" type="text/x-jquery-tmpl">
+        <li{{if i == activeIndex}} class="active"{{/if}}>
+            <a href="#${$item.activeIndex}" data-toggle="tab">${geoObject.properties.get("name")}</a>
+        </li>
+    </script>
+    <script id="mainContentTemplate" type="text/x-jquery-tmpl">
+        <address>
+            <strong>${data.name}</strong><br/>
+            {{if address.Country.AdministrativeArea}}
+                {{if address.Country.AdministrativeArea.SubAdministrativeArea}}
+                    ${address.Country.AdministrativeArea.SubAdministrativeArea.SubAdministrativeAreaName}<br/>
+                {{/if}}
+                ${address.Country.AdministrativeArea.AdministrativeAreaName}<br/>
+            {{/if}}
+            ${address.Country.CountryName}
+        </address>
+    </script>
     <style type="text/css">
         #YMapsID {
             width: 900px;
@@ -294,8 +209,8 @@ var id = new function() {
         }
         .popover {
             display: block;
-            width: 260px;
-            height: 100px;
+            min-width: 360px;
+            min-height: 200px;
             padding: 10px;
         }
         .popover .close {
