@@ -50,9 +50,9 @@
                     this.$closeButton = $('.close', this.getParentElement());
                     this.$sidebar = $('.nav', this.getParentElement());
                     this.$mainContent = $('.tab-content', this.getParentElement());
-                    this.sidebarTemplate = $('#sidebarTemplate').template('sidebarTemplate'),
-                    this.mainContentTemplate = $('#mainContentTemplate').template('mainContentTemplate'),
-                    // this.sidebarItemTemplate = $('#sidebarItemTemplate').template('sidebarItemTemplate');
+                    this.sidebarTemplate = $('#sidebarTemplate');
+                    this.mainContentTemplate = $('#mainContentTemplate');
+                    // this.sidebarItemTemplate = $('#sidebarItemTemplate');
                     this._applyElementOffset();
                     this._createSidebarItems();
                     this._attachListeners();
@@ -98,18 +98,6 @@
                         this._loadMainContent(activeObject);
                     }
                 },
-                /*
-                _setActiveItem: function (activeObject) {
-                    var index = $.inArray(activeObject, this.geoObjects);
-
-                    this.$sidebar.children()
-                        .find('.active')
-                        .removeClass('active')
-                        .end()
-                        .eq(index > -1 ? index : 0)
-                        .addClass('active');
-                },
-                */
                 _loadMainContent: function (geoObject) {
                     ymaps.geocode(geoObject.geometry.getCoordinates())
                         .then($.proxy(this._onContentLoaded, this));
@@ -118,7 +106,7 @@
                     var data = res.geoObjects.get(0).properties.getAll(),
                         address = data.metaDataProperty.GeocoderMetaData.AddressDetails;
 
-                    this.$mainContent.html($.tmpl(mainContentTemplate, {
+                    this.$mainContent.html($.tmpl(this.mainContentTemplate, {
                         data: data,
                         address: address
                     }));
@@ -136,8 +124,26 @@
                         top: -(this.$element[0].offsetHeight + this.$element.find('.arrow')[0].offsetHeight)
                     });
                 },
+                /**
+                 * Используется для автопозиционирования (balloonAutoPan).
+                 * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#getClientBoundingRect
+                 * @function
+                 * @name getClientBoundingRect
+                 * @returns {Number[][]} Координаты левого верхнего и правого нижнего углов шаблона относительно точки привязки.
+                 */
+                getClientBoundingRect: function () {
+                    var left = this.$element.position().left,
+                        top = this.$element.position().top;
+
+                    return [
+                        [left, top], [
+                            left + this.$element[0].offsetWidth,
+                            top + this.$element[0].offsetHeight + this.$element.find('.arrow')[0].offsetHeight
+                        ]
+                    ];
+                },
                 _createSidebarItems: function () {
-                    this.$sidebar.html($.tmpl(sidebarTemplate, {
+                    this.$sidebar.html($.tmpl(this.sidebarTemplate, {
                         geoObjects: this.geoObjects,
                         activeIndex: this._findActiveObjectIndex()
                     }));
@@ -147,31 +153,30 @@
                 }
             });
 
-            // Перекрываем метод генератора меток для создания подписей к маркерам.
-            generator.getPointData = function (i) {
-                return {
-                    clusterCaption: 'Метка ' + i,
-                    name: 'Метка ' + i,
-                    text: 'Метка ' + i
-                };
+        // Перекрываем метод генератора меток для создания подписей к маркерам.
+        generator.getPointData = function (i) {
+            return {
+                clusterCaption: 'Метка ' + i,
+                name: 'Метка ' + i,
+                text: 'Метка ' + i
             };
+        };
 
-            // Создаем 200 меток внутри области видимости карты.
-            var points = generator.generate(200).atBounds(myMap.getBounds()),
-                clusterer = new ymaps.Clusterer({
-                    // Поскольку опции задаются для кластеров, а не для всего
-                    // кластеризатора, им нужно приписать префикс 'cluster'.
-                    clusterDisableClickZoom: true,
-                    // Если нужно задать опции для балуна кластера, то к названию
-                    // опции приписываются сразу 2 префикса - 'cluster' и 'balloon'.
-                    clusterBalloonLayout: MyBalloonLayout
-                });
+        // Создаем 200 меток внутри области видимости карты.
+        var points = generator.generate(200).atBounds(myMap.getBounds()),
+            clusterer = new ymaps.Clusterer({
+                // Поскольку опции задаются для кластеров, а не для всего
+                // кластеризатора, им нужно приписать префикс 'cluster'.
+                clusterDisableClickZoom: true,
+                // Если нужно задать опции для балуна кластера, то к названию
+                // опции приписываются сразу 2 префикса - 'cluster' и 'balloon'.
+                clusterBalloonLayout: MyBalloonLayout
+            });
 
-
-            // Добавим геообъекты в кластеризатор.
-            clusterer.add(points);
-            // А сам кластеризатор добавим на карту.
-            myMap.geoObjects.add(clusterer);
+        // Добавим геообъекты в кластеризатор.
+        clusterer.add(points);
+        // А сам кластеризатор добавим на карту.
+        myMap.geoObjects.add(clusterer);
     });
     </script>
     <!-- Шаблон содержимого сайдбара. -->
@@ -190,6 +195,7 @@
             <a href="#${$item.activeIndex}" data-toggle="tab">${geoObject.properties.get("name")}</a>
         </li>
     </script>
+    <!-- Шаблон основного содержимого. -->
     <script id="mainContentTemplate" type="text/x-jquery-tmpl">
         <address>
             <strong>${data.name}</strong><br/>
