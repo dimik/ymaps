@@ -156,9 +156,7 @@
         // Перекрываем метод генератора меток для создания подписей к маркерам.
         generator.getPointData = function (i) {
             return {
-                clusterCaption: 'Метка ' + i,
-                name: 'Метка ' + i,
-                text: 'Метка ' + i
+                balloonContentBody: 'Метка ' + i,
             };
         };
 
@@ -192,7 +190,7 @@
     <!-- Шаблон элемента сайдбара. -->
     <script id="sidebarItemTemplate" type="text/x-jquery-tmpl">
         <li{{if i == activeIndex}} class="active"{{/if}}>
-            <a href="#${$item.activeIndex}" data-toggle="tab">${geoObject.properties.get("name")}</a>
+            <a href="#" data-toggle="tab">${geoObject.properties.get("balloonContentBody")}</a>
         </li>
     </script>
     <!-- Шаблон основного содержимого. -->
