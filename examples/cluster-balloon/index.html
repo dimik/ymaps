@@ -46,6 +46,7 @@
 
                     this.constructor.superclass.build.call(this);
 
+                    this.scrollTopTimeoutId = null;
                     this.$element = $('.popover', this.getParentElement());
                     this.$closeButton = $('.close', this.getParentElement());
                     this.$sidebar = $('.nav', this.getParentElement());
@@ -55,12 +56,20 @@
                     // this.sidebarItemTemplate = $('#sidebarItemTemplate');
                     this._applyElementOffset();
                     this._createSidebarItems();
+                    this._setScrollTop(this._getScrollTop());
                     this._attachListeners();
                 },
                 clear: function () {
                     this._detachListeners();
                     this._clearSidebarItems();
+                    this._clearScrollTopTimeout();
                     this.constructor.superclass.clear.call(this);
+                },
+                _clearScrollTopTimeout: function () {
+                    if(this.scrollTopTimeoutId) {
+                        window.clearTimeout(this.scrollTopTimeoutId);
+                        this.scrollTopTimeoutId = null;
+                    }
                 },
                 _attachListeners: function () {
                     this.$closeButton
@@ -72,6 +81,20 @@
                     this.$closeButton.off('click');
                     this.$sidebar.undelegate('li', 'click');
                 },
+                _getScrollTop: function () {
+                    // Поправка на ветер.
+                    var FIX_OFFSET = 80;
+
+                    return this.$sidebar.children().eq(this.activeObjectIndex).offset().top - FIX_OFFSET;
+                },
+                _setScrollTop: function (scrollTop) {
+                    // выставление делается асинхронно, так как
+                    // балун сначала строится, а потом передвигается на нужную позицию
+                    this.scrollTopTimeoutId = window.setTimeout($.proxy(function () {
+                        this.$sidebar.scrollTop(scrollTop);
+                        this.scrollTopTimeoutId = null;
+                    }, this), 0);
+                },
                 _onCloseButtonClick: function (e) {
                     e.preventDefault();
 
@@ -82,6 +105,7 @@
 
                     var index = this.$sidebar.children().index(e.currentTarget);
 
+                    // this.scrollTop = this.$sidebar.scrollTop();
                     this.activeObjectIndex = index > -1 ? index : 0;
                     this._setActiveObject(this.geoObjects[this.activeObjectIndex]);
                 },
@@ -221,6 +245,18 @@
             position: absolute;
             right: 5px;
             top: 1px;
+        }
+        .popover-inner {
+            max-height: 300px;
+            overflow: auto;
+        }
+        .nav-tabs {
+            max-height: 280px;
+            overflow: auto;
+        }
+        /* иначе зарезается левая часть обводки у выбранного пункта списка */
+        .nav-tabs li {
+            padding-left: 3px;
         }
     </style>
 </head>
