@@ -1,5 +1,5 @@
 function ListCollection() {
-    this.constructor.superclass.apply(this, arguments);
+    ListCollection.superclass.constructor.apply(this, arguments);
     this._list = [];
 }
 
@@ -41,12 +41,14 @@ ymaps.ready(function () {
         remove: function (child) {
             this.constructor.superclass.remove.call(this, child);
 
-            this._list.splice(this.indexOf(child), 1);
+            // this._list.splice(this.indexOf(child), 1);
+            delete this._list[this.indexOf(child)];
 
             return this;
         },
         removeAll: function () {
             this.constructor.superclass.removeAll.call(this);
+
             this._list = [];
 
             return this;
