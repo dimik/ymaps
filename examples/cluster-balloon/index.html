@@ -82,10 +82,7 @@
                     this.$sidebar.undelegate('li', 'click');
                 },
                 _getScrollTop: function () {
-                    // Поправка на ветер.
-                    var FIX_OFFSET = 80;
-
-                    return this.$sidebar.children().eq(this.activeObjectIndex).offset().top - FIX_OFFSET;
+                    return this.$sidebar.children().eq(this.activeObjectIndex).offset().top;
                 },
                 _setScrollTop: function (scrollTop) {
                     // выставление делается асинхронно, так как
