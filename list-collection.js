@@ -22,6 +22,7 @@ ymaps.ready(function () {
                     return i;
                 }
             }
+
             return -1;
         },
         splice: function (index, number) {
