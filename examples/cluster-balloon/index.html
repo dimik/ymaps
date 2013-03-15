@@ -65,25 +65,61 @@
                     this._clearScrollTopTimeout();
                     this.constructor.superclass.clear.call(this);
                 },
+                /**
+                 * Очищаем таймаут скролла.
+                 * @function
+                 * @private
+                 * @name _clearScrollTopTimeout
+                 */
                 _clearScrollTopTimeout: function () {
                     if(this.scrollTopTimeoutId) {
                         window.clearTimeout(this.scrollTopTimeoutId);
                         this.scrollTopTimeoutId = null;
                     }
                 },
+                /**
+                 * Навешивает обработчики событий.
+                 * @function
+                 * @private
+                 * @name _attachListeners
+                 */
                 _attachListeners: function () {
                     this.$closeButton
                         .on('click', $.proxy(this._onCloseButtonClick, this));
                     this.$sidebar
                         .delegate('li', 'click', $.proxy(this._onSidebarItemClick, this));
                 },
+                /**
+                 * Снимает обработчики событий.
+                 * @function
+                 * @private
+                 * @name _detachListeners
+                 */
                 _detachListeners: function () {
                     this.$closeButton.off('click');
                     this.$sidebar.undelegate('li', 'click');
                 },
+                /**
+                 * Определяет насколько нужно проскроллить сайдбар.
+                 * @function
+                 * @private
+                 * @name _getScrollTop
+                 * @returns {Number} Насколько нужно проскроллить сайдбар.
+                 */
                 _getScrollTop: function () {
-                    return this.$sidebar.children().eq(this.activeObjectIndex).offset().top;
+                    // Экспериментально найденная поправка.
+                    var FIX_POSITION = 20;
+
+                    return this.activeObjectIndex ?
+                        this.$sidebar.children().eq(this.activeObjectIndex).offset().top + FIX_POSITION : 0;
                 },
+                /**
+                 * Скроллит сайдбар на указанную позицию.
+                 * @function
+                 * @private
+                 * @name _setScrollTop
+                 * @param {Number} Позиция.
+                 */
                 _setScrollTop: function (scrollTop) {
                     // выставление делается асинхронно, так как
                     // балун сначала строится, а потом передвигается на нужную позицию
@@ -92,11 +128,26 @@
                         this.scrollTopTimeoutId = null;
                     }, this), 0);
                 },
+                /**
+                 * Обработчик клика на кнопке закрытия балуна.
+                 * @function
+                 * @private
+                 * @name _onCloseButtonClick
+                 * @param {jQuery.event} Объект-событие jQuery.
+                 */
                 _onCloseButtonClick: function (e) {
                     e.preventDefault();
 
+                    // Правильный способ закрыть балун.
                     this.events.fire('userclose');
                 },
+                /**
+                 * Обработчик клика на элементе сайдбара.
+                 * @function
+                 * @private
+                 * @name _onSidebarItemClick
+                 * @param {jQuery.event} Объект-событие jQuery.
+                 */
                 _onSidebarItemClick: function (e) {
                     e.preventDefault();
 
@@ -106,11 +157,25 @@
                     this.activeObjectIndex = index > -1 ? index : 0;
                     this._setActiveObject(this.geoObjects[this.activeObjectIndex]);
                 },
+                /**
+                 * Находит индекс активного геообъекта.
+                 * @function
+                 * @private
+                 * @name _findActiveObjectIndex
+                 * @returns {Number} Индекс активного геообъекта.
+                 */
                 _findActiveObjectIndex: function () {
                     var index = $.inArray(this.activeObject, this.geoObjects);
 
                     return index > -1 ? index : 0;
                 },
+                /**
+                 * Устанавливает активный геообъект.
+                 * @function
+                 * @private
+                 * @name _setActiveObject
+                 * @param {ymaps.GeoObject} Активный геообъект.
+                 */
                 _setActiveObject: function (activeObject) {
                     if(this.activeObject !== activeObject) {
                         this.activeObject = activeObject;
@@ -119,10 +184,25 @@
                         this._loadMainContent(activeObject);
                     }
                 },
+                /**
+                 * Загрузчик основного содержимого балуна.
+                 * @borrows ymaps.geocode
+                 * @function
+                 * @private
+                 * @name _loadMainContent
+                 * @param {ymaps.GeoObject} Геообъект для которого загружается контент.
+                 */
                 _loadMainContent: function (geoObject) {
                     ymaps.geocode(geoObject.geometry.getCoordinates())
                         .then($.proxy(this._onContentLoaded, this));
                 },
+                /**
+                 * Обработчик загрузки основного содержимого балуна.
+                 * @function
+                 * @private
+                 * @name _onContentLoaded
+                 * @param {Object} Ответ геокодера.
+                 */
                 _onContentLoaded: function (res) {
                     var data = res.geoObjects.get(0).properties.getAll(),
                         address = data.metaDataProperty.GeocoderMetaData.AddressDetails;
@@ -133,11 +213,11 @@
                     }));
                 },
                 /**
-                 * Сдвигаем балун чтобы "хвостик" указывал на точку привязки.
+                 * Сдвигает балун чтобы "хвостик" указывал на точку привязки.
                  * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/IBalloonLayout.xml#event-userclose
                  * @function
                  * @private
-                 * @name applyElementOffset
+                 * @name _applyElementOffset
                  */
                 _applyElementOffset: function () {
                     this.$element.css({
@@ -163,12 +243,24 @@
                         ]
                     ];
                 },
+                /**
+                 * Создает список элементов сайдбара.
+                 * @function
+                 * @private
+                 * @name _createSidebarItems
+                 */
                 _createSidebarItems: function () {
                     this.$sidebar.html($.tmpl(this.sidebarTemplate, {
                         geoObjects: this.geoObjects,
                         activeIndex: this._findActiveObjectIndex()
                     }));
                 },
+                /**
+                 * Очищает сайдбар.
+                 * @function
+                 * @private
+                 * @name _clearSidebarItems
+                 */
                 _clearSidebarItems: function () {
                     this.$sidebar.empty();
                 }
