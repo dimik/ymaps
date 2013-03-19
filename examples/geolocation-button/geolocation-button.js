@@ -5,9 +5,10 @@
  * @class
  * @name GeolocationButton
  * @param {Object} params Данные для кнопки и параметры к Geolocation API.
+ * @param {Object} options Опции кнопки.
  */
-function GeolocationButton(params) {
-    GeolocationButton.superclass.constructor.call(this, params);
+function GeolocationButton(params, options) {
+    GeolocationButton.superclass.constructor.call(this, params, options);
 
     // Расширяем опции по умолчанию теми, что передали в конструкторе.
     this._options = ymaps.util.extend({
@@ -23,7 +24,7 @@ function GeolocationButton(params) {
         timeout: 10000,
         // Максимальное время жизни полученных данных (в миллисекундах).
         maximumAge: 1000
-    }, params.options);
+    }, params.geolocationOptions);
 }
 
 ymaps.ready(function () {
@@ -71,16 +72,11 @@ ymaps.ready(function () {
             // Меняем иконку кнопки на прелоадер.
             this.toggleIconImage('loader.gif');
 
-            // Делаем кнопку ненажатой
-            if(this.isSelected()) {
-                this.deselect();
-            }
-
             if(navigator.geolocation) {
                 // Запрашиваем текущие координаты устройства.
                 navigator.geolocation.getCurrentPosition(
-                    this._onGeolocationSuccess.bind(this),
-                    this._onGeolocationError.bind(this),
+                    ymaps.util.bind(this._onGeolocationSuccess, this),
+                    ymaps.util.bind(this._onGeolocationError, this),
                     this._options
                 );
             }
@@ -152,7 +148,9 @@ ymaps.ready(function () {
 
             // Смена центра карты (если нужно)
             if(!options.noCentering) {
-                map.setCenter(location, 15);
+                map.setCenter(location, 15, {
+                    checkZoomRange: true
+                });
             }
 
             // Установка метки по координатам местоположения (если нужно).
@@ -255,4 +253,3 @@ GeolocationButtonHint.prototype.hide = function (timeout) {
 
     return this;
 };
-
