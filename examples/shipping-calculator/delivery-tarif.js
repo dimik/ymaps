@@ -28,6 +28,10 @@ DeliveryTarif.prototype = {
             strokeWidth: 3
         });
     },
+    _contains: function (leg_or_step) {
+        return this.geometry.contains(leg_or_step.start_location) ||
+            this.geometry.contains(leg_or_step.end_location);
+    },
     setMap: function (map) {
         this._map = map;
         this.geometry.setMap(map);
@@ -36,83 +40,29 @@ DeliveryTarif.prototype = {
         return this;
     },
     calculate: function (route) {
-        var coordSystem = this._map.options.get('projection').getCoordSystem(),
-            distance = 0,
-            duration = 0,
-            value = 0,
-            path = [];
-
-        route.legs.forEach(function (leg) {
-            if(this.geometry.contains(leg.start_location) && this.geometry.contains(leg.end_location)) {
-                distance += leg.distance;
-                duration += leg.duration;
-                path = path.concat(
-                    leg.steps
-                        .map(function (step) {
-                            return step.path;
-                        })
-                        .reduce(function (a, b) {
-                            return a.concat(b);
-                        })
-                );
-            }
-            else {
-                path = path.concat(
-                    leg.steps.filter(function (step) {
-                        return this.geometry.contains(step.start_location) ||
-                            this.geometry.contains(step.end_location);
-                    }, this)
-                    .map(function (step) {
-                        return step.path;
-                    })
-                    .reduce(function (a, b) {
-                        return a.concat(b);
-                    })
-                    .filter(function (point, i, points) {
-                        return this.geometry.contains(point) ||
-                            (points[i - 1] && this.geometry.contains(points[i - 1]));
-                    }, this)
-                );
-/*
-                leg.steps.forEach(function (step) {
-                    if(this.geometry.contains(step.start_location)) {
-                        if(this.geometry.contains(step.end_location)) {
-                            distance += step.distance;
-                            duration += step.duration;
-                            path = path.concat(step.path);
-                        }
-                        else {
-                            var i = 1, point;
-
-                            path.push(step.start_location);
-                            while(this.geometry.contains(point = step.path[i++])) {
-                                distance += coordSystem.getDistance(step.path[i - 1], point);
-                                path.push(point);
-                            }
-                            path.push(step.path[i]);
-                        }
-                    }
-                    else if(this.geometry.contains(step.end_location)) {
-                        var point;
-
-                        for(var i = 1, len = step.path.length; i < len; i++) {
-                            point = step.path[i];
-
-                            if(this.geometry.contains(point)) {
-                                distance += coordSystem.getDistance(step.path[i - 1], point);
-                                path.push(point);
-                            }
-                        }
-                    }
-                }, this);
-                */
-            }
-        }, this);
+        var flatten = function (a, b) { return a.concat(b); },
+            path = route.legs.filter(this._contains, this)
+                .map(function (leg) {
+                    return leg.steps;
+                })
+                .reduce(flatten)
+                .filter(this._contains, this)
+                .map(function (step) {
+                    return step.path;
+                })
+                .reduce(flatten)
+                .filter(function (point, i, points) {
+                    return this.geometry.contains(point) ||
+                        (points[i - 1] && this.geometry.contains(points[i - 1]));
+                }, this),
+            coordSystem = this._map.options.get('projection').getCoordSystem(),
+            distance = path.reduce(function (distance, point, index, points) {
+                    return distance + coordSystem.getDistance(points[index - 1] || point, point);
+                }, 0);
 
         this._createPolyline(path);
 
         return ymaps.util.extend({
-            duration: Math.floor(duration),
             distance: Math.floor(distance),
             value: Math.floor(distance / 1000 * this._options.cost)
         }, this._options);

@@ -91,7 +91,6 @@ ymaps.ready(init);
             <thead>
                 <tr>
                     <th>Тариф</th>
-                    <th>Время проезда</th>
                     <th>Длина маршрута</th>
                     <th>Стоимость доставки</th>
                 </tr>
@@ -112,7 +111,6 @@ ymaps.ready(init);
     <script id="rowTemplate" type="text/x-jquery-tmpl">
         <tr id="${tarif.id}">
             <td>${tarif.name}</td>
-            <td>${$item.formatter.duration(tarif.duration)}</td>
             <td>${$item.formatter.distance(tarif.distance)}</td>
             <td>${tarif.value} руб</td>
         </tr>
