@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU"
+            type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            ymaps.geocode('Череповец', { results: 1 }).then(function (res) {
+                var first = res.geoObjects.get(0);
+
+                window.myMap = new ymaps.Map("map", {
+                    center: first.geometry.getCoordinates(),
+                    bounds: first.properties.get('boundedBy')
+                }, {
+                    behaviors: ["default", "scrollZoom"],
+                    controls: ['zoomControl']
+                });
+
+                myMap.geoObjects.add(first);
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="map" style="width: 400px; height: 400px"></div>
+</body>
+
+</html>

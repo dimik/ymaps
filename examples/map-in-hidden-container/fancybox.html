@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример использования Яндекс.Карт в модальном окне FancyBox</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
+
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/fancybox/jquery.fancybox.pack.js"></script>
+
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('.fancybox').fancybox({
+            });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Открываем карту в модальном окне FancyBox.</p>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <button id="fancy" class="btn">Открыть карту в модальном окне</button>
+        </div>
+    </div>
+</body>
+
+</html>
