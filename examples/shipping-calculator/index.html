@@ -13,7 +13,7 @@
     <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js" type="text/javascript"></script>
     <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
     <script src="multi-geocoder.js" type="text/javascript"></script>
-    <script src="shipping-calculator.js" type="text/javascript"></script>
+    <script src="delivery-calculator.js" type="text/javascript"></script>
     <script src="directions-renderer.js" type="text/javascript"></script>
     <script src="directions-service.js" type="text/javascript"></script>
     <script src="delivery-tarif.js" type="text/javascript"></script>
@@ -45,7 +45,7 @@ function init() {
             color: '#ff0000',
             url: 'mo.json'
         }],
-        calculator = new ShippingCalculator(myMap, 'Москва, Льва Толстого 18', tarifs);
+        calculator = new DeliveryCalculator(myMap, 'Москва, Льва Толстого 18', tarifs);
 
     myMap.controls.add(search, { right: 5, top: 5 });
 

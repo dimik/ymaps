@@ -1,4 +1,4 @@
-function ShippingCalculator(map, origin, tarifs) {
+function DeliveryCalculator(map, origin, tarifs) {
     this._map = map;
     this._routeService = new DirectionsService({ avoidTrafficJams: true });
     this._routeRenderer = new DirectionsRenderer({ suppressPolylines: true, draggable: true, map: map });
@@ -11,8 +11,8 @@ function ShippingCalculator(map, origin, tarifs) {
     this._routeRenderer.events.add('waypointschange', this._onWayPointsChange, this);
 }
 
-ShippingCalculator.prototype = {
-    constructor: ShippingCalculator,
+DeliveryCalculator.prototype = {
+    constructor: DeliveryCalculator,
     _onDestinationChange: function (e) {
         this.setDestination(e.get('coordPosition'));
     },
