@@ -36,7 +36,8 @@ DeliveryTarif.prototype = {
         return this;
     },
     calculate: function (route) {
-        var distance = 0,
+        var coordSystem = this._map.options.get('projection').getCoordSystem(),
+            distance = 0,
             duration = 0,
             value = 0,
             path = [];
@@ -45,17 +46,66 @@ DeliveryTarif.prototype = {
             if(this.geometry.contains(leg.start_location) && this.geometry.contains(leg.end_location)) {
                 distance += leg.distance;
                 duration += leg.duration;
-                path = path.concat(leg.steps.map(function (step) { return step.path; }));
+                path = path.concat(
+                    leg.steps
+                        .map(function (step) {
+                            return step.path;
+                        })
+                        .reduce(function (a, b) {
+                            return a.concat(b);
+                        })
+                );
             }
             else {
+                path = path.concat(
+                    leg.steps.filter(function (step) {
+                        return this.geometry.contains(step.start_location) ||
+                            this.geometry.contains(step.end_location);
+                    }, this)
+                    .map(function (step) {
+                        return step.path;
+                    })
+                    .reduce(function (a, b) {
+                        return a.concat(b);
+                    })
+                    .filter(function (point, i, points) {
+                        return this.geometry.contains(point) ||
+                            (points[i - 1] && this.geometry.contains(points[i - 1]));
+                    }, this)
+                );
+/*
                 leg.steps.forEach(function (step) {
-                    if(this.geometry.contains(step.start_location)
-                        /* && this.geometry.contains(step.end_location)*/ ) {
-                        distance += step.distance;
-                        duration += step.duration;
-                        path = path.concat(step.path);
+                    if(this.geometry.contains(step.start_location)) {
+                        if(this.geometry.contains(step.end_location)) {
+                            distance += step.distance;
+                            duration += step.duration;
+                            path = path.concat(step.path);
+                        }
+                        else {
+                            var i = 1, point;
+
+                            path.push(step.start_location);
+                            while(this.geometry.contains(point = step.path[i++])) {
+                                distance += coordSystem.getDistance(step.path[i - 1], point);
+                                path.push(point);
+                            }
+                            path.push(step.path[i]);
+                        }
+                    }
+                    else if(this.geometry.contains(step.end_location)) {
+                        var point;
+
+                        for(var i = 1, len = step.path.length; i < len; i++) {
+                            point = step.path[i];
+
+                            if(this.geometry.contains(point)) {
+                                distance += coordSystem.getDistance(step.path[i - 1], point);
+                                path.push(point);
+                            }
+                        }
                     }
                 }, this);
+                */
             }
         }, this);
 
