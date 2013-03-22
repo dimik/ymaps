@@ -32,19 +32,14 @@ DeliveryTarif.prototype = {
         return this.geometry.contains(leg_or_step.start_location) ||
             this.geometry.contains(leg_or_step.end_location);
     },
-    setMap: function (map) {
-        this._map = map;
-        this.geometry.setMap(map);
-        this.geometry.options.setParent(map.options);
-
-        return this;
-    },
-    calculate: function (route) {
+    _getPath: function (route) {
         var flatten = function (a, b) { return a.concat(b); },
-            path = route.legs.filter(this._contains, this)
+            steps = route.legs
+                .filter(this._contains, this)
                 .map(function (leg) {
                     return leg.steps;
-                })
+                }),
+            path = steps.length? steps
                 .reduce(flatten)
                 .filter(this._contains, this)
                 .map(function (step) {
@@ -54,11 +49,27 @@ DeliveryTarif.prototype = {
                 .filter(function (point, i, points) {
                     return this.geometry.contains(point) ||
                         (points[i - 1] && this.geometry.contains(points[i - 1]));
-                }, this),
-            coordSystem = this._map.options.get('projection').getCoordSystem(),
-            distance = path.reduce(function (distance, point, index, points) {
-                    return distance + coordSystem.getDistance(points[index - 1] || point, point);
-                }, 0);
+                }, this) : [];
+
+        return path;
+    },
+    _getDistance: function (path) {
+        var coordSystem = this._map.options.get('projection').getCoordSystem();
+
+        return path.reduce(function (distance, point, index, points) {
+            return distance + coordSystem.getDistance(points[index - 1] || point, point);
+        }, 0);
+    },
+    setMap: function (map) {
+        this._map = map;
+        this.geometry.setMap(map);
+        this.geometry.options.setParent(map.options);
+
+        return this;
+    },
+    calculate: function (route) {
+        var path = this._getPath(route),
+            distance = this._getDistance(path);
 
         this._createPolyline(path);
 
