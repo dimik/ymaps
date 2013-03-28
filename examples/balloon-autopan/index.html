@@ -34,11 +34,11 @@
                      * @name build
                      */
                     build: function () {
+                        this.$element = $(this.getParentElement()).find('.popover');
+
                         this.constructor.superclass.build.call(this);
 
-                        this.$element = $(this.getParentElement()).find('.popover');
                         this.applyElementOffset();
-
                         this.$element.find('.close').on('click', $.proxy(this.onCloseClick, this));
                     },
 
