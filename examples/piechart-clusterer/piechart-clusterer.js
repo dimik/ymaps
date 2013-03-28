@@ -173,7 +173,7 @@ ymaps.ready(function () {
 
             while(size = sizes[i]) {
                 icons[i++] = {
-                    href: '"' + this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects)) + '"', // Временный заляп, оторвать когда починят в АПИ.
+                    href: this.formatClusterIconHref(size, this.getClusterIconColours(geoObjects)),
                     size: size,
                     offset: [-Math.floor(size[0] / 2), -Math.floor(size[1] / 2)]
                 };
