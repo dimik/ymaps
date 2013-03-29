@@ -1,8 +1,8 @@
-function ObjectManager(options) {
-    // Для оптимизации сделаем метки на canvas по-умолчанию.
-    var opts = ymaps.util.extend({ overlayFactory: 'default#interactiveGraphics' }, options);
-
-    ObjectManager.superclass.constructor.call(this, null, opts);
+function ObjectManager(feature, options) {
+    ObjectManager.superclass.constructor.call(this, feature,
+        // Для оптимизации сделаем метки на canvas по-умолчанию.
+        ymaps.util.extend({ overlayFactory: 'default#interactiveGraphics' }, options)
+    );
 
     this._zooms = [];
     this._map = null;
