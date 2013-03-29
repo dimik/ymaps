@@ -8,7 +8,7 @@
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
-    <script src="//api-maps.yandex.ru/2.0.27/?load=package.standard&lang=ru-RU&mode=debug" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0.27/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
     <script type="text/javascript">
         ymaps.ready(function () {
             // Создание экземпляра карты и его привязка к созданному контейнеру.
@@ -36,10 +36,11 @@
                     build: function () {
                         this.constructor.superclass.build.call(this);
 
-                        this.$element = $(this.getParentElement()).find('.popover');
+                        this._element = $('.popover', this.getParentElement());
 
                         this.applyElementOffset();
-                        this.$element.find('.close').on('click', $.proxy(this.onCloseClick, this));
+                        this._element.find('.close')
+                            .on('click', $.proxy(this.onCloseClick, this));
                     },
 
                     /**
@@ -49,7 +50,8 @@
                      * @name clear
                      */
                     clear: function () {
-                        this.$element.find('.close').off('click');
+                        this._element.find('.close')
+                            .off('click');
 
                         this.constructor.superclass.clear.call(this);
                     },
@@ -74,9 +76,9 @@
                      * @name applyElementOffset
                      */
                     applyElementOffset: function () {
-                        this.$element.css({
-                            left: -(this.$element[0].offsetWidth / 2),
-                            top: -(this.$element[0].offsetHeight + this.$element.find('.arrow')[0].offsetHeight)
+                        this._element.css({
+                            left: -(this._element[0].offsetWidth / 2),
+                            top: -(this._element[0].offsetHeight + this._element.find('.arrow')[0].offsetHeight)
                         });
                     },
 
@@ -100,13 +102,17 @@
                      * @returns {Number[][]} Координаты левого верхнего и правого нижнего углов шаблона относительно точки привязки.
                      */
                     getClientBounds: function () {
-                        var left = this.$element.position().left,
-                            top = this.$element.position().top;
+                        if(!this._element) {
+                            return MyBalloonLayout.superclass.getClientBounds.apply(this, arguments);
+                        }
+
+                        var left = this._element.position().left,
+                            top = this._element.position().top;
 
                         return [
                             [left, top], [
-                                left + this.$element[0].offsetWidth,
-                                top + this.$element[0].offsetHeight + this.$element.find('.arrow')[0].offsetHeight
+                                left + this._element[0].offsetWidth,
+                                top + this._element[0].offsetHeight + this._element.find('.arrow')[0].offsetHeight
                             ]
                         ];
                     }
@@ -164,6 +170,7 @@
         .popover .close {
             position: absolute;
             right: 5px;
+            top: 1px;
         }
     </style>
 </head>
