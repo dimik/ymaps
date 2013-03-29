@@ -63,7 +63,11 @@
                      * @name onSublayoutSizeChange
                      */
                     onSublayoutSizeChange: function () {
-                        MyBalloonLayout.superclass.onSublayoutSizeChange.apply(this, arguments);
+                        if(!this._element) {
+                            MyBalloonLayout.superclass.onSublayoutSizeChange.apply(this, arguments);
+
+                            return;
+                        }
 
                         this.applyElementOffset();
                         this.events.fire('boundschange');
