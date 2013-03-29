@@ -4,7 +4,7 @@ function ObjectManager() {
     this._map = null;
 
     // Для оптимизации сделаем метки на канвасе по-умолчанию.
-    this.options.set('overlayFactory', 'default#interactivegraphics');
+    // this.options.set('overlayFactory', 'default#interactivegraphics');
     this.events.add('mapchange', this._onMapChange, this);
 }
 
