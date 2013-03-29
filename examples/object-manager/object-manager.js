@@ -1,10 +1,12 @@
-function ObjectManager() {
-    ObjectManager.superclass.constructor.apply(this, arguments);
+function ObjectManager(options) {
+    // Для оптимизации сделаем метки на canvas по-умолчанию.
+    var opts = ymaps.util.extend({ overlayFactory: 'default#interactiveGraphics' }, options);
+
+    ObjectManager.superclass.constructor.call(this, null, opts);
+
     this._zooms = [];
     this._map = null;
 
-    // Для оптимизации сделаем метки на канвасе по-умолчанию.
-    // this.options.set('overlayFactory', 'default#interactivegraphics');
     this.events.add('mapchange', this._onMapChange, this);
 }
 
@@ -57,18 +59,18 @@ ymaps.ready(function () {
             var map = e.get('newMap');
 
             if(this._map != map) {
-                this._removeFromMap();
-                this._addToMap(map);
+                this._detachListeners();
+                this._attachListeners(map);
             }
 
             this._map = map;
         },
-        _addToMap: function (map) {
+        _attachListeners: function (map) {
             if(map) {
                 map.events.add('boundschange', this._onBoundsChange, this);
             }
         },
-        _removeFromMap: function () {
+        _detachListeners: function () {
             if(this._map) {
                 this._map.events.remove('boundschange', this._onBoundsChange, this);
             }
