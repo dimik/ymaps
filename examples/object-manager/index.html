@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Менеджер объектов.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+    <script src="points-generator.js" type="text/javascript"></script>
+    <script src="object-manager.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+    ymaps.ready(function () {
+        var myMap = new ymaps.Map('YMapsID', {
+                center: [55.751574, 37.573856],
+                zoom: 9,
+                behaviors: ['default', 'scrollZoom']
+            }),
+            generator = new RandomPointsGenerator(),
+            myObjectManager = new ObjectManager();
+
+        // Перекроем метод генератора меток для добавления данных про масштабы их отображения.
+        generator.getPointData = function (index) {
+            var minZoom = Math.floor(Math.random() * 15),
+                maxZoom = minZoom + 3;
+
+            return {
+                minZoom: minZoom,
+                maxZoom: maxZoom,
+                balloonContentBody: 'Метка отображается на масштабе от ' + minZoom + ' до ' + maxZoom
+            };
+        };
+
+        // Создадим 200 меток в области видимости карты.
+        var points = generator.generate(200).atBounds(myMap.getBounds());
+
+        // Добавим геообъекты в менеджер.
+        for(var i = 0, len = points.length, point; i < len; i++) {
+            point = points[i];
+            myObjectManager.add(point, point.properties.get('minZoom'), point.properties.get('maxZoom'));
+        }
+
+        // А сам менеджер добавим на карту.
+        myMap.geoObjects.add(myObjectManager);
+
+        if(console && console.log) {
+            myMap.events.add('boundschange', function (e) {
+                console.log('Масштаб карты: ' + e.get('newZoom'));
+            });
+        }
+    });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Менеджер объектов для АПИ 2.0</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
