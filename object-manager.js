@@ -36,8 +36,8 @@ ymaps.ready(function () {
             this.constructor.superclass.add.call(this, object);
 
             var zoom = this._map && this._map.getZoom(),
-                minZoom = minZoom > 0 ? minZoom : 0,
-                maxZoom = maxZoom > 0 ? maxZoom : Infinity;
+                minZoom = minZoom >= 0 ? minZoom : 0,
+                maxZoom = maxZoom >= 0 ? maxZoom : Infinity;
 
             this._zooms.push({
                 minZoom: minZoom,
