@@ -106,17 +106,17 @@
                      * @returns {Number[][]} Координаты левого верхнего и правого нижнего углов шаблона относительно точки привязки.
                      */
                     getClientBounds: function () {
-                        if(!this._element) {
-                            return MyBalloonLayout.superclass.getClientBounds.apply(this, arguments);
+                        var arrowElement;
+                        if(!this._element || !this._element.length || !(arrowElement = this._element.find('.arrow')).length) {
+                            return MyBalloonLayout.superclass.getClientBounds.call(this);
                         }
 
-                        var left = this._element.position().left,
-                            top = this._element.position().top;
+                        var position = this._element.position();
 
                         return [
-                            [left, top], [
-                                left + this._element[0].offsetWidth,
-                                top + this._element[0].offsetHeight + this._element.find('.arrow')[0].offsetHeight
+                            [position.left, position.top], [
+                                position.left + this._element[0].offsetWidth,
+                                position.top + this._element[0].offsetHeight + arrowElement[0].offsetHeight
                             ]
                         ];
                     }
