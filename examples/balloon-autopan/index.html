@@ -63,9 +63,9 @@
                      * @name onSublayoutSizeChange
                      */
                     onSublayoutSizeChange: function () {
-                        if(!this._element) {
-                            MyBalloonLayout.superclass.onSublayoutSizeChange.apply(this, arguments);
+                        MyBalloonLayout.superclass.onSublayoutSizeChange.apply(this, arguments);
 
+                        if(!this._isElement(this._element)) {
                             return;
                         }
 
@@ -106,8 +106,7 @@
                      * @returns {Number[][]} Координаты левого верхнего и правого нижнего углов шаблона относительно точки привязки.
                      */
                     getClientBounds: function () {
-                        var arrowElement;
-                        if(!this._element || !this._element.length || !(arrowElement = this._element.find('.arrow')).length) {
+                        if(!this._isElement(this._element)) {
                             return MyBalloonLayout.superclass.getClientBounds.call(this);
                         }
 
@@ -116,9 +115,21 @@
                         return [
                             [position.left, position.top], [
                                 position.left + this._element[0].offsetWidth,
-                                position.top + this._element[0].offsetHeight + arrowElement[0].offsetHeight
+                                position.top + this._element[0].offsetHeight + this._element.find('.arrow')[0].offsetHeight
                             ]
                         ];
+                    },
+
+                    /**
+                     * Проверяем наличие элемента (в ИЕ и Опере его еще может не быть).
+                     * @function
+                     * @private
+                     * @name _isElement
+                     * @param {jQuery} [element] Элемент.
+                     * @returns {Boolean} Флаг наличия.
+                     */
+                    _isElement: function (element) {
+                        return element && element[0] && element.find('.arrow')[0];
                     }
                 }),
 
