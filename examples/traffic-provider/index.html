@@ -61,13 +61,25 @@ TrafficModel.prototype = {
         if(data.level == null) {
             return;
         }
+        /*
+        if(data.isInited) {
+            this.events.fire('change', { data: data });
+        }
+        */
 
         this.events.fire('change', { data: data });
     },
     _onProviderStateChange: function (e) {
         var data = e.get('target').getAll();
 
-        if(data.level == null || data.iconColor == null || data.timestamp == null) {
+        console.log(data);
+        /*
+        if(this._provider.state.get('isInited')) {
+            this.events.fire('change', { data: e.get('target').getAll() });
+        }
+        */
+
+        if(data.level == null || data.iconStyle == null || data.timestamp == null) {
             return;
         }
 
@@ -151,7 +163,7 @@ ymaps.ready(function () {
 
         myMap.events.add('contextmenu', function (e) {
            var position = e.get('position');
-           console.log(position);
+           console.log(position, e);
                $('#status').css({ top: position[0], left: position[1], display: 'block'});
                });
 });
