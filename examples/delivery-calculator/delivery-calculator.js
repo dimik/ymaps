@@ -46,15 +46,13 @@ DeliveryCalculator.prototype = {
         this.getDirections(this._origin, position);
     },
     calculate: function (route) {
-        // Константы.
-        MINIMUM_COST = 300,
-        results = [],
-        total = {
-            name: 'Итого',
-            duration: 0,
-            distance: 0,
-            value: 0
-        };
+        var results = [],
+            total = {
+                name: 'Итого',
+                duration: 0,
+                distance: 0,
+                value: 0
+            };
 
         this._tarifs.forEach(function (tarif) {
             var result = tarif.calculate(route);
