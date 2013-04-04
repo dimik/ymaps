@@ -24,7 +24,7 @@
                         '<a class="close" href="#">&times;</a>' +
                         '<div class="arrow"></div>' +
                         '<div class="popover-inner">' +
-                            '$[[options.contentLayout observeSize minWidth=235 maxWidth=235 maxHeight=350]]' +
+                            '$[[options.contentLayout]]' +
                         '</div>' +
                     '</div>', {
                     /**
@@ -41,6 +41,9 @@
                         this.applyElementOffset();
                         this._element.find('.close')
                             .on('click', $.proxy(this.onCloseClick, this));
+
+                        this.getData().properties.events
+                            .add('change', this._onPropertiesChange, this);
                     },
 
                     /**
@@ -53,24 +56,10 @@
                         this._element.find('.close')
                             .off('click');
 
+                        this.getData().properties.events
+                            .remove('change', this._onPropertiesChange, this);
+
                         this.constructor.superclass.clear.call(this);
-                    },
-
-                    /**
-                     * Метод будет вызван системой шаблонов АПИ при изменении размеров вложенного макета.
-                     * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/IBalloonLayout.xml#event-userclose
-                     * @function
-                     * @name onSublayoutSizeChange
-                     */
-                    onSublayoutSizeChange: function () {
-                        MyBalloonLayout.superclass.onSublayoutSizeChange.apply(this, arguments);
-
-                        if(!this._isElement(this._element)) {
-                            return;
-                        }
-
-                        this.applyElementOffset();
-                        this.events.fire('boundschange');
                     },
 
                     /**
@@ -130,6 +119,18 @@
                      */
                     _isElement: function (element) {
                         return element && element[0] && element.find('.arrow')[0];
+                    },
+
+                    /**
+                     * Обработчик изменений свойств.
+                     * @function
+                     * @private
+                     * @name _onPropertiesChange
+                     * @param {ymaps.Event} e Объект события.
+                     */
+                    _onPropertiesChange: function (e) {
+                        this.applyElementOffset();
+                        this.events.fire('boundschange');
                     }
                 }),
 
@@ -146,7 +147,7 @@
                 }, {
                     balloonShadow: false,
                     balloonLayout: MyBalloonLayout,
-                    balloonContentLayout: MyBalloonContentLayout,
+                    balloonContentLayout: MyBalloonContentLayout
                    // Не скрываем иконку при открытом балуне.
                    // hideIconOnBalloonOpen: false,
                    // И дополнительно смещаем балун, для открытия над иконкой.
