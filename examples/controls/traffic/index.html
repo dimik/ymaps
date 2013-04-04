@@ -60,13 +60,13 @@ ymaps.ready(function () {
         },
 
         setActualProvider: function () {
-            this.events.fire('providerkeychange', {newProviderKey: 'traffic#actual'});
-            this.getData().data.set({actualProvider: true, archiveProvider: false});
+            this.events.fire('providerkeychange', { newProviderKey: 'traffic#actual' });
+            this.getData().data.set({ actualProvider: true, archiveProvider: false });
         },
 
         setArchiveProvider: function () {
-            this.events.fire('providerkeychange', {newProviderKey: 'traffic#archive'});
-            this.getData().data.set({archiveProvider: true, actualProvider: false});
+            this.events.fire('providerkeychange', { newProviderKey: 'traffic#archive' });
+            this.getData().data.set({ archiveProvider: true, actualProvider: false });
         },
 
         checkShown: function (e) {
