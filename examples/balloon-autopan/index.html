@@ -39,6 +39,7 @@
                         this._element = $('.popover', this.getParentElement());
 
                         this.applyElementOffset();
+
                         this._element.find('.close')
                             .on('click', $.proxy(this.onCloseClick, this));
                     },
@@ -70,6 +71,7 @@
                         }
 
                         this.applyElementOffset();
+
                         this.events.fire('boundschange');
                     },
 
