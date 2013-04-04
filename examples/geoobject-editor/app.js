@@ -23,7 +23,8 @@ requirejs.config({
         bootstrap: {
             deps: ['jquery'],
         }
-    }
+    },
+    waitSeconds: 0
 });
 
 require(['map', 'Collection'], function (map, Collection) {
