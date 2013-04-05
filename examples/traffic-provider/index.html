@@ -11,167 +11,24 @@
     <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
     <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js" type="text/javascript"></script>
     <script src="//api-maps.yandex.ru/2.0/?load=package.map,package.traffic&lang=ru-RU&mode=debug" type="text/javascript"></script>
+    <script src="traffic-model.js" type="text/javascript"></script>
+    <script src="traffic-view.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-function TrafficModel(map) {
-    this._map = map;
-    this._provider = null;
-    this._monitor = null;
-    this._providers = {
-        actual: new ymaps.traffic.provider.Actual(),
-        archive: new ymaps.traffic.provider.Archive()
-        /*
-        actual: ymaps.traffic.provider.storage.get('traffic#actual'),
-        archive: ymaps.traffic.provider.storage.get('traffic#archive')
-        */
-    };
-
-    this.events = new ymaps.event.Manager();
-}
-
-TrafficModel.prototype = {
-    constructor: TrafficModel,
-    getProvider: function () {
-        return this._provider;
-    },
-    setProvider: function (key) {
-        if(this._provider === this._providers[key]) {
-            return;
-        }
-
-        if(this._provider) {
-            this._provider.setMap(null);
-            this._clearMonitor();
-        }
-
-        this._provider = this._providers[key];
-        this._provider.setMap(this._map);
-        this._setupMonitor();
-    },
-    _setupMonitor: function () {
-        this._monitor = new ymaps.Monitor(this._provider.state);
-        // this._monitor.add(['level', 'timestamp', 'iconStyle'], this._onStateChange, this);
-        this._provider.state.events.add('change', this._onProviderStateChange, this);
-    },
-    _clearMonitor: function () {
-        this._monitor.removeAll();
-        this._monitor = null;
-    },
-    _onStateChange: function (data) {
-        if(data.level == null) {
-            return;
-        }
-        /*
-        if(data.isInited) {
-            this.events.fire('change', { data: data });
-        }
-        */
-
-        this.events.fire('change', { data: data });
-    },
-    _onProviderStateChange: function (e) {
-        var data = e.get('target').getAll();
-
-        console.log(data);
-        /*
-        if(this._provider.state.get('isInited')) {
-            this.events.fire('change', { data: e.get('target').getAll() });
-        }
-        */
-
-        if(data.level == null || data.iconStyle == null || data.timestamp == null) {
-            return;
-        }
-
-        this.events.fire('change', { data: data });
-    }
-};
-
-function TrafficView(model) {
-    this._model = model;
-    this._buttons = $(':button');
-    this._info = $('#status');
-    this._statusTemplate = $('#trafficStatusTemplate').template('statusTemplate');
-
-    this._attachHandlers();
-}
-
-TrafficView.prototype = {
-    constructor: TrafficView,
-    _attachHandlers: function () {
-        this._buttons
-            .on('click', $.proxy(this._onButtonClick, this));
-        this._model.events.add('change', this._onModelChange, this);
-    },
-    _detachHandlers: function () {
-        this._buttons
-            .off('click');
-        this._model.events.remove('change', this._onModelChange, this);
-    },
-    _onButtonClick: function (e) {
-        var provider = e.target.id;
-
-        this._model.setProvider(provider);
-    },
-    _onModelChange: function (e) {
-        console.log(e.get('data'));
-        this._info.html($.tmpl(this._statusTemplate, e.get('data'), {
-            getBadgeColor: this._getBadgeColor,
-            formatDate: this._formatDate,
-            decline: this._decline
-        }));
-    },
-    _getBadgeColor: function (style) {
-        var colors = {
-            yellow: 'warning',
-            green: 'success',
-            red: 'important'
-        };
-
-        return colors[style];
-    },
-    _formatDate: function (timestamp) {
-        return (new Date(timestamp)).toString();
-    },
-    _decline: function (n, w) {
-        n = n >= 0 ? n : 0;
-        w = w || ['балл', 'балла', 'баллов'];
-
-        if(n % 100 >= 11 && n % 100 <= 20) {
-            return w[2];
-        }
-        else if(n % 10 === 1) {
-            return w[0];
-        }
-        else if(n % 10 >= 2 && n % 10 <= 4) {
-            return w[1];
-        }
-        else {
-            return w[2];
-        }
-    },
-};
-
-ymaps.ready(function () {
-    var myMap = window.myMap = new ymaps.Map('YMapsID', {
-            center: [55.751574, 37.573856],
-            zoom: 9,
-            behaviors: ['default', 'scrollZoom']
-        }),
-        model = new TrafficModel(myMap),
-        view = new TrafficView(model);
-
-        myMap.events.add('contextmenu', function (e) {
-           var position = e.get('position');
-           console.log(position, e);
-               $('#status').css({ top: position[0], left: position[1], display: 'block'});
-               });
-});
+        ymaps.ready(function () {
+            var myMap = window.myMap = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                }),
+                model = new TrafficModel(myMap, { autoUpdate: true }),
+                view = new TrafficView(model);
+        });
     </script>
     <!-- Шаблон статуса пробок. -->
     <script id="trafficStatusTemplate" type="text/x-jquery-tmpl">
-        <span>${$item.formatDate(timestamp)}</span>
-        <span class="badge badge-${$item.getBadgeColor(iconStyle)}">${level}</span>&nbsp;${$item.decline(level)}
+        <span>${$item.getDay(dayOfWeek)},&nbsp;{{if hours < 10}}0{{/if}}${hours}:{{if minutes < 10}}0{{/if}}${minutes}</span>
+        <span class="badge badge-${$item.getBadgeColor(level)}">${level}</span>&nbsp;${$item.decline(level)}
     </script>
     <style type="text/css">
         #YMapsID {
@@ -179,6 +36,7 @@ ymaps.ready(function () {
             height: 400px;
         }
         #status {
+            height: 30px;
             padding: 10px;
         }
     </style>
