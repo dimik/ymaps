@@ -94,10 +94,14 @@ function ArchiveProvider() {
      * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/traffic.provider.Archive.xml
      */
     this._updateTimeout = 15;
+    this._name = 'archive';
 }
 
 ymaps.ready(function () {
     ymaps.util.augment(ArchiveProvider, ymaps.traffic.provider.Archive, {
+        getName: function () {
+            return this._name;
+        },
         getUpdateTimeout: function () {
             return this._updateTimeout;
         },
@@ -114,12 +118,16 @@ function ActualProvider() {
      * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/traffic.provider.Actual.xml
      */
     this._updateTimeout = 4;
+    this._name = 'actual';
 }
 
 ActualProvider.DAYS_OF_WEEK = ['sun', 'mon', 'tue', 'wen', 'thu', 'fri', 'sat'];
 
 ymaps.ready(function () {
     ymaps.util.augment(ActualProvider, ymaps.traffic.provider.Actual, {
+        getName: function () {
+            return this._name;
+        },
         getUpdateTimeout: function () {
             return this._updateTimeout;
         },

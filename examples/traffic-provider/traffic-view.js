@@ -22,12 +22,26 @@ TrafficView.prototype = {
     _attachHandlers: function () {
         this._buttons
             .on('click', $.proxy(this._onButtonClick, this));
-        this._model.events.add('change', this._onModelChange, this);
+        this._info
+            .on('change', ':checkbox', $.proxy(this._onChangeInfoLayerState, this))
+        this._model.events
+            .add('change', this._onModelChange, this);
     },
     _detachHandlers: function () {
         this._buttons
             .off('click');
-        this._model.events.remove('change', this._onModelChange, this);
+        this._info
+            .off('change');
+        this._model.events
+            .remove('change', this._onModelChange, this);
+    },
+    _onChangeInfoLayerState: function (e) {
+        if(e.target.checked) {
+            this._model.showInfoLayer();
+        }
+        else {
+            this._model.hideInfoLayer();
+        }
     },
     _onButtonClick: function (e) {
         var provider = e.target.id;
@@ -43,7 +57,8 @@ TrafficView.prototype = {
         }, {
             getBadgeColor: this._getBadgeColor,
             getDay: this._getDay,
-            decline: this._decline
+            decline: this._decline,
+            getProviderName: $.proxy(this._getProviderName, this)
         }));
     },
     _getBadgeColor: function (level) {
@@ -76,5 +91,8 @@ TrafficView.prototype = {
     },
     _getDay: function (dayOfWeek) {
         return TrafficView.DAYS_OF_WEEK[dayOfWeek];
+    },
+    _getProviderName: function () {
+        return this._model.getProvider().getName();
     }
 };
