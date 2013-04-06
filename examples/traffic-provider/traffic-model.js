@@ -57,13 +57,14 @@ TrafficModel.prototype = {
         }
     },
     _setupMonitor: function () {
-        this._monitor = new ymaps.Monitor(this._provider.state);
-        // this._monitor.add(['level', 'timestamp', 'timeZone', 'localtime'], this._onStateChange, this);
+        // this._monitor = new ymaps.Monitor(this._provider.state);
+        // this._monitor.add(['level', 'timestamp', 'timeZone', 'localtime', 'isotime'], this._onStateChange, this);
         this._provider.state.events.add('change', this._onProviderStateChange, this);
     },
     _clearMonitor: function () {
-        this._monitor.removeAll();
-        this._monitor = null;
+        // this._monitor.removeAll();
+        // this._monitor = null;
+        this._provider.state.events.remove('change', this._onProviderStateChange, this);
     },
     _onStateChange: function (data) {
         if(this._isData(data)) {
