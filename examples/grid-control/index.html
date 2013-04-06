@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Примеры. Контрол добавления градусной сетки.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = window.map = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 2,
+                    behaviors: ['default', 'scrollZoom']
+                }),
+                gridButton = new ymaps.control.Button({
+                    data: {
+                        content: 'Градусная сетка'
+                    }
+                }),
+                gridLayer = new ymaps.Layer('http://lrs.maps.yandex.net/tiles/?l=grd&v=1.0&%c', {
+                    projection: ymaps.projection.sphericalMercator,
+                    tileTransparent: true
+                });
+
+            map.controls.add(gridButton, { top: 5, left: 5 });
+
+            gridButton.events
+                .add('select', function (e) {
+                    myMap.layers.add(gridLayer);
+                })
+                .add('deselect', function (e) {
+                    myMap.layers.remove(gridLayer);
+                });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пример контрола добавления градусной сетки.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
