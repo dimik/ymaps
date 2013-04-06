@@ -1,6 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
     <title>Примеры. Провайдеры пробок.</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -29,14 +28,11 @@
     <script id="trafficStatusTemplate" type="text/x-jquery-tmpl">
         <span>${$item.getDay(dayOfWeek)},&nbsp;{{if hours < 10}}0{{/if}}${hours}:{{if minutes < 10}}0{{/if}}${minutes}</span>
         <span class="badge badge-${$item.getBadgeColor(level)}">${level}</span>&nbsp;${$item.decline(level)}
-        {{if $item.getProviderName() == 'actual'}}
-            {{tmpl "#infoLayerTemplate"}}
-        {{/if}}
     </script>
     <script id="infoLayerTemplate" type="text/x-jquery-tmpl">
         <form class="form-inline">
             <label class="checkbox">
-                <input id="infoLayer" type="checkbox">&nbsp;Дорожные события
+                <input id="infoLayer" type="checkbox"{{if infoLayerShown}} checked{{/if}}>&nbsp;Дорожные события
             </label>
         </form>
     </script>
@@ -45,9 +41,8 @@
             width: 900px;
             height: 400px;
         }
-        #status {
-            height: 30px;
-            padding: 10px;
+        form {
+            margin: 0;
         }
     </style>
 </head>
@@ -55,12 +50,22 @@
     <div class="hero-unit">
         <div class="container">
             <p>Пример использования провайдеров пробок.</p>
-            <div class="btn-group" data-toggle="buttons-radio">
-                <button class="btn" id="actual">Сейчас</button>
-                <button class="btn" id="archive">Обычно</button>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="row-fluid">
+                        <div class="span4">
+                            <div class="btn-group" data-toggle="buttons-radio">
+                                <button class="btn" id="actual">Сейчас</button>
+                                <button class="btn" id="archive">Обычно</button>
+                            </div>
+                        </div>
+                        <div class="span4" id="status"></div>
+                        <div class="span4" id="info"></div>
+                    </div>
+                </div>
+                <div class="span12"></div>
+                <div id="YMapsID"></div>
             </div>
-            <div id="status"></div>
-            <div id="YMapsID"></div>
         </div>
     </div>
 </body>

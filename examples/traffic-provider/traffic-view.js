@@ -1,8 +1,10 @@
 function TrafficView(model) {
     this._model = model;
     this._buttons = $(':button');
-    this._info = $('#status');
+    this._status = $('#status');
+    this._info = $('#info');
     this._statusTemplate = $('#trafficStatusTemplate').template('statusTemplate');
+    this._infoLayerTemplate = $('#infoLayerTemplate').template('infoLayerTemplate');
 
     this._attachHandlers();
 }
@@ -49,7 +51,7 @@ TrafficView.prototype = {
         this._model.setProvider(provider);
     },
     _onModelChange: function (e) {
-        this._info.html($.tmpl(this._statusTemplate, {
+        this._status.html($.tmpl(this._statusTemplate, {
             dayOfWeek: e.get('dayOfWeek'),
             hours: e.get('hours'),
             minutes: e.get('minutes'),
@@ -57,9 +59,17 @@ TrafficView.prototype = {
         }, {
             getBadgeColor: this._getBadgeColor,
             getDay: this._getDay,
-            decline: this._decline,
-            getProviderName: $.proxy(this._getProviderName, this)
+            decline: this._decline
         }));
+
+        if(this._isActualProvider()) {
+            this._info.html($.tmpl(this._infoLayerTemplate, {
+                infoLayerShown: e.get('infoLayerShown')
+            }));
+        }
+        else {
+            this._info.empty();
+        }
     },
     _getBadgeColor: function (level) {
         if(level < 4) {
@@ -92,7 +102,7 @@ TrafficView.prototype = {
     _getDay: function (dayOfWeek) {
         return TrafficView.DAYS_OF_WEEK[dayOfWeek];
     },
-    _getProviderName: function () {
-        return this._model.getProvider().getName();
+    _isActualProvider: function () {
+        return this._model.getProvider().getName() == 'actual';
     }
 };
