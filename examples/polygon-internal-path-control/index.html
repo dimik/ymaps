@@ -10,7 +10,7 @@
 
     <script type="text/javascript">
         ymaps.ready(function () {
-            var myMap = window.map = new ymaps.Map('YMapsID', {
+            var myMap = new ymaps.Map('YMapsID', {
                     center: [55.751574, 37.573856],
                     zoom: 10,
                     behaviors: ['default', 'scrollZoom']
@@ -43,7 +43,7 @@
             // Добавляем многоугольник на карту.
             myMap.geoObjects.add(myPolygon);
 
-            map.controls.add(button, { top: 5, left: 5 });
+            myMap.controls.add(button, { top: 5, left: 5 });
 
             button.events
                 .add('select', function (e) {

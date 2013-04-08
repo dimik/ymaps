@@ -10,7 +10,7 @@
 
     <script type="text/javascript">
         ymaps.ready(function () {
-            var myMap = window.map = new ymaps.Map('YMapsID', {
+            var myMap = new ymaps.Map('YMapsID', {
                     center: [55.751574, 37.573856],
                     zoom: 2,
                     behaviors: ['default', 'scrollZoom']
@@ -25,7 +25,7 @@
                     tileTransparent: true
                 });
 
-            map.controls.add(gridButton, { top: 5, left: 5 });
+            myMap.controls.add(gridButton, { top: 5, left: 5 });
 
             gridButton.events
                 .add('select', function (e) {
