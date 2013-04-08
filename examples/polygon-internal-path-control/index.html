@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Примеры. Контрол добавления внутреннего контура полигона.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = window.map = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 10,
+                    behaviors: ['default', 'scrollZoom']
+                }),
+                button = new ymaps.control.Button({
+                    data: {
+                        content: 'Добавить внутренний контур'
+                    }
+                }),
+                // Создаем многоугольник, используя вспомогательный класс Polygon.
+                myPolygon = new ymaps.Polygon([
+                    // Координаты вершин внешнего контура.
+                    [
+                        [55.75, 37.50],
+                        [55.80, 37.60],
+                        [55.75, 37.70],
+                        [55.70, 37.70],
+                        [55.70, 37.50]
+                    ]
+                ], {
+                    hintContent: "Многоугольник"
+                }, {
+                    // Задаем опции геообъекта.
+                    // Цвет заливки.
+                    fillColor: '#00FF0088',
+                    // Ширина обводки.
+                    strokeWidth: 5
+                });
+
+            // Добавляем многоугольник на карту.
+            myMap.geoObjects.add(myPolygon);
+
+            map.controls.add(button, { top: 5, left: 5 });
+
+            button.events
+                .add('select', function (e) {
+                    var newIndex = myPolygon.geometry.getLength();
+
+                    myPolygon.geometry.insert(newIndex, []);
+                    myPolygon.editor.state.set({
+                        drawing: true,
+                        drawingPath: newIndex
+                    });
+                })
+                .add('deselect', function (e) {
+                    myPolygon.editor.state.set({
+                        editing: false
+                    });
+                });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пример контрола добавления внутреннего контура полигона.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
