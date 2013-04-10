@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Примеры. Определение координат.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                center: [55.751574, 37.573856],
+                zoom: 9,
+                behaviors: ['default', 'scrollzoom']
+            });
+
+            new PositioningTool(myMap);
+        });
+
+        function PositioningTool(map, options) {
+            this._view = new PositioningTool.View();
+            this._mapView = new PositioningTool.MapView(map);
+            this._attachHandlers();
+        }
+
+        PositioningTool.prototype = {
+            constructor: PositioningTool,
+            _attachHandlers: function () {
+                this._mapView.state.events
+                    .add('change', this._onMapViewStateChange, this);
+            },
+            _onMapViewStateChange: function (e) {
+                console.log('statechange', e.get('target').getAll());
+                this._view.render(e.get('target').getAll());
+            }
+        };
+
+        PositioningTool.MapView = function (map) {
+            this._map = map;
+            this.state = new ymaps.data.Manager({
+                mapCenter: map.getCenter(),
+                mapZoom: map.getZoom(),
+                markerPosition: map.getCenter()
+            });
+            this._addMarkers();
+            this._attachHandlers();
+        };
+
+        PositioningTool.MapView.prototype = {
+            constructor: PositioningTool.MapView,
+            _attachHandlers: function () {
+                this._map.events
+                    .add('boundschange', this._onMapChange, this)
+                    .add('actionbegin', this._onMapActionBegin, this)
+                    .add('actionend', this._onMapActionEnd, this);
+
+                this._marker.events
+                    .add('drag', this._onMarkerDrag, this);
+            },
+            _addMarkers: function () {
+                var map = this._map,
+                    coordinates = map.getCenter();
+
+                map.geoObjects
+                    .add(this._createCenterMarker(coordinates))
+                    .add(this._marker = this._createDraggableMarker(coordinates));
+            },
+            _onMarkerDrag: function (e) {
+                this.state.set({
+                    markerPosition: e.get('target').geometry.getCoordinates()
+                });
+            },
+            _onMapActionBegin: function (e) {
+                console.log('MapActionBegin');
+                if(this._intervalId) {
+                    return;
+                }
+
+                this._intervalId = window.setInterval(
+                    ymaps.util.bind(this._onMapChange, this),
+                    200 // this._options.updateTimeout
+                );
+            },
+            _onMapActionEnd: function (e) {
+                console.log('MapActionEnd');
+                window.clearInterval(this._intervalId);
+                this._intervalId = null;
+            },
+            _onMapChange: function () {
+                console.log('MapChange', this._map.getCenter());
+                this.state.set({
+                    mapCenter: this._map.getCenter(),
+                    mapZoom: this._map.getZoom()
+                });
+            },
+            _createCenterMarker: function (coordinates) {
+                return new ymaps.Placemark(coordinates, null, {
+                    iconImageHref: 'http://api.yandex.ru/i/maps/icons/center.gif',
+                    iconImageSize: [16, 16],
+                    iconImageOffset: [-8, -8],
+                    pane: 'movableOuters'
+                });
+            },
+            _createDraggableMarker: function (coordinates) {
+                return new ymaps.Placemark(coordinates, {
+                    hintContent: 'Перетащите метку'
+                }, {
+                    draggable: true
+                });
+            }
+        };
+
+        PositioningTool.View = function () {
+            this._element = $($('#positionDataTemplate').text());
+            this._container = $('body');
+            this._container
+                .append(this._element);
+        }
+
+        PositioningTool.View.prototype = {
+            constructor: PositioningTool.View,
+            render: function (data) {
+                $.each(data, $.proxy(this._setData, this));
+            },
+            _setData: function (key, value) {
+                console.log(key, value);
+                this._element
+                    .find('#' + key)
+                    .val(value);
+            },
+            clear: function () {
+                this._element.remove();
+            }
+        };
+
+    </script>
+    <script id="positionDataTemplate" type="text/x-jquery-tmpl">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="markerPosition">Координаты метки</label>
+                <div class="controls">
+                    <input type="text" id="markerPosition">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="mapZoom" >Масштаб карты</label>
+                <div class="controls">
+                    <input type="text" id="mapZoom">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="mapCenter">Центр карты</label>
+                <div class="controls">
+                    <input type="text" id="mapCenter">
+                </div>
+            </div>
+        </form>
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        },
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Определение координат.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
