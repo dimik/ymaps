@@ -25,7 +25,7 @@
             this._view = new LocationTool.View();
             this._mapView = new LocationTool.MapView(map);
             this._attachHandlers();
-            this._view.render(this._mapView.state..getAll());
+            this._view.render(this._mapView.state.getAll());
         }
 
         LocationTool.prototype = {
