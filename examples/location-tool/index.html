@@ -7,160 +7,41 @@
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
-    <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js" type="text/javascript"></script>
-    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0.28/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+    <script src="location-tool.js" type="text/javascript"></script>
+    <script src="geolocation-button.js" type="text/javascript"></script>
 
     <script type="text/javascript">
         ymaps.ready(function () {
             var myMap = new ymaps.Map('YMapsID', {
-                center: [55.751574, 37.573856],
-                zoom: 9,
-                behaviors: ['default', 'scrollZoom']
-            });
+                    center: [55.753994, 37.622093],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                }),
+                // Создание кнопки определения местоположения
+                geolocationButton = new GeolocationButton({
+                    data: {
+                        image: 'wifi.png',
+                        title: 'Определить местоположение'
+                    },
+                    geolocationOptions: {
+                        enableHighAccuracy: true // Режим получения наиболее точных данных
+                    }
+                }, {
+                    // Зададим опции для кнопки.
+                    selectOnClick: false
+                });
+
+
+            myMap.controls
+                .add('mapTools')
+                .add(geolocationButton, { top: 5, left: 100 })
+                .add('zoomControl')
+                .add('typeSelector', { top: 5, right: 5 })
+                .add('searchControl', { top: 5, left: 200 });
 
             new LocationTool(myMap);
         });
-
-        function LocationTool(map, options) {
-            this._view = new LocationTool.View();
-            this._mapView = new LocationTool.MapView(map);
-            this._attachHandlers();
-            this._view.render(this._mapView.state.getAll());
-        }
-
-        LocationTool.prototype = {
-            constructor: LocationTool,
-            _attachHandlers: function () {
-                this._mapView.state.events
-                    .add('change', this._onMapViewStateChange, this);
-            },
-            _onMapViewStateChange: function (e) {
-                this._view.render(e.get('target').getAll());
-            }
-        };
-
-        LocationTool.MapView = function (map) {
-            this._map = map;
-            this._marker = this._createDraggableMarker();
-            map.geoObjects.add(this._marker);
-            this.state = new ymaps.data.Manager({
-                mapCenter: map.getCenter(),
-                mapZoom: map.getZoom(),
-                markerPosition: map.getCenter()
-            });
-            this._attachHandlers();
-        };
-
-        LocationTool.MapView.prototype = {
-            constructor: LocationTool.MapView,
-            _attachHandlers: function () {
-                this._map.events
-                    .add('boundschange', this._onMapBoundsChange, this)
-                    .add('actiontick', this._onMapAction, this)
-                    /* Во время плавного движения карты, у браузеров поддерживающих CSS3 Transition,
-                     * actiontick не кидается, поэтому используем этот прием через setInterval.
-                     */
-                    .add('actionbegin', this._onMapActionBegin, this)
-                    .add('actionend', this._onMapActionEnd, this);
-
-                this._marker.events
-                    .add('drag', this._onMarkerDrag, this);
-            },
-            _onMarkerDrag: function (e) {
-                this.state.set({
-                    markerPosition: e.get('target').geometry.getCoordinates()
-                });
-            },
-            _onMapActionBegin: function (e) {
-                if(this._intervalId) {
-                    return;
-                }
-
-                this._intervalId = window.setInterval(
-                    ymaps.util.bind(this._onMapAction, this),
-                    this._updateTimeout
-                );
-            },
-            _onMapActionEnd: function (e) {
-                window.clearInterval(this._intervalId);
-                this._intervalId = null;
-            },
-            _onMapAction: function () {
-                var state = this._map.action.getCurrentState(),
-                    zoom = state.zoom,
-                    center = this._map.options.get('projection').fromGlobalPixels(
-                        state.globalPixelCenter, zoom
-                    );
-
-                this.state.set({
-                    mapCenter: center,
-                    mapZoom: zoom
-                });
-            },
-            _onMapBoundsChange: function (e) {
-                this.state.set({
-                    mapCenter: e.get('newCenter'),
-                    mapZoom: e.get('newZoom')
-                });
-            },
-            _createDraggableMarker: function () {
-                return new ymaps.Placemark(this._map.getCenter(), {
-                    hintContent: 'Перетащите метку'
-                }, {
-                    draggable: true
-                });
-            }
-        };
-
-        LocationTool.View = function () {
-            this._element = $($('#positionDataTemplate').text());
-            this._container = $('body');
-            this._container
-                .append(this._element);
-        }
-
-        LocationTool.View.prototype = {
-            constructor: LocationTool.View,
-            render: function (data) {
-                $.each(data, $.proxy(this._setData, this));
-            },
-            _formatCoords: function (coords) {
-                return Number(coords).toFixed(6);
-            },
-            _setData: function (key, value) {
-                this._element
-                    .find('#' + key)
-                    .val(
-                        $.isArray(value)?
-                            $.map(value, this._formatCoords).join(', ') : value
-                    );
-            },
-            clear: function () {
-                this._element.remove();
-            }
-        };
-
-/*
-        function CrossControl () {
-            CrossControl.superclass.constructor.apply(this, arguments);
-        };
-
-        ymaps.util.augment(CrossControl, ymaps.collection.Item, {
-            onAddToMap: function (map) {
-                CrossControl.superclass.onAddToMap.call(this, map);
-
-                var container = $(this.getParent().getChildElement(this));
-                this._el = $('img', {
-                    src: '//api.yandex.ru/i/maps/icons/center.gif'
-                });
-                container.append(this._el);
-            },
-            onRemoveFromMap: function () {
-                this._el.remove();
-                CrossControl.superclass.onRemoveFromMap.call(this);
-            }
-        });
-*/
     </script>
     <script id="positionDataTemplate" type="text/x-jquery-tmpl">
         <form class="form-horizontal">
@@ -188,14 +69,27 @@
         #YMapsID {
             width: 900px;
             height: 400px;
-        },
+        }
+        .hero-unit p {
+            line-height: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="hero-unit">
         <div class="container">
             <p>Определение координат.</p>
+            <p><small>Введите в строке поиска название географического объекта или перетащите метку в то место, координаты которого вы хотите узнать. Под картой будут показаны: координаты метки в формате "широта, долгота", текущий масштаб карты и координаты центра карты.</small></p>
             <div id="YMapsID"></div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="row-fluid">
+                <div class="span4"></div>
+                <div class="span4" id="container"></div>
+                <div class="span4"></div>
+            </div>
         </div>
     </div>
 </body>
