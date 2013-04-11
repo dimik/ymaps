@@ -16,7 +16,7 @@
             myMap.controls.add('typeSelector');
             myMap.behaviors.enable('scrollZoom');
 
-            myMap.events.add('locationstatechange', function (e) {
+            mapLocation.events.add('statechange', function (e) {
                 var state = e.get('newState'),
                     hash = '#' + state;
 

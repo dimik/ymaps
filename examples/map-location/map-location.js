@@ -9,15 +9,16 @@ function MapLocation(map, state) {
     this._map = map;
     this._state = state;
     this._freeze = false;
+    this.events = new ymaps.event.Manager();
 
-    map.events.add(['boundschange', 'typechange'], this._onStateChange, this);
+    map.events.add(['boundschange', 'typechange'], this._onMapStateChange, this);
 }
 
 /**
  * @private
  * @function
  */
-MapLocation.prototype._onStateChange = function (e) {
+MapLocation.prototype._onMapStateChange = function (e) {
     var oldState = this._state;
 
     if(this._freeze) {
@@ -35,7 +36,7 @@ MapLocation.prototype._onStateChange = function (e) {
          * @param {MapLocationState} oldState Предыдущее состояние карты.
          * @param {MapLocationState} newState Актуальное состояние карты.
          */
-        this._map.events.fire('locationstatechange', {
+        this.events.fire('statechange', {
             oldState: oldState,
             newState: this._state
         });
@@ -174,7 +175,7 @@ MapLocationState.fromString = function (location) {
  * Преобразование координат к числу фиксированной длины.
  * @static
  * @function
- * @name MapLocationState.toCoors
+ * @name MapLocationState.toFixedNumber
  * @param {String|Number} i
  * @returns {Number} Число с 6-ю цифрами поле точки.
  */
