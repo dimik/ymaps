@@ -32,7 +32,7 @@ MapLocation.prototype._onMapStateChange = function (e) {
         });
         /**
          * @event
-         * @name ymaps.Map#locationstatechange
+         * @name ymaps.Map#statechange
          * @param {MapLocationState} oldState Предыдущее состояние карты.
          * @param {MapLocationState} newState Актуальное состояние карты.
          */
@@ -67,7 +67,7 @@ MapLocation.prototype.setState = function (data) {
     var map = this._map,
         state = this._state;
 
-    // Не кидаем событие "locationstatechange"
+    // Не кидаем событие "statechange"
     this._freeze = true;
 
     // Если тип карты не изменился значит изменился центр или масштаб.
