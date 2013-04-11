@@ -26,6 +26,8 @@ LocationTool.prototype = {
 
 LocationTool.MapView = function (map) {
     this._map = map;
+    // Интервал обновления данных (millisec) при кинетическом движении карты.
+    this._updateTimeout = 10;
     this._marker = this._createDraggableMarker();
     map.geoObjects.add(this._marker);
     this.state = new ymaps.data.Manager({
