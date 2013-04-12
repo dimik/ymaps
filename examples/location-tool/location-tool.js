@@ -291,28 +291,3 @@ LocationTool.DOMView.prototype = {
     }
 };
 
-/*
- * Контрол-крестик.
- * До лучших времен
-function CrossControl () {
-    CrossControl.superclass.constructor.apply(this, arguments);
-}
-
-ymaps.ready(function () {
-    ymaps.util.augment(CrossControl, ymaps.control.Base, {
-        onAddToMap: function (map) {
-            CrossControl.superclass.onAddToMap.call(this, map);
-
-            var container = $(this.getParent().getChildElement(this));
-            this._el = $('img', {
-                src: '//api.yandex.ru/i/maps/icons/center.gif'
-            });
-            container.append(this._el);
-        },
-        onRemoveFromMap: function () {
-            this._el.remove();
-            CrossControl.superclass.onRemoveFromMap.call(this);
-        }
-    });
-});
- */

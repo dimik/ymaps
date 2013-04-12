@@ -7,8 +7,9 @@
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
-    <script src="//api-maps.yandex.ru/2.0.28/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
     <script src="location-tool.js" type="text/javascript"></script>
+    <script src="cross-control.js" type="text/javascript"></script>
     <script src="geolocation-button.js" type="text/javascript"></script>
 
     <script type="text/javascript">
@@ -32,9 +33,9 @@
                     selectOnClick: false
                 });
 
-
             myMap.controls
                 .add('mapTools')
+                .add(new CrossControl)
                 .add(geolocationButton, { top: 5, left: 100 })
                 .add('zoomControl')
                 .add('typeSelector', { top: 5, right: 5 })
@@ -72,6 +73,12 @@
         }
         .hero-unit p {
             line-height: 20px;
+        }
+        .cross-control {
+            background: url(center.gif) no-repeat;
+            position: absolute;
+            width: 16px;
+            height: 16px;
         }
     </style>
 </head>
