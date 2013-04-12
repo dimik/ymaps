@@ -57,6 +57,8 @@ CrossControl.prototype = {
         else {
             this.layout.setParentElement(null);
         }
+
+        return this;
     },
     /**
      * Возвращает ссылку на родительский объект.
