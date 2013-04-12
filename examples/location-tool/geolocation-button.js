@@ -208,16 +208,12 @@ GeolocationButton.ERRORS = [
  * Класс хинта кнопки геолокации, будем использовать для отображения ошибок.
  * @class
  * @name GeolocationButtonHint
- * @param {GeolocationButton} btn Экземпляр класса кнопки.
+ * @param {GeolocationButton} button Экземпляр класса кнопки.
  */
-function GeolocationButtonHint(btn) {
-    var map = btn.getMap(),
-        // Позиция кнопки.
-        position = btn.options.get('position');
-
-    this._map = map;
-    // Отодвинем от кнопки на 35px.
-    this._position = [position.left + 35, position.top];
+function GeolocationButtonHint(button) {
+    this._button = button;
+    this._map = button.getMap();
+    this._offset = { left: 35, top: -18 };
 }
 /**
  * Отображает хинт справа от кнопки.
@@ -228,7 +224,10 @@ function GeolocationButtonHint(btn) {
  */
 GeolocationButtonHint.prototype.show = function (text) {
     var map = this._map,
-        globalPixels = map.converter.pageToGlobal(this._position),
+        offset = this._offset,
+        buttonPagePixels = this._button.getLayout().getElement().getBoundingClientRect(),
+        pagePixels = [buttonPagePixels.left + offset.left, buttonPagePixels.top + offset.top],
+        globalPixels = map.converter.pageToGlobal(pagePixels),
         position = map.options.get('projection').fromGlobalPixels(globalPixels, map.getZoom());
 
     this._hint = map.hint.show(position, text);
