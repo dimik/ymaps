@@ -268,7 +268,7 @@ LocationTool.DOMView.prototype = {
      * @returns {Number} Число фиксированной длины.
      */
     _toFixedNumber: function (coords) {
-        return Number(coords).toFixed(6);
+        return Number(coords).toFixed(8);
     },
     /**
      * Обновление значений полей формы.
