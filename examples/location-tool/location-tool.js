@@ -230,10 +230,7 @@ LocationTool.MapView.prototype = {
  * @name DOMView
  */
 LocationTool.DOMView = function () {
-    this._element = $($('#positionDataTemplate').text());
-    this._container = $('#container');
-    this._container
-        .append(this._element);
+    this._element = $('form');
 }
 
 /**
@@ -290,4 +287,3 @@ LocationTool.DOMView.prototype = {
             );
     }
 };
-

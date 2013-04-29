@@ -44,28 +44,6 @@
             new LocationTool(myMap);
         });
     </script>
-    <script id="positionDataTemplate" type="text/x-jquery-tmpl">
-        <form class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="markerPosition">Координаты метки</label>
-                <div class="controls">
-                    <input type="text" id="markerPosition">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="mapZoom" >Масштаб карты</label>
-                <div class="controls">
-                    <input type="text" id="mapZoom">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="mapCenter">Центр карты</label>
-                <div class="controls">
-                    <input type="text" id="mapCenter">
-                </div>
-            </div>
-        </form>
-    </script>
     <style type="text/css">
         #YMapsID {
             width: 900px;
@@ -94,7 +72,28 @@
         <div class="span12">
             <div class="row-fluid">
                 <div class="span4"></div>
-                <div class="span4" id="container"></div>
+                <div class="span4">
+                    <form class="form-horizontal">
+                        <div class="control-group">
+                            <label class="control-label" for="markerPosition">Координаты метки</label>
+                            <div class="controls">
+                                <input type="text" id="markerPosition">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapZoom" >Масштаб карты</label>
+                            <div class="controls">
+                                <input type="text" id="mapZoom">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapCenter">Центр карты</label>
+                            <div class="controls">
+                                <input type="text" id="mapCenter">
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="span4"></div>
             </div>
         </div>
