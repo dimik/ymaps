@@ -33,6 +33,7 @@ ContextMenu.prototype = {
             .off('selectaction');
     },
     _onOpenMenu: function (e) {
+        this._view.clear();
         this._view.render(e.get('position'));
         this._coordinates = e.get('coordinates');
     },
