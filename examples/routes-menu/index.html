@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Примеры. Меню выбора маршрута.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+    <script src="route-selector.js" type="text/javascript"></script>
+    <script src="route-selector-model.js" type="text/javascript"></script>
+    <script src="route-selector-map-view.js" type="text/javascript"></script>
+    <script src="route-selector-dom-view.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('map', {
+                    center: [55.751574, 37.573856],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                });
+
+            new RouteSelector(myMap, $('#sidebar'));
+
+        });
+    </script>
+    <style type="text/css">
+        .hero-unit {
+            background-color: #FFF;
+        }
+        .well {
+            padding: 15px 0;
+        }
+        #map {
+            width: 800px;
+            height: 520px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="lead">Пример создания меню выбора маршрута.</p>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div id="map" class="span8"></div>
+                <div id="sidebar" class="well span2"></div>
+                <div class="span2"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
