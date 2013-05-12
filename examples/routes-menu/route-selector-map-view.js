@@ -1,39 +1,39 @@
 function RouteSelectorMapView(map) {
     this._map = map;
-    this._routes = [];
-    this._data = null;
+    this._routes = new ListCollection();
     this._activeItem = null;
 }
 
 RouteSelectorMapView.prototype = {
     constructor: RouteSelectorMapView,
     render: function (data) {
-        this._data = data;
+        this._routes.properties.set('items', data);
+        this._map.geoObjects.add(this._routes);
 
         return this;
     },
     clear: function () {
-        this._routes = [];
-        this._data = null;
-        this.unsetActiveItem();
+        this._routes.removeAll();
+        this._map.geoObjects.remove(this._routes);
+        this._routes.properties.unset('items');
 
         return this;
     },
     setActiveItem: function (index) {
-        var route = this._routes[index];
+        var route = this._routes.get(index);
 
         if(route) {
-            this._map.geoObjects.add(
-                this._activeItem = route
-            );
+            (this._activeItem = route)
+                .options.set('visible', true);
         }
         else {
             var self = this,
-                coords = this._data[index].path;
+                coords = this._routes.properties.get('items')[index].path;
 
             this._getRoute(coords, function (route) {
-                self._map.geoObjects.add(
-                    self._activeItem = self._routes[index] = route
+                self._routes.add(
+                    self._activeItem = route,
+                    index
                 );
             });
         }
@@ -42,7 +42,7 @@ RouteSelectorMapView.prototype = {
     },
     unsetActiveItem: function () {
         if(this._activeItem) {
-            this._map.geoObjects.remove(this._activeItem);
+            this._activeItem.options.set('visible', false);
             this._activeItem = null;
         }
 
