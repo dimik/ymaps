@@ -25,6 +25,7 @@ RouteSelectorMapView.prototype = {
         if(route) {
             (this._activeItem = route)
                 .options.set('visible', true);
+            this._map.setBounds(route.properties.get('boundedBy'));
         }
         else {
             var self = this,
