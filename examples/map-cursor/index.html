@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Смена курсора при наведении на карту.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        // Как только будет загружен API и готов DOM, выполняем инициализацию
+        ymaps.ready(init);
+
+        function init () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.753994, 37.622093],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                }),
+                myCursor;
+
+            // Вариант с 2-мя обработчиками
+            myMap.events
+                .add('mouseenter', function (e) {
+                    myCursor = e.get('target') // myMap
+                        .cursors.push('help'); // @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/util.cursor.Manager.xml
+                })
+                .add('mouseleave', function (e) {
+                    myCursor.remove();
+                });
+
+            /*
+            // Вариант с одним обработчиком
+            myMap.events.add(['mouseenter', 'mouseleave'], function (e) {
+                if(e.get('type') === 'mouseenter') {
+                    myCursor = e.get('target') // myMap
+                        .cursors.push('help');
+                }
+                else {
+                    myCursor.remove();
+                }
+            });
+            */
+        }
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пример смены курсора при наведении на карту.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
