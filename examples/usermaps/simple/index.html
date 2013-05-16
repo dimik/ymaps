@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Экпорт карты из сервиса &laquo;Мои карты&raquo;</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.753994, 37.622093],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                });
+
+            // Необходимо подставить свой URL.
+            ymaps.geoXml.load("http://maps.yandex.ru/export/usermaps/ydthuh_cw37GmjF39vR9y0WBYIfsK7jX/")
+                .then(function (res) {
+
+                    // Установка границ карты по размерам содержимого YMapsML-файла.
+                    var bounds = res.mapState && res.mapState.getBounds();
+
+                    if(bounds) {
+                        myMap.setBounds(bounds);
+                    }
+
+                    res.geoObjects.each(function (geoObject) {
+                        geoObject.options.set({
+                            // Все типы стандартных значков можно увидеть тут http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/option.presetStorage.xml
+                            preset : 'twirl#trainIcon'
+                            /* Можно установить и собственный значок для метки.
+                            , iconImageHref: 'http://api.yandex.ru/maps/doc/jsapi/2.x/examples/images/myIcon.gif' // картинка иконки
+                            , iconImageSize: [30, 42] // размеры картинки
+                            , iconImageOffset: [-3, -42] // смещение картинки
+                            */
+                        });
+                    });
+
+                    // Добавление загруженных из YMapsML-файла объектов на карту.
+                    myMap.geoObjects.add(res.geoObjects);
+                });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пример экпорта карты из сервиса &laquo;Мои карты&raquo;.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
