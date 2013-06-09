@@ -6,11 +6,6 @@ function RegionSelector(map, listContainer, optContainer) {
 
     this._attachHandlers();
     this._model.load();
-    this._optsView.render({
-        country: this._model.constructor.COUNTRIES,
-        lang: this._model.constructor.LANGUAGES,
-        level: this._model.constructor.LEVELS
-    });
 }
 
 RegionSelector.prototype = {
@@ -28,17 +23,20 @@ RegionSelector.prototype = {
         this._model.events.remove('load', this._onRegionsLoaded, this);
     },
     _onRegionsLoaded: function (data) {
-        this._listView
-            .clear()
-            .render(data);
-        this._mapView
-            .clear()
-            .render(data);
+        [this._listView, this._mapView, this._optsView]
+            .forEach(function (view) {
+                view
+                    .clear()
+                    .render(data);
+            });
     },
     _onRegionSelected: function (e) {
+        var index = e.get('index');
+
         this._listView
             .unsetActiveItem()
-            .setActiveItem(e.get('index'));
+            .setActiveItem(index)
+            .scrollToItem(index);
     },
     _onItemSelected: function (e) {
         var index = e.itemIndex;
@@ -134,6 +132,7 @@ RegionSelector.MapView.SELECTED_PRESET = {
 RegionSelector.ListView = function (container) {
     this._container = container;
     this._template = '<li><a href="#">%s</a></li>';
+    this._activeItem = null;
     this.events = $({});
 };
 
@@ -143,6 +142,7 @@ RegionSelector.ListView.prototype = {
         var regions = data.get('regions');
 
         regions.each(this._onEveryRegion, this);
+        this._sortItems();
         this._attachHandlers();
 
         return this;
@@ -153,6 +153,13 @@ RegionSelector.ListView.prototype = {
 
         return this;
     },
+    _sortItems: function () {
+        this._container.append(
+            this._container.children().sort(function (a, b) {
+                return $(a).find('a').text() > $(b).find('a').text() ? 1 : -1;
+            })
+        );
+    },
     _attachHandlers: function () {
         this._container.on('click', 'li', $.proxy(this._onItemSelected, this));
     },
@@ -162,16 +169,16 @@ RegionSelector.ListView.prototype = {
     _onItemSelected: function (e) {
         e.preventDefault();
 
-        var item = this._activeItem = $(e.currentTarget),
-            index = this._container.children().index(item);
+        var index = $(e.currentTarget).data('index');
 
-        item.addClass('active');
+        this.unsetActiveItem()
+            .setActiveItem(index);
         this.events.trigger($.Event('itemselected', {
             itemIndex: index
         }));
     },
     setActiveItem: function (index) {
-        (this._activeItem = this._container.children().eq(index))
+        this._activeItem = this._findItem(index)
             .addClass('active');
 
         return this;
@@ -185,9 +192,27 @@ RegionSelector.ListView.prototype = {
 
         return this;
     },
-    _onEveryRegion: function (region) {
+    scrollToItem: function (index) {
+        var item = this._findItem(index),
+            position = item.offset().top - this._container.offset().top;
+
+        this._container.parent()
+            .scrollTop(position);
+
+        return this;
+    },
+    _findItem: function (index) {
+        return this._container.children()
+            .filter(function () {
+                return $(this).data('index') == index;
+            });
+    },
+    _onEveryRegion: function (region, index) {
         this._container.append(
-            this._template.replace('%s', region.properties.get('hintContent'))
+            $(
+                this._template
+                    .replace('%s', region.properties.get('hintContent'))
+            ).data('index', index)
         );
     },
 };
@@ -211,20 +236,28 @@ RegionSelector.OptsView = function (container) {
 RegionSelector.OptsView.prototype = {
     constructor: RegionSelector.OptsView,
     render: function (data) {
-        for(var key in data) {
-            var option = data[key],
+        var labels = this.constructor.LABELS,
+            options = data.get('regions').properties.getAll();
+
+        for(var key in labels) {
+            var option = labels[key],
                 btn = $(
                     this._btnTemplate
-                        .replace('%s', this.constructor.LABELS[key])
+                        .replace('%s', option.label)
                 );
 
-            for(var i = 0, len = option.length; i < len; i++) {
-                var value = option[i],
+            for(var value in option.values) {
+                var label = option.values[value],
                     item = $(
                         this._itemTemplate
-                            .replace('%s', this.constructor.OPTION_LABELS[key][value])
+                            .replace('%s', label)
                     )
                     .data(key, value);
+
+                if(options[key] == value) {
+                    item.find('a')
+                        .prepend(this._activeIconTemplate);
+                }
 
                 btn.find('ul')
                     .append(item);
@@ -234,6 +267,14 @@ RegionSelector.OptsView.prototype = {
         }
 
         this._attachHandlers();
+
+        return this;
+    },
+    clear: function () {
+        this._detachHandlers();
+        this._container.empty();
+
+        return this;
     },
     _attachHandlers: function () {
         this._container.on('click', 'li', $.proxy(this._onItemClick, this));
@@ -272,30 +313,33 @@ RegionSelector.OptsView.prototype = {
  * @constant
  */
 RegionSelector.OptsView.LABELS = {
-    country: 'Страна',
-    lang: 'Язык',
-    level: 'Уровень качества'
-};
-
-RegionSelector.OptsView.OPTION_LABELS = {
     country: {
-        RU: 'Россия',
-        UA: 'Украина',
-        BY: 'Белоруссия',
-        KZ: 'Казахстан'
+        label: 'Страна',
+        values: {
+            RU: 'Россия',
+            UA: 'Украина',
+            BY: 'Белоруссия',
+            KZ: 'Казахстан'
+        }
     },
     lang: {
-        ru: 'русский',
-        uk: 'украинский',
-        be: 'белорусский',
-        en: 'английский'
+        label: 'Язык',
+        values: {
+            ru: 'русский',
+            uk: 'украинский',
+            be: 'белорусский',
+            en: 'английский'
+        }
     },
-    level: [
-        'низкий',
-        'средний',
-        'высокий',
-        'максимальный'
-    ]
+    level: {
+        label: 'Уровень качества',
+        values: [
+            'низкий',
+            'средний',
+            'высокий',
+            'максимальный'
+        ]
+    }
 };
 
 RegionSelector.Model = function () {
@@ -337,27 +381,9 @@ RegionSelector.Model.prototype = {
     },
     getDefaults: function () {
         return {
-            country: this.constructor.COUNTRIES[0],
-            lang: this.constructor.LANGUAGES[0],
-            level: this.constructor.LEVELS[0]
+            country: 'RU',
+            lang: 'ru',
+            level: 0
         };
     }
 }
-
-/**
- * Доступные страны:
- * Россия, Украина, Белоруссия, Казахстан.
- * @constant
- */
-RegionSelector.Model.COUNTRIES = ['RU', 'UA', 'BY', 'KZ'];
-/**
- * Доступные языки:
- * русский, украинский, белорусский, английский.
- * @constant
- */
-RegionSelector.Model.LANGUAGES = ['ru', 'uk', 'be', 'en'];
-/**
- * Доступные уровни качества геометрии:
- * @constant
- */
-RegionSelector.Model.LEVELS = [0, 1, 2, 3];
