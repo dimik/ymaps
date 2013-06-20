@@ -1,36 +1,78 @@
+/**
+ * Класс-контрол выбора региона
+ * @class
+ * @name RegionSelector
+ * @param [ymaps.Map] map Карта.
+ * @param [jQuery] listContainer Контейнер списка областей.
+ * @param [jQuery] optContainer Контейнер для настроек.
+ */
 function RegionSelector(map, listContainer, optContainer) {
     this._model = new RegionSelector.Model();
-    this._listView = new RegionSelector.ListView(listContainer);
-    this._optsView = new RegionSelector.OptsView(optContainer);
-    this._mapView = new RegionSelector.MapView(map);
+    this._views = [
+        this._listView = new RegionSelector.ListView(listContainer),
+        this._optsView = new RegionSelector.OptsView(optContainer),
+        this._mapView = new RegionSelector.MapView(map),
+        this._mapMaskView = new RegionSelector.MapMaskView(map)
+    ];
 
     this._attachHandlers();
     this._model.load();
 }
 
+/**
+ * @lends RegionSelector.prototype
+ */
 RegionSelector.prototype = {
+    /**
+     * @constructor
+     */
     constructor: RegionSelector,
+    /**
+     * Добавление обработчиков событий.
+     * @function
+     * @private
+     * @name RegionSelector._attachHandlers
+     */
     _attachHandlers: function () {
         this._model.events.add('load', this._onRegionsLoaded, this);
-        this._mapView.events.add('regionselected', this._onRegionSelected, this);
-        this._listView.events.on('itemselected', $.proxy(this._onItemSelected, this));
+        this._mapView.events.add('itemselected', this._onMapItemSelected, this);
+        this._listView.events.on('itemselected', $.proxy(this._onListItemSelected, this));
         this._optsView.events.on('optionschange', $.proxy(this._onOptionsChange, this));
     },
+    /**
+     * Удаление обработчиков событий.
+     * @function
+     * @private
+     * @name RegionSelector._detachHandlers
+     */
     _detachHandlers: function () {
         this._optsView.events.off();
         this._listView.events.off();
         this._mapView.events.remove('regionselected', this._onRegionSelected, this);
         this._model.events.remove('load', this._onRegionsLoaded, this);
     },
+    /**
+     * Обработчик события загрузки данных о регионах.
+     * @function
+     * @private
+     * @name RegionSelector._onRegionsLoaded
+     * @param [ymaps.data.Manager] data Менеджер данных.
+     */
     _onRegionsLoaded: function (data) {
-        [this._listView, this._mapView, this._optsView]
-            .forEach(function (view) {
-                view
-                    .clear()
-                    .render(data);
-            });
+        for(var i = 0, len = this._views.length; i < len; i++) {
+            this._views[i]
+                .clear()
+                .render(data);
+        }
     },
-    _onRegionSelected: function (e) {
+    /**
+     * Обработчик выбора региона на карте.
+     * @function
+     * @private
+     * @name RegionSelector._onMapItemSelected
+     * @param [ymaps.data.Manager] e Менеджер данных.
+     */
+    _onMapItemSelected: function (e) {
         var index = e.get('index');
 
         this._listView
@@ -38,95 +80,63 @@ RegionSelector.prototype = {
             .setActiveItem(index)
             .scrollToItem(index);
     },
-    _onItemSelected: function (e) {
+    /**
+     * Обработчик выбора региона в списке.
+     * @function
+     * @private
+     * @name RegionSelector._onListItemSelected
+     * @param [jQuery.Event] e Объект-событие.
+     */
+    _onListItemSelected: function (e) {
         var index = e.itemIndex;
 
         this._mapView
             .unsetActiveItem()
             .setActiveItem(index);
     },
+    /**
+     * Обработчик смены настроек.
+     * @function
+     * @private
+     * @name RegionSelector._onOptionsChange
+     * @param [jQuery.Event] e Объект-событие.
+     */
     _onOptionsChange: function (e) {
         this._model.options.set(e.options);
     }
 };
 
-RegionSelector.MapView = function (map) {
-    this._map = map;
-    this._regions = null;
-    this._activeItem = null;
-    this.events = new ymaps.event.Manager();
-}
+RegionSelector.HeaderView = function (container) {
+    this._container = container;
+    this._template = '<h3><a href="#">%s</a></h3>';
+};
 
-RegionSelector.MapView.prototype = {
-    constructor: RegionSelector.MapView,
-    _attachHandlers: function () {
-        this._regions.events.add('mouseenter', this._onMouseEnter, this);
-        this._regions.events.add('mouseleave', this._onMouseLeave, this);
-    },
-    _detachHandlers: function () {
-        this._regions.events.remove('mouseleave', this._onMouseLeave, this);
-        this._regions.events.remove('mouseenter', this._onMouseEnter, this);
-    },
-    _onMouseEnter: function (e) {
-        var region = e.get('target'),
-            index = this._regions.indexOf(region);
-
-        region.options.set('preset', this.constructor.SELECTED_PRESET);
-        this.events.fire('regionselected', {
-            index: index
-        });
-    },
-    _onMouseLeave: function (e) {
-        e.get('target')
-            .options.set('preset', '');
-    },
+RegionSelector.HeaderView.prototype = {
+    constaructor: RegionSelector.ListView,
     render: function (data) {
-        this._map.geoObjects.add(
-            this._regions = data.get('regions')
-        );
-        this._map.setBounds(this._regions.getBounds());
-        this._regions.options.set({
-            zIndex: 1,
-            zIndexHover: 1
-        });
+        var regions = data.get('regions');
+
         this._attachHandlers();
 
         return this;
     },
     clear: function () {
-        if(this._regions) {
-            this._detachHandlers();
-            this._map.geoObjects.remove(this._regions);
-            this._regions = null;
-            this._activeItem = null;
-        }
+        this._detachHandlers();
+        this._container.empty();
 
         return this;
     },
-    setActiveItem: function (index) {
-        var region = this._activeItem = this._regions.get(index);
-
-        region.options.set('preset', this.constructor.SELECTED_PRESET);
-        this._map.setBounds(region.geometry.getBounds()/*, {
-            duration: 1000
-        }*/);
-
-        return this;
+    _attachHandlers: function () {
+        this._container.on('click', 'a', $.proxy(this._onHeaderClick, this));
     },
-    unsetActiveItem: function () {
-        if(this._activeItem) {
-            this._activeItem.options.set('preset', '');
-            this._activeItem = null;
-        }
+    _detachHandlers: function () {
+        this._container.off('click');
+    },
+    _onHeaderClick: function (e) {
+        e.preventDefault();
 
-        return this;
+
     }
-};
-
-RegionSelector.MapView.SELECTED_PRESET = {
-    strokeWidth: 3,
-    fillColor: 'F99',
-    strokeColor: '9F9'
 };
 
 RegionSelector.ListView = function (container) {
@@ -341,49 +351,3 @@ RegionSelector.OptsView.LABELS = {
         ]
     }
 };
-
-RegionSelector.Model = function () {
-    this.events = new ymaps.event.Manager();
-    this.options = new ymaps.option.Manager({
-        preset: this.getDefaults()
-    });
-    this._monitor = new ymaps.Monitor(this.options);
-
-    this._setupMonitor();
-}
-
-RegionSelector.Model.prototype = {
-    constructor: RegionSelector.Model,
-    _setupMonitor: function () {
-        this._monitor
-            .add(['country', 'lang', 'level'], this._onOptionsChanged, this);
-    },
-    _clearMonitor: function () {
-        this._monitor
-            .removeAll();
-    },
-    _onOptionsChanged: function () {
-        this.load();
-    },
-    load: function () {
-        ymaps.regions.load(
-            this.options.get('country'),
-            this.options.getAll()
-        ).then(
-            ymaps.util.bind(this._onDataLoaded, this)
-        );
-    },
-    _onDataLoaded: function (data) {
-        this.events.fire('load', {
-            regions: data.geoObjects,
-            target: this
-        });
-    },
-    getDefaults: function () {
-        return {
-            country: 'RU',
-            lang: 'ru',
-            level: 0
-        };
-    }
-}
