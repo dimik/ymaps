@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Подпись на карте.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full,theme.twirl.label.Layout,theme.twirl.label.layout.Content&mode=debug&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.753994, 37.622093],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                }),
+                pixelCenter = myMap.getGlobalPixelCenter(),
+                pixelPoint = new ymaps.geometry.pixel.Point(pixelCenter),
+                myOverlay = new ymaps.overlay.html.Label(pixelPoint, {
+                    content: 'Центр карты',
+                }, {
+                    layout: 'twirl#label',
+                    contentLayout: 'twirl#labelContent'
+                });
+
+            myOverlay.options.setParent(myMap.options);
+            myOverlay.setMap(myMap);
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пример создания подписи на карте.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
