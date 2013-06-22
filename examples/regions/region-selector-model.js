@@ -61,7 +61,7 @@ RegionSelector.Model.prototype = {
      * @function
      * @private
      * @name RegionSelector.Model._onDataLoaded
-     * @param [Object] data Данные региона.
+     * @param {Object} data Данные региона.
      */
     _onDataLoaded: function (data) {
         this.events.fire('load', {
@@ -73,7 +73,7 @@ RegionSelector.Model.prototype = {
      * Опции модели по-умолчанию.
      * @function
      * @name RegionSelector.Model.getDefaults
-     * @returns [Object] Опции модели.
+     * @returns {Object} Опции модели.
      */
     getDefaults: function () {
         return {
