@@ -3,8 +3,8 @@
  * @class
  * @name MaskOverlay
  * @param {ymaps.geometry.pixel.Polygon} geometry Пиксельная геометкрия полигона.
- * @param {ymaps.data.Manager} data Менеджер данных.
- * @param {ymaps.option.Manager} options Менеджер опций.
+ * @param {Object} data Данные.
+ * @param {Object} options Опции.
  */
 function MaskOverlay(geometry, data, options) {
     MaskOverlay.superclass.constructor.call(this, geometry, data, options);
