@@ -1,11 +1,30 @@
+/**
+ * Класс-отображение данных на карте ввиде маски.
+ * @class
+ * @name RegionSelector.MapMaskView
+ * @param {ymaps.Map} map Карта.
+ */
 RegionSelector.MapMaskView = function (map) {
     this._map = map;
     this._overlay = null;
     this._geometry = null;
 };
 
+/**
+ * @lends RegionSelector.MapMaskView.prototype
+ */
 RegionSelector.MapMaskView.prototype = {
+    /**
+     * @constructor
+     */
     constructor: RegionSelector.MapMaskView,
+    /**
+     * Отображение данных на карте.
+     * @function
+     * @name RegionSelector.MapMaskView.render
+     * @param {ymaps.data.Manager} data Менеджер данных.
+     * @returns {RegionSelector.MapMaskView} Возвращает ссылку на себя.
+     */
     render: function (data) {
         var coordinates = [];
 
@@ -20,6 +39,12 @@ RegionSelector.MapMaskView.prototype = {
 
         return this;
     },
+    /**
+     * Удаление данных с карты.
+     * @function
+     * @name RegionSelector.MapMaskView.clear
+     * @returns {RegionSelector.MapMaskView} Возвращает ссылку на себя.
+     */
     clear: function () {
         if(this._geometry) {
             this._detachHandlers();
@@ -30,30 +55,69 @@ RegionSelector.MapMaskView.prototype = {
 
         return this;
     },
+    /**
+     * Добавление обработчиков событий.
+     * @function
+     * @private
+     * @name RegionSelector.MapMaskView._attachHandlers
+     */
     _attachHandlers: function () {
         this._geometry.events
             .add('pixelgeometrychange', this._onPixelGeometryChange, this);
         this._map.events
             .add('actionend', this._onActionEnd, this);
     },
+    /**
+     * Удаление обработчиков событий.
+     * @function
+     * @private
+     * @name RegionSelector.MapMaskView._detachHandlers
+     */
     _detachHandlers: function () {
         this._map.events
             .remove('actionend', this._onActionEnd, this);
         this._geometry.events
             .remove('pixelgeometrychange', this._onPixelGeometryChange, this);
     },
+    /**
+     * Обработчик события изменения пискельной геометрии.
+     * @function
+     * @private
+     * @name RegionSelector.MapMaskView._onPixelGeometryChange
+     * @param {ymaps.data.Manager} e Менеджер данных.
+     */
     _onPixelGeometryChange: function (e) {
         this._createOverlay(e.get('newPixelGeometry'));
     },
+    /**
+     * Обработчик события окончания плавного движения карты.
+     * @function
+     * @private
+     * @name RegionSelector.MapMaskView._onActionEnd
+     */
     _onActionEnd: function () {
         this._createOverlay(this._geometry.getPixelGeometry());
     },
+    /**
+     * Создание геометрии типа "Polygon".
+     * @function
+     * @private
+     * @name RegionSelector.MapMaskView._createGeometry
+     * @param {Number[][]} coordinates Координаты вершин ломаных, определяющих внешнюю и внутренние границы многоугольника.
+     */
     _createGeometry: function (coordinates) {
         this._geometry = new ymaps.geometry.Polygon(coordinates, 'evenOdd',{
             projection: this._map.options.get('projection')
         });
         this._geometry.setMap(this._map);
     },
+    /**
+     * Создание оверлея.
+     * @function
+     * @private
+     * @name RegionSelector.MapMaskView._createOverlay
+     * @param {ymaps.geometry.pixel.Polygon} geometry Пиксельная геометрия полигона.
+     */
     _createOverlay: function (geometry) {
         if(!this._overlay) {
             this._overlay = new MaskOverlay(geometry, null, this.getDefaults());
@@ -61,6 +125,12 @@ RegionSelector.MapMaskView.prototype = {
         this._overlay.setMap(this._map);
         this._overlay.setGeometry(geometry);
     },
+    /**
+     * Опции по-умолчанию.
+     * @function
+     * @name RegionSelector.MapMaskView.getDefaults
+     * @returns {Object} Опции.
+     */
     getDefaults: function () {
         return {
             zIndex: 1,
