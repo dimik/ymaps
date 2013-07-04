@@ -68,15 +68,22 @@ RegionSelector.MapView.prototype = {
      * @param {ymaps.data.Manager} e Менеджер данных.
      */
     _onMouseEnter: function (e) {
-    /*
         var region = e.get('target'),
-            index = this._regions.indexOf(region);
+            colorFx = new ColorFx(
+                RegionSelector.MapView.COLOR,
+                RegionSelector.MapView.SELECTED_COLOR
+            );
 
-        region.options.set('preset', this.constructor.SELECTED_PRESET);
-        this.events.fire('itemselected', {
-            index: index
+        if(region === this._activeItem) {
+            return;
+        }
+
+        colorFx.animate(function (color) {
+            region.options.set({
+                fillColor: color,
+                strokeColor: color
+            });
         });
-    */
     },
     /**
      * Обработчик сведения мыши с области региона.
@@ -86,10 +93,22 @@ RegionSelector.MapView.prototype = {
      * @param {ymaps.data.Manager} e Менеджер данных.
      */
     _onMouseLeave: function (e) {
-    /*
-        e.get('target')
-            .options.set('preset', '');
-    */
+        var region = e.get('target'),
+            colorFx = new ColorFx(
+                region.options.get('fillColor'),
+                RegionSelector.MapView.COLOR
+            );
+
+        if(region === this._activeItem) {
+            return;
+        }
+
+        colorFx.animate(function (color) {
+            region.options.set({
+                fillColor: color,
+                strokeColor: color
+            });
+        });
     },
     /**
      * Отображение данных на карте.
@@ -106,7 +125,10 @@ RegionSelector.MapView.prototype = {
         this._map.setBounds(this._regions.getBounds());
         this._regions.options.set({
             zIndex: 1,
-            zIndexHover: 1
+            zIndexHover: 1,
+            fillColor: RegionSelector.MapView.COLOR,
+            strokeColor: RegionSelector.MapView.COLOR,
+            strokeWidth: 1
         });
         this._attachHandlers();
 
@@ -138,7 +160,10 @@ RegionSelector.MapView.prototype = {
     setActiveItem: function (index) {
         var region = this._activeItem = this._regions.get(index);
 
-        region.options.set('preset', this.constructor.SELECTED_PRESET);
+        region.options.set({
+            fillColor: RegionSelector.MapView.SELECTED_COLOR,
+            strokeColor: RegionSelector.MapView.SELECTED_COLOR
+        });
 
         return this;
     },
@@ -150,7 +175,10 @@ RegionSelector.MapView.prototype = {
      */
     unsetActiveItem: function () {
         if(this._activeItem) {
-            this._activeItem.options.set('preset', '');
+            this._activeItem.options.set({
+                fillColor: RegionSelector.MapView.COLOR,
+                strokeColor: RegionSelector.MapView.COLOR
+            });
             this._activeItem = null;
         }
 
@@ -187,12 +215,14 @@ RegionSelector.MapView.prototype = {
 };
 
 /**
- * Стили отображения выделенного региона.
+ * Цвет областей региона.
  * @static
  * @constant
  */
-RegionSelector.MapView.SELECTED_PRESET = {
-    strokeWidth: 1,
-    fillColor: 'F99',
-    strokeColor: 'F99'
-};
+RegionSelector.MapView.COLOR = 'rgba(0,102,255,0.6)';
+/**
+ * Цвет выделенной области.
+ * @static
+ * @constant
+ */
+RegionSelector.MapView.SELECTED_COLOR = 'rgba(255,153,153,1)';
