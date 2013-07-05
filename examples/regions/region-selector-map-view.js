@@ -28,7 +28,6 @@ RegionSelector.MapView.prototype = {
     _attachHandlers: function () {
         this._regions.events.add('click', this._onClick, this);
         this._regions.events.add('mouseenter', this._onMouseEnter, this);
-        this._regions.events.add('mouseleave', this._onMouseLeave, this);
     },
     /**
      * Удаление обработчиков событий.
@@ -37,9 +36,8 @@ RegionSelector.MapView.prototype = {
      * @name RegionSelector.MapView._detachHandlers
      */
     _detachHandlers: function () {
-        this._regions.events.remove('click', this._onClick, this);
-        this._regions.events.remove('mouseleave', this._onMouseLeave, this);
         this._regions.events.remove('mouseenter', this._onMouseEnter, this);
+        this._regions.events.remove('click', this._onClick, this);
     },
     /**
      * Обработчик клика на области региона.
@@ -58,56 +56,6 @@ RegionSelector.MapView.prototype = {
 
         this.events.fire('itemselected', {
             index: index
-        });
-    },
-    /**
-     * Обработчик наведения мыши на область региона.
-     * @function
-     * @private
-     * @name RegionSelector.MapView._onMouseEnter
-     * @param {ymaps.data.Manager} e Менеджер данных.
-     */
-    _onMouseEnter: function (e) {
-        var region = e.get('target'),
-            colorFx = new ColorFx(
-                RegionSelector.MapView.COLOR,
-                RegionSelector.MapView.SELECTED_COLOR
-            );
-
-        if(region === this._activeItem) {
-            return;
-        }
-
-        colorFx.animate(function (color) {
-            region.options.set({
-                fillColor: color,
-                strokeColor: color
-            });
-        });
-    },
-    /**
-     * Обработчик сведения мыши с области региона.
-     * @function
-     * @private
-     * @name RegionSelector.MapView._onMouseLeave
-     * @param {ymaps.data.Manager} e Менеджер данных.
-     */
-    _onMouseLeave: function (e) {
-        var region = e.get('target'),
-            colorFx = new ColorFx(
-                region.options.get('fillColor'),
-                RegionSelector.MapView.COLOR
-            );
-
-        if(region === this._activeItem) {
-            return;
-        }
-
-        colorFx.animate(function (color) {
-            region.options.set({
-                fillColor: color,
-                strokeColor: color
-            });
         });
     },
     /**
