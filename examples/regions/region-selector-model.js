@@ -29,7 +29,18 @@ RegionSelector.Model.prototype = {
      */
     _setupMonitor: function () {
         this._monitor
-            .add(['country', 'lang', 'level'], this.load, this);
+            .add(['country', 'lang', 'level'], function (newValues, oldValues) {
+                /**
+                 * Хак для смены языка при смене страны.
+                 */
+                if(newValues.country === oldValues.country) {
+                    this.load();
+                }
+                else {
+                    this.options.set('lang', this.getDefaults().lang);
+                    this.load();
+                }
+            }, this);
     },
     /**
      * Отключение мониторинга опций модели.

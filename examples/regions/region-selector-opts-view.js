@@ -40,7 +40,9 @@ RegionSelector.OptsView.prototype = {
             options = data.get('regions').properties.getAll();
 
         for(var key in labels) {
-            var option = labels[key],
+            var option = key === 'lang'? // Хак для списка доступных языков.
+                    labels[key][options.country] :
+                    labels[key],
                 btn = $(
                     this._btnTemplate
                         .replace('%s', option.label)
@@ -163,11 +165,31 @@ RegionSelector.OptsView.LABELS = {
     },
     lang: {
         label: 'Язык',
-        values: {
-            ru: 'русский',
-            uk: 'украинский',
-            be: 'белорусский',
-            en: 'английский'
+        RU: {
+            label: 'Язык',
+            values: {
+                ru: 'русский'
+            }
+        },
+        UA: {
+            label: 'Язык',
+            values: {
+                uk: 'украинский',
+                ru: 'русский'
+            }
+        },
+        BY: {
+            label: 'Язык',
+            values: {
+                be: 'белорусский',
+                ru: 'русский'
+            }
+        },
+        KZ: {
+            label: 'Язык',
+            values: {
+                ru: 'русский'
+            }
         }
     },
     level: {
