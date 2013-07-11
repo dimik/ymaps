@@ -27,7 +27,10 @@
             var myMap = window.map = new ymaps.Map('YMapsID', {
                     center: [69.642513,105.386271],
                     zoom: 2,
-                    behaviors: ['drag', 'scrollZoom']
+                    behaviors: ['default', 'scrollZoom']
+                }, {
+                    scrollZoomSpeed: 0,
+                    dblClickZoomDuration: 0
                 });
 
             new RegionSelector(myMap, $('#sidebar ul'), $('#settings div'), $('#header'));
