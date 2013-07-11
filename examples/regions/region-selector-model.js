@@ -33,14 +33,11 @@ RegionSelector.Model.prototype = {
                 /**
                  * Хак для смены языка при смене страны.
                  */
-                if(newValues.country === oldValues.country) {
-                    this.load();
+                if(newValues.country !== oldValues.country) {
+                    this.options.unset('lang');
                 }
-                else {
-                    this.options.set('lang', this.getDefaults().lang);
-                    this.load();
-                }
-            }, this);
+                this.load();
+            }, this, this.getDefaults());
     },
     /**
      * Отключение мониторинга опций модели.
