@@ -136,7 +136,7 @@ RegionSelector.MapMaskView.prototype = {
             zIndex: 1,
             stroke: false,
             strokeColor: false,
-            fillColor: 'rgba(0,0,0,1)'
+            fillColor: 'CCC'
         };
     }
 };
