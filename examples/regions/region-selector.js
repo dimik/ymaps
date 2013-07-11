@@ -103,6 +103,9 @@ RegionSelector.prototype = {
         this._mapView
             .unsetActiveItem()
             .setFocusOnRegions();
+
+        this._listView
+            .unsetActiveItem();
     },
     /**
      * Обработчик смены настроек.
