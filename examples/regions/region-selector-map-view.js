@@ -70,7 +70,6 @@ RegionSelector.MapView.prototype = {
             this._regions = data.get('regions')
         );
         this.setFocusOnRegions();
-        this._map.setBounds(this._regions.getBounds());
         this._regions.options.set({
             zIndex: 1,
             zIndexHover: 1,
