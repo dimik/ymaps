@@ -5,14 +5,13 @@
     <title>Примеры. Поиск по локальной коллекции геообъектов с помощью SearchControl.</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
     <!-- Класс провайдера для стандартного ymaps.SearchControl -->
     <script src="collection-search-provider.js" type="text/javascript"></script>
 
     <!-- Тестовые данные. Нужно заменить на свои. -->
     <script src="data.js" type="text/javascript"></script>
-
-    <!-- Сделаем броузеры ES5 friendly -->
-    <script src="/es5-shim/es5-shim.js" type="text/javascript"></script>
 
     <script src="//api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects&lang=ru-RU" type="text/javascript"></script>
 
@@ -20,23 +19,26 @@
         ymaps.ready(init);
 
         function init() {
-            var map = new ymaps.Map("map", {
-                center: [55.755768, 37.617671],
-                zoom: 10,
-                behaviors: ["default", "scrollZoom"]
-            });
-
-            // Создаем коллекцию для точек из data.js
-            var collection = new ymaps.GeoObjectCollection();
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.755768, 37.617671],
+                    zoom: 10,
+                    behaviors: ["default", "scrollZoom"]
+                }),
+                // Создаем коллекцию для точек из data.js
+                collection = new ymaps.GeoObjectCollection();
 
             // Добавляем коллекцию на карту.
-            map.geoObjects.add(collection);
+            myMap.geoObjects.add(collection);
 
             // Массив points определен в файле data.js
             // Заполняем коллекцию тестовыми данными.
-            points.forEach(function (point) {
-                collection.add(new ymaps.Placemark(point.coords, { balloonContentBody : point.label }));
-            });
+            for(var i = 0, len = points.length; i < len; i++) {
+                collection.add(
+                    new ymaps.Placemark(points[i].coords, {
+                        balloonContentBody: points[i].label
+                    })
+                );
+            }
 
             // Создаем экземпляр класса ymaps.control.SearchControl
             // и подменяем ему стандартный провайдер данных - геокодер,
@@ -47,15 +49,22 @@
             });
 
             // Добавляем контрол в верхний правый угол.
-            map.controls.add(search, { right : 10, top : 10 });
+            myMap.controls.add(search, { right : 10, top : 10 });
         }
-
     </script>
-
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
 </head>
-
 <body>
-    <div id="map" style="width: 800px; height: 400px"></div>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Поиск по локальной коллекции геообъектов с помощью SearchControl.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
 </body>
-
 </html>
