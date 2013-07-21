@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Вращение метки.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.755768, 37.617671],
+                    zoom: 10,
+                    behaviors: ["default", "scrollZoom"]
+                }, {
+                    // geoObjectOverlayFactory: 'default#interactiveGraphics'
+                }),
+                myPlacemark = new ymaps.Placemark(myMap.getCenter(), {}, {
+                    overlayFactory: 'default#interactiveGraphics'
+                }),
+                angle = 0;
+
+            myMap.geoObjects.add(myPlacemark);
+
+            setInterval(function () {
+                myPlacemark.options.set('iconImageRotation', angle);
+                angle += 0.1;
+            }, 10);
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Вращение метки.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
