@@ -21,7 +21,7 @@
             var menu = $('<ul class="nav nav-list"/>');
 
             // Перебираем все группы.
-            groups.forEach(function (group) {
+            $.each(groups, function (index, group) {
                 // DOM-представление группы.
                 var menuItem = $('<li class="nav-header"><span class="label label-' + group.style + '">' + group.name + '</span></li>'),
                     // Создадим коллекцию для геообъектов группы.
@@ -51,7 +51,7 @@
                     });
 
                 // Перебираем элементы группы.
-                group.items.forEach(function (item) {
+                $.each(group.items, function (index, item) {
                     // DOM-представление элемента группы.
                     var menuItem = $('<li><a href="#">' + item.name + '</a></li>'),
                         // Создаем метку.
