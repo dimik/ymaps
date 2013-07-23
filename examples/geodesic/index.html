@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Построение сегмента круга.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects&mode=debug&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(init);
+
+        function init() {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.755768, 37.617671],
+                    zoom: 10,
+                    behaviors: [/*"default", */"scrollZoom"]
+                });
+
+new CircleSector(myMap);
+/*
+var center = myMap.getCenter(),
+    middlePoint = [30, 60],
+    sectorAngle = Math.PI / 4,
+    // Решаем обратную задачу между двумя точками.
+    geodesic = ymaps.coordSystem.geo.solveInverseProblem(point1, middlePoint),
+    // Находим угол в радианах.
+    azimuth = Math.atan2.apply(null, geodesic.startDirection),
+    // Находим азимуты сторон треугольника.
+    azimuth2 = azimuth - sectorAngle / 2,
+    azimuth3 = azimuth + sectorAngle / 2,
+    // Находим направления для сторон треугольника.
+    dir2 = [Math.sin(azimuth2), Math.cos(azimuth2)],
+    dir3 = [Math.sin(azimuth3), Math.cos(azimuth3)],
+    // Находим длину гипотенузы в метрах.
+    hypotenuseLength = geodesic.distance / Math.cos(sectorAngle / 2),
+    // Находим координаты точек треугольника.
+    point2 = ymaps.coordSystem.geo.solveDirectProblem(point1, dir2, hypotenuseLength).endPoint,
+    point3 = ymaps.coordSystem.geo.solveDirectProblem(point1, dir3, hypotenuseLength).endPoint,
+    // Создаем объект, не забываем указать ему опцию geodesic: true.
+    triangle = new ymaps.Polygon([[point1, point2, point3]], {}, { geodesic: true });
+
+console.log(azimuth2, azimuth3);
+
+myMap.geoObjects.add(triangle);
+var points = [];
+
+for(var i = azimuth2; i < azimuth3; i += 0.01) {
+    var dir = [Math.sin(i), Math.cos(i)]
+        point = ymaps.coordSystem.geo.solveDirectProblem(point1, dir, hypotenuseLength).endPoint;
+points.push(point);
+}
+
+console.log(points);
+myMap.geoObjects.add(new ymaps.Polyline(points));
+*/
+        }
+
+function CircleSector(map) {
+    this._model = new CircleSector.Model(map);
+    this._view = new CircleSector.MapView(map);
+
+    this._attachHandlers();
+}
+
+CircleSector.prototype = {
+    constructor: CircleSector,
+    _attachHandlers: function () {
+        this._model.events
+            .add('selectcenter', this._onCenterSelected, this)
+            .add('selectradius', this._onRadiusSelected, this)
+            .add('searchradius', this._onRadiusSelected, this);
+    },
+    _detachHandlers: function () {
+        this._model.events
+            .remove('searchradius', this._onRadiusSelected, this)
+            .remove('selectradius', this._onRadiusSelected, this)
+            .remove('selectcenter', this._onCenterSelected, this);
+    },
+    _onCenterSelected: function (e) {
+        this._view.setCenter(e.get('coordPosition'));
+    },
+    _onRadiusSelected: function (e) {
+        this._view.setRadius(e.get('coordPosition'));
+    },
+};
+
+CircleSector.Model = function (map) {
+    this._observable = map;
+    this.events = new ymaps.event.Manager();
+
+    this._attachHandlers();
+};
+
+CircleSector.Model.prototype = {
+    constructor: CircleSector.Model,
+    _attachHandlers: function () {
+        this._observable.events
+            .add('mousedown', this._onCenterSelected, this)
+            .add('mouseup', this._onRadiusSelected, this);
+    },
+    _detachHandlers: function () {
+        this._observable.events
+            .remove('mouseup', this._onRadiusSelected, this)
+            .remove('mousedown', this._onCenterSelected, this);
+    },
+    _attachMovementHandlers: function () {
+        this._observable.events
+            .add('mousemove', this._onRadiusSearch, this);
+    },
+    _detachMovementHandlers: function () {
+    console.log(this);
+        this._observable.events
+            .remove('mousemove', this._onRadiusSearch, this);
+    },
+    _onCenterSelected: function (e) {
+        this._attachMovementHandlers();
+        this.events.fire('selectcenter', e);
+    },
+    _onRadiusSelected: function (e) {
+    console.log('e');
+        this._detachMovementHandlers();
+        this.events.fire('selectradius', e);
+    },
+    _onRadiusSearch: function (e) {
+        this.events.fire('searchradius', e);
+    }
+};
+
+CircleSector.MapView = function (map) {
+    this._map = map;
+    this._center = null;
+    this._radius = null;
+    this.events = new ymaps.event.Manager();
+};
+
+CircleSector.MapView.prototype = {
+    constructor: CircleSector.MapView,
+    setCenter: function (position) {
+        this.unsetCenter();
+
+        this._map.geoObjects.add(
+            this._center = new ymaps.Placemark(position)
+        );
+    },
+    unsetCenter: function () {
+        if(this._center) {
+            this._map.geoObjects.remove(this._center);
+            this._center = null;
+        }
+    },
+    setRadius: function (position) {
+        this.unsetRadius();
+
+        var center = this._center.geometry.getCoordinates(),
+            pixelPosition = this._map.options.get('projection')
+                .toGlobalPixels(position, this._map.getZoom()),
+            distance = ymaps.coordSystem.geo
+                .solveInverseProblem(center, position).distance;
+
+        this._map.geoObjects.add(
+            this._radius = new ymaps.Polyline([center, position], {
+                hintContent: ymaps.formatter.distance(distance)
+            }, {
+                strokeStyle: 'dash'
+            })
+        );
+        this._map.hint.show(position, { content: ymaps.formatter.distance(distance) });
+    },
+    unsetRadius: function () {
+        if(this._radius) {
+            this._map.geoObjects.remove(this._radius);
+            this._radius = null;
+        }
+    },
+};
+
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Построение сегмента круга</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
