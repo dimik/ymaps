@@ -93,7 +93,7 @@ CircleSector.prototype = {
     _onRadiusSelected: function (e) {
         this._isRadiusSelected = true;
         this._view
-            .unsetRadius()
+            // .clearRadius()
             .setRadius(e.get('coordPosition'));
     },
     _onSearchValue: function (e) {
@@ -104,7 +104,7 @@ CircleSector.prototype = {
         }
         else {
             this._view
-                .unsetRadius()
+                // .clearRadius()
                 .setRadius(e.get('coordPosition'));
         }
     },
@@ -203,31 +203,38 @@ CircleSector.MapView.prototype = {
     },
     setRadius: function (position) {
         var center = this._center.geometry.getCoordinates(),
-            pixelPosition = this._map.options.get('projection')
-                .toGlobalPixels(position, this._map.getZoom()),
             distance = ymaps.coordSystem.geo
-                .solveInverseProblem(center, position).distance;
+                .getDistance(center, position);
 
-        this._map.geoObjects.add(
-            this._radius = new ymaps.Polyline([center, position], {
-                hintContent: ymaps.formatter.distance(distance)
-            }, {
-                strokeStyle: 'dash'
-            })
-        );
+        this._updateRadius(position);
+
         this._map.hint.show(position, {
             content: ymaps.formatter.distance(distance)
         });
 
         return this;
     },
-    unsetRadius: function () {
+    clearRadius: function () {
         if(this._radius) {
             this._map.geoObjects.remove(this._radius);
             this._radius = null;
         }
 
         return this;
+    },
+    _updateRadius: function (position) {
+        var center = this._center.geometry.getCoordinates();
+
+        if(this._radius) {
+            this._radius.geometry.setCoordinates([center, position]);
+        }
+        else {
+            this._map.geoObjects.add(
+                this._radius = new ymaps.Polyline([center, position], {}, {
+                    strokeStyle: 'dash'
+                })
+            );
+        }
     },
     setAngle: function (position) {
         var center = this._center.geometry.getCoordinates(),
@@ -251,7 +258,7 @@ CircleSector.MapView.prototype = {
 
 
         for(var i = azimuthRadius; i < azimuthPosition; i += 0.01) {
-            var dir = [Math.sin(i), Math.cos(i)]
+            var dir = [Math.sin(i), Math.cos(i)],
                 point = ymaps.coordSystem.geo.solveDirectProblem(center, dir, distance).endPoint;
 
             coordinates.push(point);
