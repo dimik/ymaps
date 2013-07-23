@@ -6,7 +6,7 @@
 
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
-    <script src="//api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects&mode=debug&lang=ru-RU" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0.31/?load=package.standard,package.geoObjects&mode=debug&lang=ru-RU" type="text/javascript"></script>
 
     <script type="text/javascript">
         ymaps.ready(init);
@@ -61,6 +61,10 @@ function CircleSector(map) {
     this._model = new CircleSector.Model(map);
     this._view = new CircleSector.MapView(map);
 
+    this._isCenterSelected = false;
+    this._isRadiusSelected = false;
+    this._isAngleSelected = false;
+
     this._attachHandlers();
 }
 
@@ -70,19 +74,44 @@ CircleSector.prototype = {
         this._model.events
             .add('selectcenter', this._onCenterSelected, this)
             .add('selectradius', this._onRadiusSelected, this)
-            .add('searchradius', this._onRadiusSelected, this);
+            .add('searchvalue', this._onSearchValue, this)
+            .add('selectangle', this._onAngleSelected, this)
     },
     _detachHandlers: function () {
         this._model.events
-            .remove('searchradius', this._onRadiusSelected, this)
+            .remove('selectangle', this._onAngleSelected, this)
+            .remove('searchvalue', this._onSearchValue, this)
             .remove('selectradius', this._onRadiusSelected, this)
             .remove('selectcenter', this._onCenterSelected, this);
     },
     _onCenterSelected: function (e) {
-        this._view.setCenter(e.get('coordPosition'));
+        this._isCenterSelected = true;
+        this._view
+            .unsetCenter()
+            .setCenter(e.get('coordPosition'));
     },
     _onRadiusSelected: function (e) {
-        this._view.setRadius(e.get('coordPosition'));
+        this._isRadiusSelected = true;
+        this._view
+            .unsetRadius()
+            .setRadius(e.get('coordPosition'));
+    },
+    _onSearchValue: function (e) {
+        if(this._isRadiusSelected) {
+            this._view
+                .unsetAngle()
+                .setAngle(e.get('coordPosition'));
+        }
+        else {
+            this._view
+                .unsetRadius()
+                .setRadius(e.get('coordPosition'));
+        }
+    },
+    _onAngleSelected: function (e) {
+        this._view
+            .unsetAngle()
+            .setAngle(e.get('coordPosition'));
     },
 };
 
@@ -97,62 +126,82 @@ CircleSector.Model.prototype = {
     constructor: CircleSector.Model,
     _attachHandlers: function () {
         this._observable.events
-            .add('mousedown', this._onCenterSelected, this)
-            .add('mouseup', this._onRadiusSelected, this);
+            .add('mousedown', this._onMouseDown, this)
+            .add('mouseup', this._onMouseUp, this);
+        this._observable.geoObjects.events
+            .add('mouseup', this._onMouseUp, this);
     },
     _detachHandlers: function () {
+        this._observable.geoObjects.events
+            .remove('mouseup', this._onMouseUp, this);
         this._observable.events
-            .remove('mouseup', this._onRadiusSelected, this)
-            .remove('mousedown', this._onCenterSelected, this);
+            .remove('mouseup', this._onMouseUp, this)
+            .remove('mousedown', this._onMouseDown, this);
     },
     _attachMovementHandlers: function () {
         this._observable.events
-            .add('mousemove', this._onRadiusSearch, this);
+            .add('mousemove', this._onMouseMove, this);
     },
     _detachMovementHandlers: function () {
-    console.log(this);
         this._observable.events
-            .remove('mousemove', this._onRadiusSearch, this);
+            .remove('mousemove', this._onMouseMove, this);
     },
-    _onCenterSelected: function (e) {
+    _attachClickHandlers: function () {
+        this._observable.events
+            .add('click', this._onClick, this);
+    },
+    _detachClickHandlers: function () {
+        this._observable.events
+            .remove('click', this._onClick, this);
+    },
+    _onMouseDown: function (e) {
         this._attachMovementHandlers();
         this.events.fire('selectcenter', e);
     },
-    _onRadiusSelected: function (e) {
-    console.log('e');
+    _onMouseUp: function (e) {
         this._detachMovementHandlers();
         this.events.fire('selectradius', e);
+        this._detachHandlers();
+        this._attachMovementHandlers();
     },
-    _onRadiusSearch: function (e) {
-        this.events.fire('searchradius', e);
+    _onMouseMove: function (e) {
+        this.events.fire('searchvalue', e);
+    },
+    _onClick: function (e) {
+        this._detachClickHandlers();
+        this.events.fire('selectangle', e);
+        this._attachHandlers();
     }
 };
 
 CircleSector.MapView = function (map) {
     this._map = map;
+
     this._center = null;
     this._radius = null;
+    this._sector = null;
+
     this.events = new ymaps.event.Manager();
 };
 
 CircleSector.MapView.prototype = {
     constructor: CircleSector.MapView,
     setCenter: function (position) {
-        this.unsetCenter();
-
         this._map.geoObjects.add(
             this._center = new ymaps.Placemark(position)
         );
+
+        return this;
     },
     unsetCenter: function () {
         if(this._center) {
             this._map.geoObjects.remove(this._center);
             this._center = null;
         }
+
+        return this;
     },
     setRadius: function (position) {
-        this.unsetRadius();
-
         var center = this._center.geometry.getCoordinates(),
             pixelPosition = this._map.options.get('projection')
                 .toGlobalPixels(position, this._map.getZoom()),
@@ -166,14 +215,62 @@ CircleSector.MapView.prototype = {
                 strokeStyle: 'dash'
             })
         );
-        this._map.hint.show(position, { content: ymaps.formatter.distance(distance) });
+        this._map.hint.show(position, {
+            content: ymaps.formatter.distance(distance)
+        });
+
+        return this;
     },
     unsetRadius: function () {
         if(this._radius) {
             this._map.geoObjects.remove(this._radius);
             this._radius = null;
         }
+
+        return this;
     },
+    setAngle: function (position) {
+        var center = this._center.geometry.getCoordinates(),
+            point1 = this._radius.geometry.get(1),
+            sectorAngle = Math.PI / 4,
+            // Решаем обратную задачу между двумя точками.
+            geodesicRadius = ymaps.coordSystem.geo.solveInverseProblem(center, point1),
+            geodesicPosition = ymaps.coordSystem.geo.solveInverseProblem(center, position),
+            // Находим угол в радианах.
+            azimuthRadius = Math.atan2.apply(null, geodesicRadius.startDirection),
+            azimuthPosition = Math.atan2.apply(null, geodesicPosition.startDirection),
+            // Находим направления для сторон треугольника.
+            directionPosition = geodesicPosition.startDirection,
+            // Находим длину гипотенузы в метрах.
+            // hypotenuseLength = geodesic.distance / Math.cos(sectorAngle / 2),
+            distance = geodesicRadius.distance,
+            // Находим координаты точек треугольника.
+            point2 = ymaps.coordSystem.geo.solveDirectProblem(center, directionPosition, distance).endPoint,
+            // Создаем объект, не забываем указать ему опцию geodesic: true.
+            coordinates = [center, point1];
+
+
+        for(var i = azimuthRadius; i < azimuthPosition; i += 0.01) {
+            var dir = [Math.sin(i), Math.cos(i)]
+                point = ymaps.coordSystem.geo.solveDirectProblem(center, dir, distance).endPoint;
+
+            coordinates.push(point);
+        }
+        coordinates.push(point2)
+        this._map.geoObjects.add(
+            this._sector = new ymaps.Polygon([coordinates])
+        );
+
+        return this;
+    },
+    unsetAngle: function () {
+        if(this._sector) {
+            this._map.geoObjects.remove(this._sector);
+            this._sector = null;
+        }
+
+        return this;
+    }
 };
 
     </script>
