@@ -238,10 +238,10 @@ CircleSector.MapView.prototype = {
     },
     setAngle: function (position) {
         var center = this._center.geometry.getCoordinates(),
-            point1 = this._radius.geometry.get(1),
+            pointA = this._radius.geometry.get(1),
             sectorAngle = Math.PI / 4,
             // Решаем обратную задачу между двумя точками.
-            geodesicRadius = ymaps.coordSystem.geo.solveInverseProblem(center, point1),
+            geodesicRadius = ymaps.coordSystem.geo.solveInverseProblem(center, pointA),
             geodesicPosition = ymaps.coordSystem.geo.solveInverseProblem(center, position),
             // Находим угол в радианах.
             azimuthRadius = Math.atan2.apply(null, geodesicRadius.startDirection),
@@ -252,20 +252,25 @@ CircleSector.MapView.prototype = {
             // hypotenuseLength = geodesic.distance / Math.cos(sectorAngle / 2),
             distance = geodesicRadius.distance,
             // Находим координаты точек треугольника.
-            point2 = ymaps.coordSystem.geo.solveDirectProblem(center, directionPosition, distance).endPoint,
+            pointB = ymaps.coordSystem.geo.solveDirectProblem(center, directionPosition, distance).endPoint,
             // Создаем объект, не забываем указать ему опцию geodesic: true.
-            coordinates = [center, point1];
+            coordinates = [center, pointA],
+            i = Math.min(azimuthRadius, azimuthPosition),
+            j = Math.max(azimuthRadius, azimuthPosition);
 
+        while(i < j) {
+            i += 0.01;
 
-        for(var i = azimuthRadius; i < azimuthPosition; i += 0.01) {
             var dir = [Math.sin(i), Math.cos(i)],
                 point = ymaps.coordSystem.geo.solveDirectProblem(center, dir, distance).endPoint;
 
             coordinates.push(point);
         }
-        coordinates.push(point2)
+        coordinates.push(pointB);
         this._map.geoObjects.add(
-            this._sector = new ymaps.Polygon([coordinates])
+            this._sector = new ymaps.Polygon([coordinates], {}, {
+                simplification: false
+            })
         );
 
         return this;
