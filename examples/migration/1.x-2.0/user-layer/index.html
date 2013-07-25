@@ -1,8 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
 <head>
-    <title>My maps</title>
+    <title>Примеры. Миграция кода создания пользовательского слоя с версии 1.x на 2.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
     <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug&coordorder=longlat" type="text/javascript"></script>
+
     <script type="text/javascript">
         ymaps.ready(init);
 
@@ -146,11 +151,19 @@ myCollection.events.add('click', function (e) {
 
 }
     </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
 </head>
 <body>
-    <div id="YMapsID" style="width:900px;height:600px"></div></br>
-<div id="loading-layer" style="display:none;font-family: Verdana;font-size: 11px;width:600px;height:400px;background:#FFF;text-align:center;border:0px solid #000">
-Пожалуйста, подождите...<br />Идет загрузка карты.<br />Если в течение длительного времени карта не отображается, обновите страницу (нажмите F5).
-</div>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Миграция кода создания пользовательского слоя с версии 1.x на 2.0.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
 </body>
 </html>
