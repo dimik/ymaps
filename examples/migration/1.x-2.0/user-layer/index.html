@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<head>
+    <title>My maps</title>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug&coordorder=longlat" type="text/javascript"></script>
+    <script type="text/javascript">
+        ymaps.ready(init);
+
+        function init() {
+            var options = {
+                    tileUrlTemplate: "./%z/tile-%x-%y.png",
+                    controls: {
+                        typeControl: true,
+                        miniMap: false,
+                        toolBar: true,
+                        scaleLine: true
+                    },
+                    scrollZoomEnabled: true,
+                    mapCenter: [-178.874244689941, 85.0108183246281],
+                    /**
+                     * Если хотим чтобы свой слой отображался без пождложки из Яндекс.Карт, то удаляем эту опцию:
+                     * backgroundMapType: YMaps.MapType.NONE,
+                     * Если хотим чтобы отображался поверх одного из типов карты,
+                     * используем значение нужного типа:
+                     * 'yandex#map' - тип карты "схема";
+                     * 'yandex#satellite' - тип карты "спутник";
+                     * 'yandex#hybrid' - тип карты "гибрид";
+                     * 'yandex#publicMap' - тип карты "народная карта";
+                     * 'yandex#publicMapHybrid'
+                     * Таким образом:
+                     * backgroundMapType: 'yandex#hybrid',
+                     */
+                    mapZoom: 11,
+                    isTransparent: true,
+                    smoothZooming: false,
+                    layerKey: "my#layer",
+                    layerMinZoom: 9,
+                    layerMaxZoom: 12,
+                    mapType: {
+                        name: "My maps",
+                        textColor: "#000000"
+                    },
+                    copyright: ""
+                },
+                map = new ymaps.Map("YMapsID", {
+                    center: options.mapCenter,
+                    zoom: options.mapZoom
+                }),
+                MyLayer = function () {
+                    var layer = new ymaps.Layer(options.tileUrlTemplate, {
+                            tileTransparent: options.isTransparent
+                        });
+
+                    // Копирайты
+                    if(options.copyright) {
+                        layer.getCopyrights = function () {
+                            var promise = new ymaps.util.Promise();
+
+                            promise.resolve(options.copyright);
+
+                            return promise;
+                        };
+                    }
+
+                    // Диапазон доступных масштабов
+                    if(options.layerMaxZoom >= 0 && options.layerMinZoom >= 0) {
+                        layer.getZoomRange = function () {
+                            var promise = new ymaps.util.Promise();
+
+                            promise.resolve([options.layerMinZoom, options.layerMaxZoom]);
+
+                            return promise;
+                        };
+                    }
+
+                    return layer;
+                };
+
+                // Добавим слой в хранилище слоев под ключом options.layerKey
+                ymaps.layer.storage.add(options.layerKey, MyLayer);
+
+            var mapLayers = typeof options.backgroundMapType === 'string'?
+                    ymaps.mapType.storage.get(options.backgroundMapType).getLayers() : [],
+                // Создадим тип карты, состоящий из нашего слоя
+                myMapType = new ymaps.MapType(options.mapType.name, (mapLayers.unshift(options.layerKey), mapLayers));
+
+                // Добавим в хранилище типов карты
+                ymaps.mapType.storage.add(options.layerKey + 'Type', myMapType);
+                // Теперь мы можем задавать наш тип карты любой карте
+                map.setType(options.layerKey + 'Type');
+
+            if(options.controls.typeControl) {
+                map.controls.add(new ymaps.control.TypeSelector([options.layerKey + 'Type', 'yandex#map', 'yandex#satellite', 'yandex#hybrid']));
+            }
+            if(options.controls.miniMap) {
+                map.controls.add('miniMap');
+            }
+            if(options.controls.toolBar) {
+                map.controls.add('mapTools');
+            }
+            if(options.controls.scaleLine) {
+                map.controls.add('scaleLine');
+            }
+            if(options.scrollZoomEnabled) {
+                map.behaviors.enable('scrollZoom');
+            }
+            map.controls.add('zoomControl');
+
+/**
+ БОНУС - Как добавлять метки
+ */
+var myPlacemark = new ymaps.Placemark(options.mapCenter /* или так: [-178.874244689941, 85.0108183246281] или вот так:  map.getCenter() */, {
+        // Контент балуна
+        balloonContentBody: '<h3>Имя метки</h3>',
+        // Произвольные пользовательские данные
+        // Кладем сюда урл, на который надо перейти при клике на метку.
+        url: 'http://yandex.ru'
+    }, {
+        /**
+         Все доступные иконки смотри тут:
+         @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/option.presetStorage.xml
+        */
+        preset: 'twirl#houseIcon'
+    }),
+    // Для удобства будем добавлять через промежуточную коллекцию.
+    myCollection = new ymaps.GeoObjectCollection();
+
+// Добавим коллекцию на карту.
+map.geoObjects.add(myCollection);
+// Добавим метку в коллекцию.
+myCollection.add(myPlacemark);
+
+// Сразу откроем на метке балун
+// myPlacemark.balloon.open();
+
+// Удалить все метки с карты
+// myCollection.removeAll();
+
+// При клике на метку, вместо открытия балуна, сразу переходим на другой урл.
+myCollection.options.set('hasBalloon', false);
+myCollection.events.add('click', function (e) {
+    var geoObject = e.get('target'); // Геообъект, по которому кликнули (метка).
+
+    window.location.href = geoObject.properties.get('url');
+});
+
+}
+    </script>
+</head>
+<body>
+    <div id="YMapsID" style="width:900px;height:600px"></div></br>
+<div id="loading-layer" style="display:none;font-family: Verdana;font-size: 11px;width:600px;height:400px;background:#FFF;text-align:center;border:0px solid #000">
+Пожалуйста, подождите...<br />Идет загрузка карты.<br />Если в течение длительного времени карта не отображается, обновите страницу (нажмите F5).
+</div>
+</body>
+</html>
