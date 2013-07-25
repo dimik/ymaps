@@ -6,7 +6,7 @@
 
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
-    <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&mode=debug&coordorder=longlat" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU&coordorder=longlat" type="text/javascript"></script>
 
     <script type="text/javascript">
         ymaps.ready(init);
@@ -21,6 +21,7 @@
                         scaleLine: true
                     },
                     scrollZoomEnabled: true,
+                    // Координаты в 2.0 передаем ввиде массива [long, lat]
                     mapCenter: [-178.874244689941, 85.0108183246281],
                     /**
                      * Если хотим чтобы свой слой отображался без пождложки из Яндекс.Карт, то удаляем эту опцию:
