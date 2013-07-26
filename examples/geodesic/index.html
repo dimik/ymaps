@@ -99,8 +99,8 @@ CircleSector.prototype = {
     _onSearchValue: function (e) {
         if(this._isRadiusSelected) {
             this._view
-                .unsetAngle()
-                .setAngle(e.get('coordPosition'));
+                // .clearSector()
+                .setSector(e.get('coordPosition'));
         }
         else {
             this._view
@@ -110,8 +110,8 @@ CircleSector.prototype = {
     },
     _onAngleSelected: function (e) {
         this._view
-            .unsetAngle()
-            .setAngle(e.get('coordPosition'));
+            // .clearSector()
+            .setSector(e.get('coordPosition'));
     },
 };
 
@@ -236,53 +236,60 @@ CircleSector.MapView.prototype = {
             );
         }
     },
-    setAngle: function (position) {
-        var center = this._center.geometry.getCoordinates(),
+    setSector: function (position) {
+        var coordSystem = ymaps.coordSystem.geo,
+            center = this._center.geometry.getCoordinates(),
             pointA = this._radius.geometry.get(1),
-            sectorAngle = Math.PI / 4,
             // Решаем обратную задачу между двумя точками.
-            geodesicRadius = ymaps.coordSystem.geo.solveInverseProblem(center, pointA),
-            geodesicPosition = ymaps.coordSystem.geo.solveInverseProblem(center, position),
+            geodesicA = coordSystem.solveInverseProblem(center, pointA),
+            geodesicB = coordSystem.solveInverseProblem(center, position),
             // Находим угол в радианах.
-            azimuthRadius = Math.atan2.apply(null, geodesicRadius.startDirection),
-            azimuthPosition = Math.atan2.apply(null, geodesicPosition.startDirection),
-            // Находим направления для сторон треугольника.
-            directionPosition = geodesicPosition.startDirection,
-            // Находим длину гипотенузы в метрах.
-            // hypotenuseLength = geodesic.distance / Math.cos(sectorAngle / 2),
-            distance = geodesicRadius.distance,
-            // Находим координаты точек треугольника.
-            pointB = ymaps.coordSystem.geo.solveDirectProblem(center, directionPosition, distance).endPoint,
-            // Создаем объект, не забываем указать ему опцию geodesic: true.
-            coordinates = [center, pointA],
-            i = Math.min(azimuthRadius, azimuthPosition),
-            j = Math.max(azimuthRadius, azimuthPosition);
+            azimuthA = Math.atan2.apply(null, geodesicA.startDirection),
+            azimuthB = Math.atan2.apply(null, geodesicB.startDirection),
+            // Находим расстояние.
+            distance = geodesicA.distance,
+            // Находим второй конец дуги.
+            pointB = coordSystem.solveDirectProblem(center, geodesicB.startDirection, distance).endPoint,
+            angleA = Math.min(azimuthA, azimuthB),
+            angleB = Math.max(azimuthA, azimuthB),
+            coordinates = [center];
 
-        while(i < j) {
-            i += 0.01;
-
-            var dir = [Math.sin(i), Math.cos(i)],
-                point = ymaps.coordSystem.geo.solveDirectProblem(center, dir, distance).endPoint;
-
+        while(angleA < angleB) {
+            var dir = [Math.sin(angleA), Math.cos(angleA)],
+                point = coordSystem.solveDirectProblem(center, dir, distance).endPoint;
+if(Math.abs(angleA.toFixed(1)) == Math.PI.toFixed(1)) {
+console.log(angleA);
+}
             coordinates.push(point);
+            angleA += 0.01;
         }
-        coordinates.push(pointB);
-        this._map.geoObjects.add(
-            this._sector = new ymaps.Polygon([coordinates], {}, {
-                simplification: false
-            })
-        );
+
+        this._updateSector(coordinates);
 
         return this;
     },
-    unsetAngle: function () {
+    clearSector: function () {
         if(this._sector) {
             this._map.geoObjects.remove(this._sector);
             this._sector = null;
         }
 
         return this;
-    }
+    },
+    _updateSector: function (coords) {
+        if(this._sector) {
+            this._sector.geometry.set(0, coords);
+        }
+        else {
+            this._map.geoObjects.add(
+                this._sector = new ymaps.Polygon([coords], {}, {
+                    // simplification: false,
+                    geodesic: true,
+                    overlayFactory: 'default#staticGraphics'
+                })
+            );
+        }
+    },
 };
 
     </script>
