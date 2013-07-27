@@ -66,6 +66,8 @@ function CircleSector(map) {
     this._isAngleSelected = false;
 
     this._attachHandlers();
+
+    this._view.setCursor('crosshair');
 }
 
 CircleSector.prototype = {
@@ -87,31 +89,28 @@ CircleSector.prototype = {
     _onCenterSelected: function (e) {
         this._isCenterSelected = true;
         this._view
-            .unsetCenter()
-            .setCenter(e.get('coordPosition'));
+            .setCenter(e.get('coordPosition'))
+            .setCenterIcon()
+            .setCursor('move');
     },
     _onRadiusSelected: function (e) {
         this._isRadiusSelected = true;
         this._view
-            // .clearRadius()
-            .setRadius(e.get('coordPosition'));
+            .drawRadius(e.get('coordPosition'));
     },
     _onSearchValue: function (e) {
         if(this._isRadiusSelected) {
             this._view
-                // .clearSector()
-                .setSector(e.get('coordPosition'));
+                .drawSector(e.get('coordPosition'));
         }
         else {
             this._view
-                // .clearRadius()
-                .setRadius(e.get('coordPosition'));
+                .drawRadius(e.get('coordPosition'));
         }
     },
     _onAngleSelected: function (e) {
         this._view
-            // .clearSector()
-            .setSector(e.get('coordPosition'));
+            .drawSector(e.get('coordPosition'));
     },
 };
 
@@ -180,20 +179,29 @@ CircleSector.MapView = function (map) {
     this._center = null;
     this._radius = null;
     this._sector = null;
+    this._direction = null;
 
     this.events = new ymaps.event.Manager();
 };
 
 CircleSector.MapView.prototype = {
     constructor: CircleSector.MapView,
-    setCenter: function (position) {
-        this._map.geoObjects.add(
-            this._center = new ymaps.Placemark(position)
-        );
+    setCursor: function (key) {
+        this._cursor = this._map.cursors.push(key);
 
         return this;
     },
-    unsetCenter: function () {
+    clearCursor: function () {
+        this._cursor.remove();
+
+        return this;
+    },
+    setCenter: function (position) {
+        this._updateCenter(position);
+
+        return this;
+    },
+    clearCenter: function () {
         if(this._center) {
             this._map.geoObjects.remove(this._center);
             this._center = null;
@@ -201,16 +209,48 @@ CircleSector.MapView.prototype = {
 
         return this;
     },
-    setRadius: function (position) {
+    _updateCenter: function (position) {
+        if(this._center) {
+            this._center.geometry.setCoordinates(position);
+        }
+        else {
+            this._map.geoObjects.add(
+                this._center = new ymaps.Placemark(position, {}, {
+                    overlayFactory: 'default#interactiveGraphics',
+                    iconImageHref: 'icons.png',
+                    iconImageSize: [21, 21],
+                    iconImageOffset: [-10, -10],
+                    iconImageClipRect: [[0, 0], [21, 21]]
+                })
+            );
+        }
+    },
+    setCenterIcon: function () {
+        this._center.options.set({
+            iconImageClipRect: [[21, 0], [42, 21]]
+        });
+
+        return this;
+    },
+    _rotateCenterIcon: function (azimuth) {
+        var angle = 90 - azimuth * 180 / Math.PI;
+
+        this._center.options.set({
+            iconImageRotation: angle
+        });
+    },
+    drawRadius: function (position) {
         var center = this._center.geometry.getCoordinates(),
-            distance = ymaps.coordSystem.geo
-                .getDistance(center, position);
+            geodesic = ymaps.coordSystem.geo.solveInverseProblem(center, position),
+            azimuth = Math.atan2(geodesic.startDirection[0], geodesic.startDirection[1]);
 
         this._updateRadius(position);
 
         this._map.hint.show(position, {
-            content: ymaps.formatter.distance(distance)
+            content: ymaps.formatter.distance(geodesic.distance)
         });
+
+        this._rotateCenterIcon(azimuth);
 
         return this;
     },
@@ -236,7 +276,7 @@ CircleSector.MapView.prototype = {
             );
         }
     },
-    setSector: function (position) {
+    drawSector: function (position) {
         var coordSystem = ymaps.coordSystem.geo,
             center = this._center.geometry.getCoordinates(),
             pointA = this._radius.geometry.get(1),
@@ -244,24 +284,37 @@ CircleSector.MapView.prototype = {
             geodesicA = coordSystem.solveInverseProblem(center, pointA),
             geodesicB = coordSystem.solveInverseProblem(center, position),
             // Находим угол в радианах.
-            azimuthA = Math.atan2.apply(null, geodesicA.startDirection),
-            azimuthB = Math.atan2.apply(null, geodesicB.startDirection),
+            azimuthA = Math.atan2(geodesicA.startDirection[0], geodesicA.startDirection[1]),
+            azimuthB = Math.atan2(geodesicB.startDirection[0], geodesicB.startDirection[1]),
             // Находим расстояние.
             distance = geodesicA.distance,
             // Находим второй конец дуги.
             pointB = coordSystem.solveDirectProblem(center, geodesicB.startDirection, distance).endPoint,
-            angleA = Math.min(azimuthA, azimuthB),
-            angleB = Math.max(azimuthA, azimuthB),
-            coordinates = [center];
+            angleA = azimuthA,
+            angleB = azimuthB,
+            coordinates = [center],
+            // Определяем направление в котором рисуется сектор.
+            direction = - (geodesicA.startDirection[0] * geodesicB.startDirection[1] - geodesicA.startDirection[1] * geodesicB.startDirection[0]);
 
-        while(angleA < angleB) {
+        if(!this._direction || (this._direction * direction < 0 && Math.abs(angleA - angleB) < 0.01)) {
+            this._direction = direction;
+        }
+
+        if(this._direction >= 0 && angleA > angleB) {
+            angleB += 2 * Math.PI;
+        }
+        else if(this._direction < 0 && angleA < angleB) {
+            angleA += 2 * Math.PI;
+        }
+
+        var step = Math.abs(angleA - angleB) / Math.ceil(Math.abs(angleA - angleB) / 0.01);
+
+        while (Math.abs(angleA - angleB) >= 1e-6) {
             var dir = [Math.sin(angleA), Math.cos(angleA)],
                 point = coordSystem.solveDirectProblem(center, dir, distance).endPoint;
-if(Math.abs(angleA.toFixed(1)) == Math.PI.toFixed(1)) {
-console.log(angleA);
-}
+
             coordinates.push(point);
-            angleA += 0.01;
+            angleA += this._direction > 0 ? step : -step;
         }
 
         this._updateSector(coordinates);
