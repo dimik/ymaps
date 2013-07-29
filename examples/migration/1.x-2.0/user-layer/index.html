@@ -33,7 +33,14 @@
                     name: "Мой слой",
                     textColor: "#000000"
                 },
-                copyright: ""
+                copyright: "",
+                /**
+                 * Диапазон доступных масштабов на данном слое карты.
+                 * Эти два поля приложение не генерит,
+                 * их нужно дописать вручную, чтобы корректно работал ZoomControl.
+                 */
+                layerMinZoom: 0,
+                layerMaxZoom: 10
             };
 
         ymaps.ready(function () {

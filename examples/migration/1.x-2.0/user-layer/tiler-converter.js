@@ -57,8 +57,6 @@ YMaps = {
  */
 function TilerConverter(options) {
     this._options = options;
-    // Создание карты.
-    this._map = this._createMap();
 
     // Создание слоя.
     this._layer = this._createLayer();
@@ -69,9 +67,9 @@ function TilerConverter(options) {
     this._mapType = this._createMapType();
     // Добавим в хранилище типов карты.
     ymaps.mapType.storage.add(options.layerKey, this._mapType);
-    // Теперь мы можем задавать наш тип карты.
-    this._map.setType(options.layerKey);
 
+    // Создание карты.
+    this._map = this._createMap();
     // Добавление карте контролов и поведений.
     this
         ._addControls()
@@ -126,7 +124,10 @@ TilerConverter.prototype = {
         return new ymaps.Map(options.mapID || "YMapsID", {
             center: options.mapCenter,
             zoom: options.mapZoom,
+            type: options.layerKey,
             behaviors: ['default']
+        }, {
+            adjustZoomOnTypeChange: true
         });
     },
     /**
@@ -208,9 +209,9 @@ TilerConverter.prototype = {
             map.controls.add(new ymaps.control.TypeSelector(mapTypes));
         }
         if(options.controls.miniMap) {
-            // Раскомментировать если нужно чтобы миникарта показывала наш слой.
-            // map.controls.add(new ymaps.control.MiniMap({ type: options.layerKey }));
-            map.controls.add('miniMap');
+            map.controls.add(new ymaps.control.MiniMap({ type: options.layerKey }));
+            // Раскомментировать если нужно чтобы миникарта показывала схему, а не наш слой.
+            // map.controls.add('miniMap');
         }
         if(options.controls.toolBar) {
             map.controls.add('mapTools');
