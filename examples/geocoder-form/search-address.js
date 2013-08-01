@@ -103,11 +103,14 @@ SearchAddress.FormModel.prototype = {
         }
     },
     search: function (address) {
-        ymaps.geocode(this._request = address)
-            .then(
-                $.proxy(this._onSearchSuccess, this),
-                $.proxy(this._onSearchFailed, this)
-            );
+        var promise = ymaps.geocode(this._request = address);
+
+        promise.then(
+            $.proxy(this._onSearchSuccess, this),
+            $.proxy(this._onSearchFailed, this)
+        );
+
+        return promise;
     },
     _onSearchSuccess: function (result) {
         var firstResult = result.geoObjects.get(0);
