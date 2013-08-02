@@ -1,5 +1,5 @@
 function SearchAddress(map, form) {
-    this._model = new SearchAddress.Model();
+    this._model = new SearchAddress.Model(map);
     this._formView = new SearchAddress.FormView(form);
     this._mapView = new SearchAddress.MapView(map);
 
@@ -190,7 +190,8 @@ SearchAddress.FormView.prototype = {
     }
 };
 
-SearchAddress.Model = function () {
+SearchAddress.Model = function (map) {
+    this._map = map;
     this._result = null;
     this._error = null;
 };
@@ -221,7 +222,8 @@ SearchAddress.Model.prototype = {
     },
     getDefaults: function () {
         return {
-            results: 1
+            results: 1,
+            boundedBy: this._map.getBounds()
         };
     },
     getResult: function () {
