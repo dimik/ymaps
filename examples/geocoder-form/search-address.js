@@ -167,9 +167,11 @@ SearchAddress.FormView.prototype = {
                 var results = [];
 
                 for(var i = 0, len = json.result.length; i < len; i++) {
-                    var result = json.result[i];
+                    var result = json.result[i],
+                        parent = result.parents && result.parents[0];
 
                     results.push(
+                        (parent && (parent.name + ' ' + parent.type + ', ') || '') +
                         result.type + ' ' + result.name
                     );
                 }
@@ -182,7 +184,7 @@ SearchAddress.FormView.prototype = {
         return {
             url: 'http://kladr-api.ru/api.php',
             contentType: 'city',
-            withParent: 0,
+            withParent: 1,
             limit: 5,
             token: '51fbb72a2fb2b4c317000030',
             key: '8a334755712356b30da4b3333759fff16796ebe3'
