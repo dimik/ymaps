@@ -110,7 +110,12 @@ SearchAddress.FormView.prototype = {
         this._form
             .on('submit', $.proxy(this._onFormSubmit, this));
         this._input
-            .on('keydown', $.proxy(this._onInputChange, this));
+            .on('keydown', $.proxy(this._onInputChange, this))
+            .typeahead({
+                source: $.proxy(this._dataSource, this),
+                items: this.getSuggestConfig().limit,
+                minLength: 3
+            });
     },
     _detachHandlers: function () {
         this._form
@@ -148,6 +153,40 @@ SearchAddress.FormView.prototype = {
         this._message
             .addClass('invisible')
             .text('');
+    },
+    _dataSource: function (query, callback) {
+        var config = this.getSuggestConfig(),
+            request = $.extend({ query: query }, config);
+
+        $.ajax({
+            url: config.url,
+            dataType: 'jsonp',
+            data: request,
+            context: this,
+            success: function (json) {
+                var results = [];
+
+                for(var i = 0, len = json.result.length; i < len; i++) {
+                    var result = json.result[i];
+
+                    results.push(
+                        result.type + ' ' + result.name
+                    );
+                }
+
+                callback(results);
+            }
+        });
+    },
+    getSuggestConfig: function () {
+        return {
+            url: 'http://kladr-api.ru/api.php',
+            contentType: 'city',
+            withParent: 0,
+            limit: 5,
+            token: '51fbb72a2fb2b4c317000030',
+            key: '8a334755712356b30da4b3333759fff16796ebe3'
+        };
     }
 };
 
