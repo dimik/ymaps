@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Примеры. Добавление кнопки полноэкранного режима просмотра каты.</title>
+    <title>Примеры. Добавление кнопки полноэкранного режима просмотра карты.</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -26,6 +26,7 @@
                         build: function () {
                             this.constructor.superclass.build.apply(this, arguments);
 
+                            this._button = this.getData().control;
                             this._container = $('#YMapsID');
                             this._smallSize = {
                                 position: 'relative',
@@ -38,8 +39,6 @@
                                 height : $(window).height()
                             }
 
-                            this._button = $(this.getParentElement())
-                                .find('button');
                             this._attachHandlers();
                         },
                         clear: function () {
@@ -48,19 +47,16 @@
                             this.constructor.superclass.clear.apply(this, arguments);
                         },
                         _attachHandlers: function () {
-                            this._button
-                                .on('click', $.proxy(this._onButtonClick, this));
+                            this._button.events
+                                .add(['select', 'deselect'], this._onButtonClick, this);
                         },
                         _detachHandlers: function () {
-                            this._button
-                                .off();
+                            this._button.events
+                                .remove(['select', 'deselect'], this._onButtonClick, this);
                         },
                         _onButtonClick: function (e) {
-                            var data = this.getData(),
-                                state = data.state,
-                                map = data.control.getMap();
-
-                            console.log(state.get('selected'));
+                            var map = this._button.getMap(),
+                                state = this._button.state;
 
                             if(state.get('selected')) {
                                 this._container
