@@ -65,7 +65,7 @@ RegionSelector.MapMaskView.prototype = {
         this._geometry.events
             .add('pixelgeometrychange', this._onPixelGeometryChange, this);
         this._map.events
-            .add('actionend', this._onActionEnd, this);
+            .add('boundschange', this._onBoundsChange, this);
     },
     /**
      * Удаление обработчиков событий.
@@ -75,7 +75,7 @@ RegionSelector.MapMaskView.prototype = {
      */
     _detachHandlers: function () {
         this._map.events
-            .remove('actionend', this._onActionEnd, this);
+            .remove('boundschange', this._onBoundsChange, this);
         this._geometry.events
             .remove('pixelgeometrychange', this._onPixelGeometryChange, this);
     },
@@ -93,10 +93,12 @@ RegionSelector.MapMaskView.prototype = {
      * Обработчик события окончания плавного движения карты.
      * @function
      * @private
-     * @name RegionSelector.MapMaskView._onActionEnd
+     * @name RegionSelector.MapMaskView._onBoundsChange
      */
-    _onActionEnd: function () {
-        this._createOverlay(this._geometry.getPixelGeometry());
+    _onBoundsChange: function (e) {
+        if(e.get('oldZoom') !== e.get('newZoom')) {
+            this._createOverlay(this._geometry.getPixelGeometry());
+        }
     },
     /**
      * Создание геометрии типа "Polygon".
