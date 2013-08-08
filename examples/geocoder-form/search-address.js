@@ -186,8 +186,8 @@ SearchAddress.FormView.prototype = {
             contentType: 'city',
             withParent: 1,
             limit: 5,
-            token: '51fbb72a2fb2b4c317000030',
-            key: '8a334755712356b30da4b3333759fff16796ebe3'
+            token: '52024d6c472d040824000221',
+            key: '6cf033712aa73a4a26db39d72ea02bb682c8e390'
         };
     }
 };
