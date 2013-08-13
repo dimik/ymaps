@@ -100,12 +100,26 @@ MarkerIconsPreview.DOMView.prototype = {
                 .append(this._createTable(data[i].keys));
         }
 
+        this._attachHandlers();
+
         return this;
     },
     clear: function () {
+        this._detachHandlers();
         this._container.empty();
 
         return this;
+    },
+    _attachHandlers: function () {
+        this._container
+            .on('click', 'tr', $.proxy(this._onRowClick, this));
+    },
+    _detachHandlers: function () {
+        this._container
+            .off('click');
+    },
+    _onRowClick: function (e) {
+        alert('Выбран ключ: ' + $(e.currentTarget).find('td:last').text());
     },
     _createTitle: function (text) {
         var title = [
