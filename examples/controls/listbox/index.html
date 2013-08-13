@@ -21,7 +21,7 @@ ymaps.ready(function () {
     MyListBoxLayout = ymaps.templateLayoutFactory.createClass(
         '<div class="btn-group">' +
             '<button class="btn[if data.theme] btn-$[data.theme][endif] dropdown-toggle" data-toggle="dropdown">$[data.title]&nbsp;<span class="caret"></span></button>' +
-            '<ul id="childcontainer" class="dropdown-menu"/>' +
+            '<ul id="childcontainer" class="dropdown-menu" style="height: 150px; overflow: scroll;"/>' +
         '</div>', {
 
         build: function () {
@@ -52,10 +52,14 @@ ymaps.ready(function () {
             title: 'Выберите город'
         },
         items: [
-            new ymaps.control.ListBoxItem({data: {content: 'Москва', center: [55.752736, 37.606815]}}, {layout: MyListBoxItemLayout}),
-            new ymaps.control.ListBoxItem({data: {content: 'Новосибирск', center: [55.026366, 82.907803]}}, {layout: MyListBoxItemLayout}),
-            new ymaps.control.ListBoxSeparator({}, {layout: MyListBoxSeparatorLayout}),
-            new ymaps.control.ListBoxItem({data: {content: 'Нью-Йорк', center: [40.695537, -73.97552]}}, {layout: MyListBoxItemLayout})
+            new ymaps.control.ListBoxItem({ data: { content: 'Москва', center: [55.752736, 37.606815]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Новосибирск', center: [55.026366, 82.907803]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Бангкок', center: [13.74975574, 100.53144250]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Вьентьян', center: [17.97855740, 102.64755900]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Пномпень', center: [11.52197261, 104.91205950]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Ханой', center: [20.96817096, 105.82347150]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxSeparator({}, { layout: MyListBoxSeparatorLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Нью-Йорк', center: [40.695537, -73.97552]}}, { layout: MyListBoxItemLayout })
         ]
     }, {
         layout: MyListBoxLayout,
@@ -70,7 +74,9 @@ ymaps.ready(function () {
 
         // Если клик по элементу списка, а не по заголовку - меняем центр карты.
         item === listBox ||
-            map.setCenter(center, map.getZoom(), {checkZoomRange: true});
+            map.setCenter(center, map.getZoom(), {
+                checkZoomRange: true
+            });
     });
 });
     </script>
