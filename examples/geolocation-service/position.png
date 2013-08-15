@@ -1,0 +1,11 @@
+--2013-08-15 15:17:56--  http://yandex.st/maps/2.58.8-1/blocks-desktop/maps-geolocation/__preset/_id/maps-geolocation__preset_id_yandex-ru.png
+Resolving yandex.st... 2a02:6b8::215, 213.180.193.215, 93.158.134.215, ...
+Connecting to yandex.st|2a02:6b8::215|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1193 (1.2K) [image/png]
+Saving to: ‘maps-geolocation__preset_id_yandex-ru.png’
+
+     0K .                                                     100% 1.08M=0.001s
+
+2013-08-15 15:17:58 (1.08 MB/s) - ‘maps-geolocation__preset_id_yandex-ru.png’ saved [1193/1193]
+
