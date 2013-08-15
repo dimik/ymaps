@@ -90,7 +90,7 @@ RegionSelector.MapMaskView.prototype = {
         this._createOverlay(e.get('newPixelGeometry'));
     },
     /**
-     * Обработчик события окончания плавного движения карты.
+     * Обработчик события смены центра/масштаба карты.
      * @function
      * @private
      * @name RegionSelector.MapMaskView._onBoundsChange
