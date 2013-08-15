@@ -192,7 +192,7 @@ RegionSelector.OptsView.LABELS = {
             }
         }
     },
-    level: {
+    quality: {
         label: 'Уровень качества',
         values: [
             'низкий',

@@ -29,7 +29,7 @@ RegionSelector.Model.prototype = {
      */
     _setupMonitor: function () {
         this._monitor
-            .add(['country', 'lang', 'level'], function (newValues, oldValues) {
+            .add(['country', 'lang', 'quality'], function (newValues, oldValues) {
                 /**
                  * Хак для смены языка при смене страны.
                  */
@@ -58,7 +58,7 @@ RegionSelector.Model.prototype = {
         ymaps.regions.load(
             this.options.get('country'), {
                 lang: this.options.get('lang'),
-                level: this.options.get('level')
+                quality: this.options.get('quality')
             }
         ).then(
             ymaps.util.bind(this._onDataLoaded, this)
@@ -87,7 +87,7 @@ RegionSelector.Model.prototype = {
         return {
             country: 'RU',
             lang: 'ru',
-            level: 0
+            quality: 0
         };
     }
 };

@@ -28,6 +28,7 @@ RegionSelector.MapView.prototype = {
     _attachHandlers: function () {
         this._regions.events.add('click', this._onClick, this);
         this._regions.events.add('mouseenter', this._onMouseEnter, this);
+        // this._regions.events.add('mouseleave', this._onMouseLeave, this);
     },
     /**
      * Удаление обработчиков событий.
@@ -36,6 +37,7 @@ RegionSelector.MapView.prototype = {
      * @name RegionSelector.MapView._detachHandlers
      */
     _detachHandlers: function () {
+        // this._regions.events.remove('mouseleave', this._onMouseLeave, this);
         this._regions.events.remove('mouseenter', this._onMouseEnter, this);
         this._regions.events.remove('click', this._onClick, this);
     },
@@ -59,6 +61,65 @@ RegionSelector.MapView.prototype = {
         });
     },
     /**
+     * Обработчик наведения мыши на область региона.
+     * @function
+     * @private
+     * @name RegionSelector.MapView._onMouseEnter
+     * @param {ymaps.data.Manager} e Менеджер данных.
+     */
+    _onMouseEnter: function (e) {
+        var region = e.get('target');
+
+        if(region === this._activeItem) {
+            return;
+        }
+
+        var animation = this._animateRegionColor(
+            region,
+            RegionSelector.MapView.COLOR
+            RegionSelector.MapView.SELECTED_COLOR
+        );
+
+        region.events.once('onmouseleave', function () {
+            animation.stop();
+            this._animateRegionColor(
+                region,
+                region.options.get('fillColor'),
+                RegionSelector.MapView.COLOR
+            );
+        }, this);
+    },
+    /**
+     * Обработчик сведения мыши с области региона.
+     * @function
+     * @private
+     * @name RegionSelector.MapView._onMouseLeave
+     * @param {ymaps.data.Manager} e Менеджер данных.
+    _onMouseLeave: function (e) {
+        var region = e.get('target');
+
+        if(region === this._activeItem) {
+            return;
+        }
+
+        var animationState = this._animateRegionColor(
+            region,
+            region.options.get('fillColor'),
+            RegionSelector.MapView.COLOR
+        );
+    },
+     */
+    _animateRegionColor: function (region, start, end) {
+        var colorFx = new ColorFx(start, end);
+
+        return colorFx.animate(function (color) {
+            region.options.set({
+                fillColor: color,
+                strokeColor: color
+            });
+        });
+    },
+    /**
      * Отображение данных на карте.
      * @function
      * @name RegionSelector.MapView.render
@@ -70,6 +131,7 @@ RegionSelector.MapView.prototype = {
             this._regions = data.get('regions')
         );
         this.setFocusOnRegions();
+        this._map.setBounds(this._regions.getBounds());
         this._regions.options.set({
             zIndex: 1,
             zIndexHover: 1,
@@ -155,13 +217,7 @@ RegionSelector.MapView.prototype = {
      * @returns {RegionSelector.MapView} Возвращает ссылку на себя.
      */
     setFocusOnRegions: function () {
-        this._map.options.set('restrictMapArea', false);
-
-        this._map.setBounds(this._regions.getBounds(), {
-            callback: ymaps.util.bind(function () {
-                this._map.options.set('restrictMapArea', this._map.getBounds())
-            }, this)
-        });
+        this._map.setBounds(this._regions.getBounds());
 
         return this;
     }
