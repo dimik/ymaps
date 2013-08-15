@@ -8,8 +8,9 @@
 
     <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
 
-    <script src="//api-maps.yandex.ru/2.0/?lang=ru-RU&load=package.full" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?lang=ru-RU&load=package.full&mode=debug" type="text/javascript"></script>
     <script src="geolocation-service.js" type="text/javascript"></script>
+    <script src="route-controller.js" type="text/javascript"></script>
 
     <script type="text/javascript">
         ymaps.ready(function () {
@@ -33,35 +34,20 @@
                     behaviors: ['default', 'scrollZoom']
                 });
 
-                ymaps.route([myCoords, 'Москва, Льва Толстого 16'], {
-                    mapStateAutoApply: true, // автоматически позиционировать карту
-                })
-                    .then(function (route) {
-                        // Удаляем предыдущий маршрут.
-                        if(myRoute) {
-                            myMap.geoObjects.remove(myRoute);
-                        }
-                        myRoute = route;
+                var controller = new RouteController(myMap);
 
-                        var wayPoints = route.getWayPoints(),
-                            myOrigin = wayPoints.get(0),
-                            myDestination = wayPoints.get(1);
+                $('.btn-success')
+                    .on('click', function () {
+                        controller.route([myCoords, 'Москва, Льва Толстого 16']);
+                    });
 
-                        myOrigin.options.set({
-                            layout: 'default#image',
-                            iconContentLayout: ymaps.templateLayoutFactory.createClass(''),
-                            iconImageHref: 'geolocation.png',
-                            iconImageSize: [24, 24],
-                            iconImageOffset: [-12, -12]
-                        });
-
-                        myDestination.options.set('preset', 'twirl#redStretchyIcon');
-                        myDestination.properties.set('iconContent', 'Яндекс');
-
-                        myMap.geoObjects.add(route);
+                $('.btn-danger')
+                    .on('click', function () {
+                        controller.clearRoute();
                     });
             });
         });
+
     </script>
     <style type="text/css">
         #YMapsID {
@@ -72,9 +58,21 @@
 </head>
 <body>
     <div class="hero-unit">
-        <div class="container">
-            <p class="lead">Построение маршрута от местоположения пользователя до указанной точки.</p>
-            <div id="YMapsID"></div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="lead">Построение маршрута от местоположения пользователя до указанной точки.</p>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="btn-toolbar">
+                    <button class="btn btn-success">Проложить маршрут</button>
+                    <button class="btn btn-danger">Очистить карту</button>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div id="YMapsID" class="span8"></div>
+            </div>
         </div>
     </div>
 </body>

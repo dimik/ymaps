@@ -41,7 +41,34 @@ GeolocationService.prototype = {
             );
         }
 
-        return this._location;
+        return this._sync();
+    },
+    /**
+     * Обертка над оригинальным промисом, чтобы его нельзя было зареджектить
+     * из пользовательского кода.
+     * @private
+     * @function
+     * @name GeolocationService._sync
+     * @returns {ymaps.util.Promise} Промис-обертка.
+     */
+    _sync: function (p) {
+        var promise = new ymaps.util.Promise();
+
+        this._location.then(
+            function (res) { promise.resolve(res); },
+            function (err) { promise.reject(err); }
+        );
+
+        return promise;
+    },
+    /**
+     * Перегружаем промис для обновления местоположения при повторных вызовах getLocation.
+     * @private
+     * @function
+     * @name GeolocationService._reset
+     */
+    _reset: function () {
+        this._location = new ymaps.util.Promise();
     },
     /**
      * Обработчик результата геолокации.
@@ -53,6 +80,8 @@ GeolocationService.prototype = {
      */
     _onGeolocationSuccess: function (position) {
         this._location.resolve(position.coords);
+
+        this._reset();
     },
     /**
      * Обработчик ошибки геолокации.
@@ -71,6 +100,8 @@ GeolocationService.prototype = {
         this._location.resolve(
             this.getLocationByIP() || this.getDefaults()
         );
+
+        this._reset();
     },
     /**
      * Возвращает данные о местоположении пользователя на основе его IP-адреса.
@@ -83,14 +114,14 @@ GeolocationService.prototype = {
         return ymaps.geolocation;
     },
     /**
-     * Возвращает местоположение по-умолчанию.
+     * Возвращает местоположение по умолчанию.
      * Удобно для перекрытия.
      * @function
      * @name GeolocationService.getDefaults
      * @returns {Object} Местоположение пользователя.
      */
     getDefaults: function () {
-        // По-умолчанию возвращаем Москву.
+        // По умолчанию возвращаем Москву.
         return {
             latitude: 55.751574,
             longitude: 37.573856,
