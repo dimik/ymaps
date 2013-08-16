@@ -48,7 +48,7 @@ IconsPreview.ModalView.prototype = {
             .off('click');
     },
     _setTitle: function (title) {
-        this._container.find('title')
+        this._container.find('h3')
             .text(title);
 
         return this;
