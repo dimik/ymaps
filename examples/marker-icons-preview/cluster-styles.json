@@ -1,0 +1,10 @@
+{
+    "title": "Выбор стиля кластеров",
+    "styles": [{
+        "title": "Метки кластеров без содержимого",
+        "keys": [ "twirl#blackClusterIcons", "twirl#blueClusterIcons", "twirl#brownClusterIcons", "twirl#darkblueClusterIcons", "twirl#darkgreenClusterIcons", "twirl#darkorangeClusterIcons", "twirl#greenClusterIcons", "twirl#greyClusterIcons", "twirl#lightblueClusterIcons", "twirl#nightClusterIcons", "twirl#orangeClusterIcons", "twirl#pinkClusterIcons", "twirl#redClusterIcons", "twirl#violetClusterIcons", "twirl#whiteClusterIcons", "twirl#yellowClusterIcons" ]
+    }, {
+        "title": "Метки кластеров без содержимого с точкой в центре",
+        "keys": [ "twirl#invertedBlackClusterIcons", "twirl#invertedBlueClusterIcons", "twirl#invertedBrownClusterIcons", "twirl#invertedDarkblueClusterIcons", "twirl#invertedDarkgreenClusterIcons", "twirl#invertedDarkorangeClusterIcons", "twirl#invertedGreenClusterIcons", "twirl#invertedGreyClusterIcons", "twirl#invertedLightblueClusterIcons", "twirl#invertedNightClusterIcons", "twirl#invertedOrangeClusterIcons", "twirl#invertedPinkClusterIcons", "twirl#invertedRedClusterIcons", "twirl#invertedVioletClusterIcons", "twirl#invertedWhiteClusterIcons", "twirl#invertedYellowClusterIcons" ]
+    }]
+}
