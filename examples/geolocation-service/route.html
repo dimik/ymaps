@@ -41,6 +41,7 @@
                     behaviors: ['default', 'scrollZoom']
                 });
 
+                myMap.controls.add('zoomControl');
                 myMap.geoObjects.add(myPlacemark);
 
                 var controller = new RouteController(myMap);
