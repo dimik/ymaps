@@ -17,7 +17,8 @@
     <script type="text/javascript">
         ymaps.ready(function () {
             var myMap, myRoute,
-                service = new GeolocationService(),
+                myMapContainer = $('#YMapsID'),
+                service = new GeolocationService([myMapContainer.width(), myMapContainer.height()]),
                 myLocation = service.getLocation({
                     // Режим получения наиболее точных данных.
                     enableHighAccuracy: true,
@@ -29,13 +30,27 @@
 
             myLocation.then(function (loc) {
                 var myCoords = [loc.latitude, loc.longitude],
-                    myPlacemark = new ymaps.Placemark(myCoords, {}, {
+                    myPlacemark = new ymaps.Placemark(myCoords, loc, {
                         iconImageHref: 'geolocation.png',
                         iconImageSize: [24, 24],
-                        iconImageOffset: [-12, -12]
+                        iconImageOffset: [-12, -12],
+                        balloonContentBodyLayout: ymaps.templateLayoutFactory.createClass([
+                            '<address>',
+                                'Широта: $[properties.latitude]<br/>',
+                                'Долгота: $[properties.longitude]<br/>',
+                                'Масштаб: $[properties.zoom]<br/>',
+                                'Город: $[properties.city|не найдено]<br/>',
+                                // '[if properties.city]Город: $[properties.city]<br/>[endif]',
+                                'Страна: $[properties.country|не найдено]<br/>',
+                                // '[if properties.country]Страна: $[properties.country]<br/>[endif]',
+                                'Регион: $[properties.region|не найдено]<br/>',
+                                // '[if properties.region]Регион: $[properties.region]<br/>[endif]',
+                                'Тип поиска: [if properties.isHighAccuracy]Geolocation API[else]IP-адрес[endif]',
+                            '</address>'
+                        ].join(''))
                     });
 
-                myMap = new ymaps.Map('YMapsID', {
+                myMap = new ymaps.Map(myMapContainer.get(0), {
                     center: myCoords,
                     zoom: loc.zoom || 9,
                     behaviors: ['default', 'scrollZoom']

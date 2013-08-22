@@ -6,8 +6,10 @@
  * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/geolocation.xml
  * @class
  * @name GeolocationService
+ * @param {Number[]} mapSize Размер контейнера карты для расчета масштаба.
  */
-function GeolocationService() {
+function GeolocationService(mapSize) {
+    this._mapSize = mapSize;
     this._location = new ymaps.util.Promise();
 };
 
@@ -62,15 +64,6 @@ GeolocationService.prototype = {
         return promise;
     },
     /**
-     * Перегружаем промис для обновления местоположения при повторных вызовах getLocation.
-     * @private
-     * @function
-     * @name GeolocationService._reset
-     */
-    _reset: function () {
-        this._location = new ymaps.util.Promise();
-    },
-    /**
      * Обработчик результата геолокации.
      * @private
      * @function
@@ -79,9 +72,48 @@ GeolocationService.prototype = {
      * @see http://www.w3.org/TR/geolocation-API/#position_interface
      */
     _onGeolocationSuccess: function (position) {
-        this._location.resolve(position.coords);
+        var coords = [position.coords.latitude, position.coords.longitude],
+            mapSize = this._mapSize,
+            location = this._location;
 
-        this._reset();
+        this.getLocationData(coords)
+            .then(
+                function (res) {
+                    var result = res.geoObjects.get(0);
+
+                    if(result) {
+                        location.resolve(
+                            ymaps.util.extend({}, position.coords, {
+                                zoom: ymaps.util.bounds.getCenterAndZoom(result.properties.get('boundedBy'), mapSize, ymaps.projection.wgs84Mercator).zoom,
+                                city: result.properties.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.Locality.LocalityName',
+                                    result.properties.get('name')
+                                ),
+                                country: result.properties.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.CountryName',
+                                    result.properties.get('description')
+                                ),
+                                region: result.properties.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName',
+                                    result.properties.get('metaDataProperty.GeocoderMetaData.text')
+                                ),
+                                isHighAccuracy: true
+                            })
+                        );
+                    }
+                    else {
+                        location.resolve(
+                            ymaps.util.extend({}, ymaps.geolocation, position.coords, {
+                                isHighAccuracy: true
+                            })
+                        );
+                    }
+                },
+                function (err) {
+                    location.resolve(
+                        ymaps.util.extend({}, ymaps.geolocation, position.coords, {
+                            isHighAccuracy: true
+                        })
+                    );
+                }
+            );
     },
     /**
      * Обработчик ошибки геолокации.
@@ -100,8 +132,6 @@ GeolocationService.prototype = {
         this._location.resolve(
             this.getLocationByIP() || this.getDefaults()
         );
-
-        this._reset();
     },
     /**
      * Возвращает данные о местоположении пользователя на основе его IP-адреса.
@@ -112,6 +142,20 @@ GeolocationService.prototype = {
      */
     getLocationByIP: function () {
         return ymaps.geolocation;
+    },
+    /**
+     * Осуществляет обратное геокодирование местоположения пользователя.
+     * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/geolocation.xml
+     * @function
+     * @name GeolocationService.getLocationData
+     * @param {Number[]} coords Координаты местоположения.
+     * @returns {ymaps.util.Promise} Промис-обертка.
+     */
+    getLocationData: function (coords) {
+        return ymaps.geocode(coords, {
+            results: 1,
+            kind: 'locality'
+        });
     },
     /**
      * Возвращает местоположение по умолчанию.
@@ -125,7 +169,11 @@ GeolocationService.prototype = {
         return {
             latitude: 55.751574,
             longitude: 37.573856,
-            zoom: 9
+            zoom: 9,
+            city: "Москва",
+            country: "Россия",
+            region: "Москва и Московская область",
+            isHighAccuracy: false
         };
     }
 };
