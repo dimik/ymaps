@@ -39,7 +39,7 @@
                 .add(geolocationButton, { top: 5, left: 100 })
                 .add('zoomControl')
                 .add('typeSelector', { top: 5, right: 5 })
-                .add('searchControl', { top: 5, left: 200 });
+                .add(new ymaps.control.SearchControl({ noPlacemark: true }), { top: 5, left: 200 });
 
             new LocationTool(myMap);
         });
