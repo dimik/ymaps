@@ -127,7 +127,7 @@ TilerConverter.prototype = {
             type: options.layerKey,
             behaviors: ['default']
         }, {
-            projection: ymaps.projection.Cartesian([[0, 0], [1, 1]], [false, false]),
+            projection: new ymaps.projection.Cartesian([[0, 0], [1, 1]], [false, false]),
             adjustZoomOnTypeChange: true
         });
     },
