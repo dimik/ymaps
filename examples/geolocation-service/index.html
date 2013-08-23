@@ -51,6 +51,8 @@
                     center: myCoords,
                     zoom: loc.zoom || 9,
                     behaviors: ['default', 'scrollZoom']
+                }, {
+                    adjustZoomOnTypeChange: true
                 });
 
                 myMap.geoObjects.add(myPlacemark);
