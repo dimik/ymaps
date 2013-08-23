@@ -74,7 +74,16 @@ GeolocationService.prototype = {
     _onGeolocationSuccess: function (position) {
         var coords = [position.coords.latitude, position.coords.longitude],
             mapSize = this._mapSize,
-            location = this._location;
+            location = this._location,
+            positionData = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy,
+                altitude: position.coords.altitude,
+                altitudeAccuracy: position.coords.altitudeAccuracy,
+                speed: position.coords.speed,
+                heading: position.coords.heading
+            };
 
         this.getLocationData(coords)
             .then(
@@ -83,7 +92,7 @@ GeolocationService.prototype = {
 
                     if(result) {
                         location.resolve(
-                            ymaps.util.extend({}, position.coords, {
+                            ymaps.util.extend({}, positionData, {
                                 zoom: ymaps.util.bounds.getCenterAndZoom(result.properties.get('boundedBy'), mapSize, ymaps.projection.wgs84Mercator).zoom,
                                 city: result.properties.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.Locality.LocalityName',
                                     result.properties.get('name')
@@ -100,7 +109,7 @@ GeolocationService.prototype = {
                     }
                     else {
                         location.resolve(
-                            ymaps.util.extend({}, ymaps.geolocation, position.coords, {
+                            ymaps.util.extend({}, ymaps.geolocation, positionData, {
                                 isHighAccuracy: true
                             })
                         );
@@ -108,7 +117,7 @@ GeolocationService.prototype = {
                 },
                 function (err) {
                     location.resolve(
-                        ymaps.util.extend({}, ymaps.geolocation, position.coords, {
+                        ymaps.util.extend({}, ymaps.geolocation, positionData, {
                             isHighAccuracy: true
                         })
                     );
