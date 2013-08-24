@@ -2,14 +2,12 @@
  * Класс сервиса геолокации.
  * Определяет местоположение с использованием Geolocation API браузера.
  * В случае его отсутствия или ошибки определяет местоположение по IP с помощью API Яндекс.Карт.
- * @see http://www.w3.org/TR/geolocation-API/
- * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/geolocation.xml
  * @class
  * @name GeolocationService
- * @param {Number[]} mapSize Размер контейнера карты для расчета масштаба.
+ * @see http://www.w3.org/TR/geolocation-API/
+ * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/geolocation.xml
  */
-function GeolocationService(mapSize) {
-    this._mapSize = mapSize;
+function GeolocationService() {
     this._location = new ymaps.util.Promise();
 };
 
@@ -73,9 +71,8 @@ GeolocationService.prototype = {
      */
     _onGeolocationSuccess: function (position) {
         var coords = [position.coords.latitude, position.coords.longitude],
-            mapSize = this._mapSize,
             location = this._location,
-            positionData = {
+            locationData = {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
                 accuracy: position.coords.accuracy,
@@ -87,39 +84,14 @@ GeolocationService.prototype = {
 
         this.getLocationData(coords)
             .then(
-                function (res) {
-                    var result = res.geoObjects.get(0);
-
-                    if(result) {
-                        location.resolve(
-                            ymaps.util.extend({}, positionData, {
-                                zoom: ymaps.util.bounds.getCenterAndZoom(result.properties.get('boundedBy'), mapSize, ymaps.projection.wgs84Mercator).zoom,
-                                city: result.properties.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.Locality.LocalityName',
-                                    result.properties.get('name')
-                                ),
-                                country: result.properties.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.CountryName',
-                                    result.properties.get('description')
-                                ),
-                                region: result.properties.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName',
-                                    result.properties.get('metaDataProperty.GeocoderMetaData.text')
-                                ),
-                                isHighAccuracy: true
-                            })
-                        );
-                    }
-                    else {
-                        location.resolve(
-                            ymaps.util.extend({}, ymaps.geolocation, positionData, {
-                                isHighAccuracy: true
-                            })
-                        );
-                    }
+                function (data) {
+                    location.resolve(
+                        ymaps.util.extend({ isHighAccuracy: true }, locationData, data)
+                    );
                 },
                 function (err) {
                     location.resolve(
-                        ymaps.util.extend({}, ymaps.geolocation, positionData, {
-                            isHighAccuracy: true
-                        })
+                        ymaps.util.extend({}, ymaps.geolocation, locationData, { isHighAccuracy: true })
                     );
                 }
             );
@@ -161,10 +133,42 @@ GeolocationService.prototype = {
      * @returns {ymaps.util.Promise} Промис-обертка.
      */
     getLocationData: function (coords) {
-        return ymaps.geocode(coords, {
-            results: 1,
-            kind: 'locality'
-        });
+        var promise = new ymaps.util.Promise(),
+            mapSize = this.getMapSize(),
+            search = ymaps.geocode(coords, {
+                results: 1,
+                kind: 'locality'
+            });
+
+        search.then(
+            function (res) {
+                var result = res.geoObjects.get(0),
+                    props = result.properties;
+
+                if(result) {
+                    promise.resolve({
+                        zoom: ymaps.util.bounds.getCenterAndZoom(props.get('boundedBy'), mapSize, ymaps.projection.wgs84Mercator).zoom,
+                        city: props.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.Locality.LocalityName',
+                            props.get('name')
+                        ),
+                        country: props.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.CountryName',
+                            props.get('description')
+                        ),
+                        region: props.get('metaDataProperty.GeocoderMetaData.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName',
+                            props.get('metaDataProperty.GeocoderMetaData.text')
+                        )
+                    });
+                }
+                else {
+                    promise.reject('Not found');
+                }
+            },
+            function (err) {
+                promise.reject(err);
+            }
+        );
+
+        return promise;
     },
     /**
      * Возвращает местоположение по умолчанию.
@@ -184,6 +188,16 @@ GeolocationService.prototype = {
             region: "Москва и Московская область",
             isHighAccuracy: false
         };
+    },
+    /**
+     * Перекрытие.
+     * Возвращает размер контейнера карты.
+     * @function
+     * @name GeolocationService.getMapSize
+     * @returns {Number[]} Размер контейнера карты.
+     */
+    getMapSize: function () {
+        return [ 800, 600 ];
     }
 };
 

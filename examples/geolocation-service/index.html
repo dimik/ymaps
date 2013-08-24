@@ -15,7 +15,7 @@
         ymaps.ready(function () {
             var myMap,
                 myMapContainer = $('#YMapsID'),
-                service = new GeolocationService([myMapContainer.width(), myMapContainer.height()]),
+                service = new GeolocationService(),
                 myLocation = service.getLocation({
                     // Режим получения наиболее точных данных.
                     enableHighAccuracy: true,
@@ -24,6 +24,14 @@
                     // Максимальное время жизни полученных данных (в миллисекундах).
                     maximumAge: 1000
                 });
+
+            // Перекрываем метод сервиса, чтобы пробросить размер карты.
+            service.getMapSize = function () {
+                return [
+                    myMapContainer.width(),
+                    myMapContainer.height()
+                ];
+            };
 
             myLocation.then(function (loc) {
                 var myCoords = [loc.latitude, loc.longitude],
