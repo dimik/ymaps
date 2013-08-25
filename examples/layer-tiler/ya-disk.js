@@ -36,7 +36,7 @@ YaDisk.Model.prototype = {
     getDefaults: function () {
         return {
             url: 'https://webdav.yandex.ru',
-            method: 'PROPFIND',
+            type: 'PROPFIND',
             dataType: 'xml',
             headers: {
                 Authorization: 'OAuth c5a90c24062242889b23459a0c15ff53',
