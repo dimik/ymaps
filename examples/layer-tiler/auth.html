@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Получение доступа к Яндекс.Диску</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+    </script>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="lead">Получение доступа к Яндекс.Диску.</p>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <form class="form-search" action="https://oauth.yandex.ru/authorize">
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="hidden" name="response_type" value="token"/>
+                            <input type="hidden" name="client_id" value="9843ecf1ffb54e8b8d5ef5223a32c810"/>
+                            <button type="submit" class="btn">Авторизоваться на Яндексе</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row-fluid">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
