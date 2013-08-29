@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: Использование класса провайдера для поиска по двум источникам данных.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.0/?lang=ru-RU&load=package.full&mode=debug" type="text/javascript"></script>
+    <script src="geocode-mixed-provider.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = window.map = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                });
+
+            ymaps.geocode('Гази-Юрт', { provider : new GeocodeMixedProvider(), results: 1 })
+                .then(function (res) {
+                    var result = res.geoObjects.get(0);
+
+                    if(result) {
+                        myMap.geoObjects.add(result);
+                        myMap.setBounds(result.properties.get('boundedBy'), {
+                            checkZoomRange: true
+                        });
+                    }
+                }, function (err) {
+                    if(window.console) {
+                        console.log(err);
+                    }
+                });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Использование класса провайдера для поиска по двум источникам данных.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
