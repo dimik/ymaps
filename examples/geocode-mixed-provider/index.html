@@ -15,9 +15,13 @@
                     center: [55.751574, 37.573856],
                     zoom: 9,
                     behaviors: ['default', 'scrollZoom']
-                });
+                }),
+                searchControl = new ymaps.control.SearchControl({ provider: new GeocodeMixedProvider() });
 
-            ymaps.geocode('Гази-Юрт', { provider : new GeocodeMixedProvider(), results: 1 })
+            myMap.controls.add(searchControl, { top: 10, right: 10 });
+
+            /*
+            ymaps.geocode('Железобетон', { provider : new GeocodeMixedProvider(), results: 1 })
                 .then(function (res) {
                     var result = res.geoObjects.get(0);
 
@@ -32,6 +36,7 @@
                         console.log(err);
                     }
                 });
+            */
         });
     </script>
     <style type="text/css">
