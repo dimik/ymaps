@@ -1,9 +1,4 @@
-function GeocodeMixedProvider() {
-    this._providers = [
-        'yandex#map',
-        'yandex#publicMap'
-    ];
-}
+function GeocodeMixedProvider() {}
 
 GeocodeMixedProvider.prototype = {
     constructor: GeocodeMixedProvider,
