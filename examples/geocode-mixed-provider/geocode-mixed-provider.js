@@ -10,7 +10,7 @@ GeocodeMixedProvider.prototype = {
     geocode: function (request, options) {
         var promise = new ymaps.util.Promise();
 
-        ymaps.geocode.call(ymaps, request, ymaps.util.extend({}, options, { provider: 'yandex#map' }))
+        ymaps.geocode(request, ymaps.util.extend({}, options, { provider: 'yandex#map' }))
             .then(function (res) {
                 if(res && res.geoObjects.getLength()
                     //&& res.geoObjects.get(0).properties.get('metaDataProperty.GeocoderMetaData.precision') === 'exact'
@@ -19,7 +19,7 @@ GeocodeMixedProvider.prototype = {
                     promise.resolve(res);
                 }
                 else {
-                    ymaps.geocode.call(ymaps, request, ymaps.util.extend({}, options, { provider: 'yandex#publicMap' }))
+                    ymaps.geocode(request, ymaps.util.extend({}, options, { provider: 'yandex#publicMap' }))
                         .then(function (res) {
                             promise.resolve(res);
                         }, function (err) {
