@@ -6,7 +6,7 @@
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="http://yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
     <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
-    <script src="http://api-maps.yandex.ru/2.0.15/?load=package.standard,util.bind&lang=ru-RU" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard,util.bind&lang=ru-RU" type="text/javascript"></script>
 
     <script type="text/javascript">
 var map, MySearchControlLayout, searchControl;
@@ -31,7 +31,7 @@ ymaps.ready(function () {
 
             this.onSubmit = ymaps.util.bind(this.onSubmit, this);
             this.onFieldChange = ymaps.util.bind(this.onFieldChange, this);
-            this.dataSource = ymaps.util.bind(this.dataSource, this);
+            this.dataSource = ymaps.util.bind(this.dataKladrSource, this);
 
             this.form = $('.form-search')
                 .on('submit', this.onSubmit);
@@ -59,10 +59,48 @@ ymaps.ready(function () {
             }
         },
 
-        dataSource: function (query, callback) {
+        dataKladrSource: function (query, callback) {
+            var config = this.getSuggestConfig(),
+                request = $.extend({ query: query }, config);
+
+            $.ajax({
+                url: config.url,
+                dataType: 'jsonp',
+                data: request,
+                context: this,
+                success: function (json) {
+                    var results = [];
+
+                    for(var i = 0, len = json.result.length; i < len; i++) {
+                        var result = json.result[i],
+                            parent = result.parents && result.parents[0];
+
+                        results.push(
+                            (parent && (parent.name + ' ' + parent.type + ', ') || '') +
+                            result.type + ' ' + result.name
+                        );
+                    }
+
+                    callback(results);
+                }
+            });
+        },
+
+        getSuggestConfig: function () {
+            return {
+                url: 'http://kladr-api.ru/api.php',
+                contentType: 'city',
+                withParent: 1,
+                limit: 5,
+                token: '52024d6c472d040824000221',
+                key: '6cf033712aa73a4a26db39d72ea02bb682c8e390'
+            };
+        },
+
+        dataGeocoderSource: function (query, callback) {
             var provider = this.getData().control.options.get('provider');
 
-            ymaps.geocode(query, {provider: provider})
+            ymaps.geocode(query, { provider: provider })
                 .then(function (res) {
                     var results = [];
 
