@@ -62,69 +62,22 @@
                         preset: 'twirl#violetIcon'
                     };
                 },
+                points = [
+                    [55.831903,37.411961], [55.763338,37.565466], [55.763338,37.565466], [55.744522,37.616378], [55.780898,37.642889], [55.793559,37.435983], [55.800584,37.675638], [55.716733,37.589988], [55.775724,37.560840], [55.822144,37.433781], [55.874170,37.669838], [55.716770,37.482338], [55.780850,37.750210], [55.810906,37.654142], [55.865386,37.713329], [55.847121,37.525797], [55.778655,37.710743], [55.623415,37.717934], [55.863193,37.737000], [55.866770,37.760113], [55.698261,37.730838], [55.633800,37.564769], [55.639996,37.539400], [55.690230,37.405853], [55.775970,37.512900], [55.775777,37.442180], [55.811814,37.440448], [55.751841,37.404853], [55.627303,37.728976], [55.816515,37.597163], [55.664352,37.689397], [55.679195,37.600961], [55.673873,37.658425], [55.681006,37.605126], [55.876327,37.431744], [55.843363,37.778445], [55.875445,37.549348], [55.662903,37.702087], [55.746099,37.434113], [55.838660,37.712326], [55.774838,37.415725], [55.871539,37.630223], [55.657037,37.571271], [55.691046,37.711026], [55.803972,37.659610], [55.616448,37.452759], [55.781329,37.442781], [55.844708,37.748870], [55.723123,37.406067], [55.858585,37.484980]
+                ],
+                geoObjects = [];
+
                 /**
                  * Данные передаются вторым параметром в конструктор метки, опции третьим.
                  * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/Placemark.xml#constructor-summary
                  */
-                geoObjects = [
-                    new ymaps.Placemark([55.831903,37.411961], getPointData(1), getPointOptions()),
-                    new ymaps.Placemark([55.763338,37.565466], getPointData(2), getPointOptions()),
-                    new ymaps.Placemark([55.763338,37.565466], getPointData(3), getPointOptions()),
-                    new ymaps.Placemark([55.744522,37.616378], getPointData(4), getPointOptions()),
-                    new ymaps.Placemark([55.780898,37.642889], getPointData(5), getPointOptions()),
-                    new ymaps.Placemark([55.793559,37.435983], getPointData(6), getPointOptions()),
-                    new ymaps.Placemark([55.800584,37.675638], getPointData(7), getPointOptions()),
-                    new ymaps.Placemark([55.716733,37.589988], getPointData(8), getPointOptions()),
-                    new ymaps.Placemark([55.775724,37.560840], getPointData(9), getPointOptions()),
-                    new ymaps.Placemark([55.822144,37.433781], getPointData(10), getPointOptions()),
-                    new ymaps.Placemark([55.874170,37.669838], getPointData(11), getPointOptions()),
-                    new ymaps.Placemark([55.716770,37.482338], getPointData(12), getPointOptions()),
-                    new ymaps.Placemark([55.780850,37.750210], getPointData(13), getPointOptions()),
-                    new ymaps.Placemark([55.810906,37.654142], getPointData(14), getPointOptions()),
-                    new ymaps.Placemark([55.865386,37.713329], getPointData(15), getPointOptions()),
-                    new ymaps.Placemark([55.847121,37.525797], getPointData(16), getPointOptions()),
-                    new ymaps.Placemark([55.778655,37.710743], getPointData(17), getPointOptions()),
-                    new ymaps.Placemark([55.623415,37.717934], getPointData(18), getPointOptions()),
-                    new ymaps.Placemark([55.863193,37.737000], getPointData(19), getPointOptions()),
-                    new ymaps.Placemark([55.866770,37.760113], getPointData(20), getPointOptions()),
-                    new ymaps.Placemark([55.698261,37.730838], getPointData(21), getPointOptions()),
-                    new ymaps.Placemark([55.633800,37.564769], getPointData(22), getPointOptions()),
-                    new ymaps.Placemark([55.639996,37.539400], getPointData(23), getPointOptions()),
-                    new ymaps.Placemark([55.690230,37.405853], getPointData(24), getPointOptions()),
-                    new ymaps.Placemark([55.775970,37.512900], getPointData(25), getPointOptions()),
-                    new ymaps.Placemark([55.775777,37.442180], getPointData(26), getPointOptions()),
-                    new ymaps.Placemark([55.811814,37.440448], getPointData(27), getPointOptions()),
-                    new ymaps.Placemark([55.751841,37.404853], getPointData(28), getPointOptions()),
-                    new ymaps.Placemark([55.627303,37.728976], getPointData(29), getPointOptions()),
-                    new ymaps.Placemark([55.816515,37.597163], getPointData(30), getPointOptions()),
-                    new ymaps.Placemark([55.664352,37.689397], getPointData(31), getPointOptions()),
-                    new ymaps.Placemark([55.679195,37.600961], getPointData(32), getPointOptions()),
-                    new ymaps.Placemark([55.673873,37.658425], getPointData(33), getPointOptions()),
-                    new ymaps.Placemark([55.681006,37.605126], getPointData(34), getPointOptions()),
-                    new ymaps.Placemark([55.876327,37.431744], getPointData(35), getPointOptions()),
-                    new ymaps.Placemark([55.843363,37.778445], getPointData(36), getPointOptions()),
-                    new ymaps.Placemark([55.875445,37.549348], getPointData(37), getPointOptions()),
-                    new ymaps.Placemark([55.662903,37.702087], getPointData(38), getPointOptions()),
-                    new ymaps.Placemark([55.746099,37.434113], getPointData(39), getPointOptions()),
-                    new ymaps.Placemark([55.838660,37.712326], getPointData(40), getPointOptions()),
-                    new ymaps.Placemark([55.774838,37.415725], getPointData(41), getPointOptions()),
-                    new ymaps.Placemark([55.871539,37.630223], getPointData(42), getPointOptions()),
-                    new ymaps.Placemark([55.657037,37.571271], getPointData(43), getPointOptions()),
-                    new ymaps.Placemark([55.691046,37.711026], getPointData(44), getPointOptions()),
-                    new ymaps.Placemark([55.803972,37.659610], getPointData(45), getPointOptions()),
-                    new ymaps.Placemark([55.616448,37.452759], getPointData(46), getPointOptions()),
-                    new ymaps.Placemark([55.781329,37.442781], getPointData(47), getPointOptions()),
-                    new ymaps.Placemark([55.844708,37.748870], getPointData(48), getPointOptions()),
-                    new ymaps.Placemark([55.723123,37.406067], getPointData(49), getPointOptions()),
-                    new ymaps.Placemark([55.858585,37.484980], getPointData(50), getPointOptions())
-                ];
-
-                /**
-                 * Данные и опции можно также добавлять/менять динамически после создания меток.
-                 */
-                for(var i = 0, len = geoObjects.length; i < len; i++) {
-                    geoObjects[i].properties.set(getPointData(i));
-                    geoObjects[i].options.set(getPointOptions());
+                for(var i = 0, len = points.length; i < len; i++) {
+                    geoObjects[i] = new ymaps.Placemark(points[i], getPointData(i), getPointOptions());
+                    /**
+                     * Так же их можно добавлять/менять динамически после создания меток.
+                     * geoObjects[i].properties.set(getPointData(i));
+                     * geoObjects[i].options.set(getPointOptions());
+                     */
                 }
 
                 /**
