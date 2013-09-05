@@ -6,7 +6,7 @@
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="http://yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
     <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
-    <script src="http://api-maps.yandex.ru/2.0.15/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
 
     <script type="text/javascript">
 var map, MyListBoxLayout, MyListBoxItemLayout, MyListBoxSeparatorLayout, listBox;
@@ -66,17 +66,15 @@ ymaps.ready(function () {
         expandOnClick: false
     });
 
-    map.controls.add(listBox, {right: 15, top: 5});
+    map.controls.add(listBox, { right: 15, top: 5 });
 
-    listBox.events.add('click', function (e) {
+    listBox.events.add('select', function (e) {
         var item = e.get('target'),
             center = item.data.get('center');
 
-        // Если клик по элементу списка, а не по заголовку - меняем центр карты.
-        item === listBox ||
-            map.setCenter(center, map.getZoom(), {
-                checkZoomRange: true
-            });
+        map.setCenter(center, map.getZoom(), {
+            checkZoomRange: true
+        });
     });
 });
     </script>
