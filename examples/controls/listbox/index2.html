@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример реализации пользовательского макета раскрывающегося списка</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="http://yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+var map, MyListBoxLayout, MyListBoxItemLayout, MyListBoxSeparatorLayout, listBox;
+
+ymaps.ready(function () {
+    map = new ymaps.Map('YMapsID', {
+        center: [55.751574, 37.573856],
+        zoom: 9
+    });
+
+    // Создание макета раскрывающегося списка.
+    MyListBoxLayout = ymaps.templateLayoutFactory.createClass(
+        '<div class="btn-group">' +
+            '<button class="btn[if data.theme] btn-$[data.theme][endif] dropdown-toggle" data-toggle="dropdown">$[data.title]&nbsp;<span class="caret"></span></button>' +
+            '<ul id="childcontainer" class="dropdown-menu" style="height: 150px; overflow: scroll;"/>' +
+        '</div>', {
+
+        build: function () {
+            MyListBoxLayout.superclass.build.call(this);
+
+            this.childContainerElement = $('#childcontainer').get(0);
+            this.events.fire('childcontainerchange', {
+                newChildContainerElement: this.childContainerElement,
+                oldChildContainerElement: null
+            });
+        },
+
+        // Переопределим метод, который требует интерфейс IGroupControlLayout.
+        getChildContainerElement: function () {
+            return this.childContainerElement;
+        }
+    });
+
+    // Создание макета элемента раскрывающегося списка.
+    MyListBoxItemLayout = ymaps.templateLayoutFactory.createClass('<li><a href="#">$[data.content]</a></li>');
+
+    // Создание макета разделителя раскрывающегося списка.
+    MyListBoxSeparatorLayout = ymaps.templateLayoutFactory.createClass('<li class="divider"></li>');
+
+    // Создадим список и выставим созданный макет через опции.
+    listBox = new ymaps.control.ListBox({
+        data: {
+            title: 'Выберите город'
+        },
+        items: [
+            new ymaps.control.ListBoxItem({ data: { content: 'Москва', center: [55.752736, 37.606815]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Новосибирск', center: [55.026366, 82.907803]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Бангкок', center: [13.74975574, 100.53144250]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Вьентьян', center: [17.97855740, 102.64755900]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Пномпень', center: [11.52197261, 104.91205950]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Ханой', center: [20.96817096, 105.82347150]}}, { layout: MyListBoxItemLayout }),
+            new ymaps.control.ListBoxSeparator({}, { layout: MyListBoxSeparatorLayout }),
+            new ymaps.control.ListBoxItem({ data: { content: 'Нью-Йорк', center: [40.695537, -73.97552]}}, { layout: MyListBoxItemLayout })
+        ]
+    }, {
+        layout: MyListBoxLayout,
+        expandOnClick: false
+    });
+
+    map.controls.add(listBox, {right: 15, top: 5});
+
+    listBox.events.add('select', function (e) {
+        var item = e.get('target'),
+            center = item.data.get('center');
+
+        map.setCenter(center, map.getZoom(), {
+            checkZoomRange: true
+        });
+    });
+});
+    </script>
+</head>
+
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пользовательский макет раскрывающегося списка</p>
+            <div id="YMapsID" style="width: 800px; height: 400px"></div>
+        </div>
+    </div>
+</body>
+
+</html>
