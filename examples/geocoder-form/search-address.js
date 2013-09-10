@@ -80,6 +80,9 @@ SearchAddress.MapView.prototype = {
 
         return this;
     },
+    getPoint: function () {
+        return this._point;
+    },
     _setMapBounds: function (bounds) {
         this._map.setBounds(bounds, {
             checkZoomRange: true,
