@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: отображение статуса кластеров во внешнем контейнере</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <script src="//yandex.st/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
+    <!--script src="https://raw.github.com/dimik/ymaps/master/points-generator.js" type="text/javascript"></script>
+    <script src="https://raw.github.com/dimik/ymaps/master/piechart-clusterer.js" type="text/javascript"></script-->
+    <script src="points-generator.js" type="text/javascript"></script>
+    <script src="piechart-clusterer.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            // Создание экземпляра карты и его привязка к созданному контейнеру
+            var myMap = new ymaps.Map("map", {
+                    center: [55.755768, 37.617671], // Москва
+                    zoom: 10,
+                    behaviors: ["default", "scrollZoom"]
+                });
+
+            var generator = new RandomPointsGenerator();
+
+            // Перекрываем метод генератора меток для создания случайных пресетов 4-х типов.
+            var presets = ['twirl#blueIcon', 'twirl#orangeIcon', 'twirl#greenIcon', 'twirl#redIcon'];
+            generator.getPointOptions = function (i) {
+                return {
+                    preset: presets[Math.floor(Math.random() * presets.length)]
+                };
+            };
+            // Перекрываем метод генератора меток для добавления данных сгенеренным меткам.
+            generator.getPointData = function (i) {
+                return {
+                    id: 'item-' + (i + 1),
+                    title: 'Метка ' + (i + 1),
+                    clusterCaption: 'Метка ' + (i + 1),
+                    balloonContentBody: 'Содержимое балуна метки ' + (i + 1)
+                };
+            };
+
+            // Создаем 200 меток внутри области видимости карты.
+            var points = generator.generate(200).atBounds(myMap.getBounds()),
+                clusterer = new PieChartClusterer(),
+                // Стили для DOM-представлений групп.
+                presetStyles = {
+                    "red": "important",
+                    "green": "success",
+                    "orange": "warning",
+                    "blue": "info"
+                },
+                // Названия групп.
+                presetTitles = {
+                    "red": "Красный",
+                    "green": "Зеленый",
+                    "orange": "Оранжевый",
+                    "blue": "Синий"
+                },
+                // Группируем метки из исходного массива по типу пресета.
+                groups = $.map(presets, function (preset, index) {
+                    var color = preset.match(/#([a-z]+)[A-Z]/)[1];
+
+                    return {
+                        id: 'group-' + index,
+                        title: presetTitles[color],
+                        style: presetStyles[color],
+                        visible: true,
+                        toggle: function () {
+                            if(this.visible = !this.visible) {
+                                clusterer.add(this.points);
+                            }
+                            else {
+                                clusterer.remove(this.points);
+                            }
+                        },
+                        points: $.grep(points, function (point) { return point.options.get('preset') === preset; }),
+                        // Поиск метки в массиве по идентификатору.
+                        findPointById: function (id) {
+                            var i = 0, point;
+
+                            while(point = this.points[i++]) {
+                                if(point.properties.get('id') === id) {
+                                    return point;
+                                }
+                            }
+
+                            return null;
+                        }
+                    };
+                });
+
+            // Добавляем метки в кластеризатор.
+            clusterer.add(points);
+            // Добавляем кластеризатор на карту.
+            myMap.geoObjects.add(clusterer);
+
+            // Контейнер для таблицы.
+            var sidebar = $('#sidebar'),
+                sidebarTemplate = $('#sidebarSimpleTemplate').template('sidebarTemplate'),
+                rowTemplate = $('#rowTemplate').template('rowTemplate');
+                getState = function (point) {
+                    return clusterer.getObjectState(point);
+                },
+                findGroupById = function (id) {
+                    var i = 0, group;
+
+                    while(group = groups[i++]) {
+                        if(group.id === id) {
+                            return group;
+                        }
+                    }
+
+                    return null;
+                },
+                openBalloon = function (point) {
+                    var state = getState(point),
+                        cluster = state.isClustered && state.cluster;
+
+                    if(cluster) {
+                        cluster.state.set('activeObject', point);
+                        cluster.balloon.open();
+                    }
+                    else {
+                        point.balloon.open();
+                    }
+                };
+
+            sidebar
+                // Рендерим шаблон в сайдбар.
+                .html($.tmpl(sidebarTemplate, {
+                    clusterer: clusterer,
+                    groups: groups
+                }, {
+                    getState: getState
+                }))
+                // По клику на описание геообъекта в таблице
+                // будем фокусировать центр карты на координаты центра геообъекта.
+                .on('click', 'tr', function (e) {
+                    var groupId = $(this).closest('.tab-pane').attr('id'),
+                        point = findGroupById(groupId).findPointById(this.id);
+
+                    myMap.panTo(point.geometry.getCoordinates(), {
+                        callback: function () {
+                            var state = getState(point),
+                                cluster = state.cluster;
+
+                            if(state.isShown && (point.getMap() || (cluster && cluster.getMap()))) {
+                                openBalloon(point);
+                            }
+                            else {
+                                clusterer.events.once('objectsaddtomap', function () {
+                                    openBalloon(point);
+                                });
+                                /*
+                                clusterer.events.add('objectsaddtomap', function onObjectsAddToMap() {
+                                    clusterer.events.remove('objectsaddtomap', onObjectsAddToMap);
+                                    openBalloon(point);
+                                });
+                                */
+                            }
+                        }
+                    });
+                })
+                .on('click', '[name=visible]', function (e) {
+                    // var id = $(e.target).closest('.tab-pane').attr('id'),
+                    var id = $(e.target).attr('id'),
+                        group = findGroupById(id);
+
+                    group.toggle();
+                })
+                // Включаем первый таб
+                .find('a[data-toggle=tab]:first').tab('show');
+
+            // При смене центра или масштаба карты обновляем статус геообъектов.
+            myMap.events.add('boundschange', function () {
+                sidebar
+                    .find('.tab-pane')
+                    .each(function (i, group) {
+                        $(group)
+                            .find('tr:gt(0)')
+                            .each(function (i, item) {
+                                $(item).html($.tmpl(rowTemplate, {
+                                    i: i,
+                                    point: findGroupById(group.id).findPointById(item.id)
+                                }, {
+                                    getState: getState
+                                }).html());
+                            });
+                    });
+            });
+        });
+    </script>
+    <!-- Шаблон содержимого сайдбара. -->
+    <script id="sidebarTemplate" type="text/x-jquery-tmpl">
+        <ul class="nav nav-tabs">
+            {{tmpl(groups) "#tabTemplate"}}
+        </ul>
+        <div class="tab-content">
+            {{tmpl(groups, {
+                getState: $item.getState
+            }) "#tabPaneTemplate"}}
+        </div>
+    </script>
+    <!-- Шаблон упрощенного содержимого сайдбара. -->
+    <script id="sidebarSimpleTemplate" type="text/x-jquery-tmpl">
+        <form class="form-inline">
+            {{each(i, group) groups}}
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input id="${id}" type="checkbox" name="visible"{{if visible}} checked{{/if}}> Отображение группы <span class="label label-${style}">${title}</span>
+                        </label>
+                    </div>
+                </div>
+            {{/each}}
+        </form>
+    </script>
+    <!-- Шаблон таба. -->
+    <script id="tabTemplate" type="text/x-jquery-tmpl">
+        <li>
+            <a href="#${id}" data-toggle="tab">
+                <span class="label label-${style}">${title}</span>
+            </a>
+        </li>
+    </script>
+    <!-- Шаблон содержимого таба. -->
+    <script id="tabPaneTemplate" type="text/x-jquery-tmpl">
+        <div class="tab-pane" id="${id}">
+            <form class="form-inline">
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" name="visible"{{if visible}} checked{{/if}}> Отображение группы
+                        </label>
+                    </div>
+                    <div class="controls">Объектов в группе (${points.length})</div>
+                </div>
+            </form>
+            <table class="table table-hover table-striped table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Имя</th>
+                        <th>Добавлен на карту</th>
+                        <th>Добавлен в кластер</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {{each(i, point) points}}
+                    {{tmpl({
+                        i: i,
+                        point: point
+                    }, {
+                        getState: $item.getState
+                    }) "#rowTemplate"}}
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </script>
+    <!-- Шаблон геообъекта в таблице. -->
+    <script id="rowTemplate" type="text/x-jquery-tmpl">
+        <tr id="${point.properties.get("id")}">
+            <td>${i + 1}</td>
+            <td>${point.properties.get("title")}</td>
+            {{tmpl($item.getState(point)) "#statusLabelsTemplate"}}
+        </tr>
+    </script>
+    <!-- Шаблон статуса геообъекта. -->
+    <script id="statusLabelsTemplate" type="text/x-jquery-tmpl">
+        <td><span class="label label-{{if isShown}}success{{else}}important{{/if}}">${isShown}</span></td>
+        <td><span class="label label-{{if isClustered}}success{{else}}important{{/if}}">${isClustered}</span></td>
+    </script>
+    <style type="text/css">
+        .hero-unit {
+            background-color: #FFF;
+        }
+        .well {
+            padding: 15px 0;
+            height: 520px;
+        }
+        .label {
+            cursor: pointer;
+        }
+        #map {
+            width: 800px;
+            height: 520px;
+        }
+        #sidebar {
+            height: 520px;
+            overflow: scroll;
+        }
+       .table tr {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="lead">Пример отображения статуса кластеров во внешнем контейнере.</p>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div id="map" class="span8"></div>
+                <div id="sidebar" class="span4"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
