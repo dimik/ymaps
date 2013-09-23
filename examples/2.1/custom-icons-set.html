@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: карта с набором различных меток.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api01e.tst.maps.yandex.ru/2.1.0/?lang=ru-RU&load=package.full" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 9
+                });
+
+            myMap.geoObjects
+                .add(new ymaps.Placemark([55.684758, 37.738521], { balloonContent: 'цвет <strong>воды пляжа бонди</strong>' }, { iconColor: '#0095b6' }))
+                .add(new ymaps.Placemark([55.833436, 37.715175], { balloonContent: '<strong>серобуромалиновый</strong> цвет' }, { iconColor: '#735184' }))
+                .add(new ymaps.Placemark([55.687086, 37.529789], { balloonContent: 'цвет <strong>влюбленной жабы</strong>' }, { iconColor: '#34a140' }))
+                .add(new ymaps.Placemark([55.782392, 37.614924], { balloonContent: 'цвет <strong>детской неожиданности</strong>' }, { iconColor: '#f7f21a' }))
+                .add(new ymaps.Placemark([55.642063, 37.656123], { balloonContent: 'цвет <strong>бисмарк-фуриозо</strong>' }, { iconColor: '#a5260a' }))
+                .add(new ymaps.Placemark([55.826479, 37.487208], { balloonContent: 'цвет <strong>фэйсбука</strong>' }, { iconColor: '#3b5998' }))
+                .add(new ymaps.Placemark([55.694843, 37.435023], { balloonContent: 'цвет <strong>вконтакте</strong>' }, { iconColor: '#4d7198' }))
+                .add(new ymaps.Placemark([55.790139, 37.814052], { balloonContent: 'цвет <strong>твиттера</strong>' }, { iconColor: '#1faee9' }))
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Карта с набором различный меток.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: карта с ручным набором контролов.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api01e.tst.maps.yandex.ru/2.1.0/?lang=ru-RU&load=package.full" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 9,
+                    controls: ['zoomControl', 'searchControl', 'typeSelector', 'geolocationControl', 'trafficControl', 'fullscreenControl']
+                });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 450px;
+            height: 420px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Карта с ручным набором контролов.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>

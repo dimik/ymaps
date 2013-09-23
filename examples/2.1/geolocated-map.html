@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: создание карты с местоположением пользователя.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//api01e.tst.maps.yandex.ru/2.1.0/?lang=ru-RU&load=package.full" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap,
+                defaultMapOptions = { center: [55.751574, 37.573856], zoom: 9 },
+                createMap = function (options) {
+                    return new ymaps.Map('YMapsID', options);
+                },
+                onSuccess = function (res) {
+                    var geoObject = res.geoObjects.get(0),
+                        mapOptions = geoObject && { bounds: geoObject.properties.get('boundedBy') };
+
+                    myMap = createMap(mapOptions || defaultMapOptions);
+
+                    if(geoObject) {
+                        myMap.geoObjects.add(geoObject);
+                    }
+                },
+                onFail = function (err) {
+                    if(console) {
+                        console.log(err);
+                    }
+                    myMap = createMap(defaultMapOptions);
+                };
+
+            ymaps.geolocation.get({ autoReverseGeocode: true })
+                .then(onSuccess, onFail);
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Создание карты с местоположением пользователя.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
