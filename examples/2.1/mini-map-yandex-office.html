@@ -11,10 +11,24 @@
     <script type="text/javascript">
         ymaps.ready(function () {
             var myMap = new ymaps.Map('YMapsID', {
-                    center: [55.751574, 37.573856],
-                    zoom: 9,
+                    center: [55.733835, 37.588227],
+                    zoom: 12,
                     controls: ['smallMapDefaultSet']
                 });
+
+            var myPlacemark = new ymaps.Placemark(myMap.getCenter(), {
+                balloonContentBody: [
+                '<address>',
+                    '<strong>Офис Яндекса в Москве</strong>',
+                    '<br/>',
+                    'Адрес: 119021, Москва, ул. Льва Толстого, 16',
+                    '<br/>',
+                    'Подробнее: <a href="http://company.yandex.ru/">http://company.yandex.ru/<a>',
+                '</address>'
+                ].join('')
+            }, { preset: 'islands#redDotIcon' });
+
+            myMap.geoObjects.add(myPlacemark);
         });
     </script>
     <style type="text/css">
