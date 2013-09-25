@@ -16,14 +16,14 @@
                 });
 
             myMap.geoObjects
-                .add(new ymaps.Placemark([55.684758, 37.738521], { balloonContent: 'цвет <strong>воды пляжа бонди</strong>' }, { iconColor: '#0095b6' }))
-                .add(new ymaps.Placemark([55.833436, 37.715175], { balloonContent: '<strong>серобуромалиновый</strong> цвет' }, { iconColor: '#735184' }))
-                .add(new ymaps.Placemark([55.687086, 37.529789], { balloonContent: 'цвет <strong>влюбленной жабы</strong>' }, { iconColor: '#34a140' }))
-                .add(new ymaps.Placemark([55.782392, 37.614924], { balloonContent: 'цвет <strong>детской неожиданности</strong>' }, { iconColor: '#f7f21a' }))
-                .add(new ymaps.Placemark([55.642063, 37.656123], { balloonContent: 'цвет <strong>бисмарк-фуриозо</strong>' }, { iconColor: '#a5260a' }))
-                .add(new ymaps.Placemark([55.826479, 37.487208], { balloonContent: 'цвет <strong>фэйсбука</strong>' }, { iconColor: '#3b5998' }))
-                .add(new ymaps.Placemark([55.694843, 37.435023], { balloonContent: 'цвет <strong>вконтакте</strong>' }, { iconColor: '#4d7198' }))
-                .add(new ymaps.Placemark([55.790139, 37.814052], { balloonContent: 'цвет <strong>твиттера</strong>' }, { iconColor: '#1faee9' }))
+                .add(new ymaps.Placemark([55.684758, 37.738521], { balloonContent: 'цвет <strong>воды пляжа бонди</strong>' }, { preset: 'islands#icon', iconColor: '#0095b6' }))
+                .add(new ymaps.Placemark([55.833436, 37.715175], { balloonContent: '<strong>серобуромалиновый</strong> цвет' }, { preset: 'islands#dotIcon', iconColor: '#735184' }))
+                .add(new ymaps.Placemark([55.687086, 37.529789], { balloonContent: 'цвет <strong>влюбленной жабы</strong>' }, { preset: 'islands#circleIcon', iconColor: '#34a140' }))
+                .add(new ymaps.Placemark([55.782392, 37.614924], { balloonContent: 'цвет <strong>детской неожиданности</strong>' }, { preset: 'islands#circleDotIcon', iconColor: '#f7f21a' }))
+                .add(new ymaps.Placemark([55.642063, 37.656123], { balloonContent: 'цвет <strong>бисмарк-фуриозо</strong>' }, { preset: 'islands#icon', iconColor: '#a5260a' }))
+                .add(new ymaps.Placemark([55.826479, 37.487208], { balloonContent: 'цвет <strong>фэйсбука</strong>' }, { preset: 'islands#dotIcon',iconColor: '#3b5998' }))
+                .add(new ymaps.Placemark([55.694843, 37.435023], { balloonContent: 'цвет <strong>вконтакте</strong>' }, { preset: 'islands#circleIcon', iconColor: '#4d7198' }))
+                .add(new ymaps.Placemark([55.790139, 37.814052], { balloonContent: 'цвет <strong>твиттера</strong>' }, { preset: 'islands#circleDotIcon', iconColor: '#1faee9' }))
         });
     </script>
     <style type="text/css">
