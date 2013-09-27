@@ -1,10 +1,12 @@
 function RoseCollection(feature, options) {
-    ObjectManager.superclass.constructor.call(this, feature,
+    RoseCollection.superclass.constructor.call(this, feature,
         // По-умолчанию обрабатываем только точное совпадение координат.
         ymaps.util.extend({ margin: 0 }, options)
     );
 
     this._points = {};
+    this._offset = options.offset || 100;
+    this._circle = null;
     this._map = null;
 
     this.events.add('mapchange', this._onMapChange, this);
@@ -12,64 +14,24 @@ function RoseCollection(feature, options) {
 }
 
 ymaps.ready(function () {
-    ymaps.util.augment(ObjectManager, ymaps.GeoObjectCollection, {
-        add: function (object) {
-            this.constructor.superclass.add.apply(this, arguments);
+    ymaps.util.augment(RoseCollection, ymaps.GeoObjectCollection, {
+        _getRadius: function () {
+            var projection = this._map.options.get('projection'),
+                zoom = this._map.getZoom(),
+                start = this._map.getPixelCenter(),
+                end = [start[0], start[1] + this._offset];
 
-            var coordinates = object.geometry.getCoordinates(),
-                points = this._points[coordinates];
-
-            if(points) {
-                points.push(object);
-            }
-            else {
-                this._points[coordinates] = [object];
-            }
-
-            return this;
+            return projection.getCoordSystem().getDistance(
+                projection.fromGlobalPixels(start, zoom),
+                projection.fromGlobalPixels(end, zoom)
+            );
         },
-        /**
-         * Удаляет метку из диспетчера объектов.
-         * @function
-         * @name ObjectManager.remove
-         * @param {ymaps.GeoObject} object Добавляемая метка.
-         * @returns {ObjectManager} Для совместимости с АПИ 2.0.
-         */
-        remove: function (object) {
-            this.constructor.superclass.remove.call(this, object);
-
-            return this;
-        },
-        /**
-         * Удаляет все метки и сбрасывает состояние.
-         * @function
-         * @name ObjectManager.removeAll
-         * @returns {ObjectManager} Для совместимости с АПИ 2.0.
-         */
-        removeAll: function () {
-            this.constructor.superclass.removeAll.call(this);
-
-            this._points = [];
-
-            return this;
-        },
-        /**
-         * Обработчик смены масштаба карты.
-         * @function
-         * @private
-         * @name ObjectManager._onBoundsChange
-         * @param {ymaps.Event} e Объект-событие.
-         */
-        _onBoundsChange: function (e) {
-            var zoom = e.get('newZoom');
-
-            this.each(function (object, i) {
-                var minZoom = this._zooms[i].minZoom,
-                    maxZoom = this._zooms[i].maxZoom;
-
-                object.options.set('visible', zoom >= minZoom && zoom <= maxZoom);
-
-            }, this);
+        _createCircle: function () {
+            this._circle = new ymaps.geometry.Circle(
+                this._map.getCenter(),
+                this._getRadius(),
+                this._map.options
+            ).getPixelGeometry();
         },
         /**
          * Обработчик смены карты.

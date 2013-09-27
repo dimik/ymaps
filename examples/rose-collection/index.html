@@ -9,7 +9,7 @@
 
     <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
     <script src="points-generator.js" type="text/javascript"></script>
-    <script src="rose-collection.js" type="text/javascript"></script>
+    <!--script src="rose-collection.js" type="text/javascript"></script-->
 
     <script type="text/javascript">
     ymaps.ready(function () {
@@ -18,18 +18,54 @@
                 zoom: 9,
                 behaviors: ['default', 'scrollZoom']
             }),
-            generator = new RandomPointsGenerator(),
-            // Создадим 200 меток в области видимости карты.
-            points = generator.generate(200).atBounds(myMap.getBounds()),
-            myCollection = new RoseCollection();
+            myCollection = new ymaps.GeoObjectArray();
 
-        // Добавим геообъекты в коллекцию.
-        for(var i = 0, len = points.length; i < len; i++) {
-            myCollection.add(points[i], i);
-        }
+        myCollection
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()))
+            .add(new ymaps.Placemark(myMap.getCenter()));
+
+var geometry = new ymaps.geometry.Circle(myMap.getCenter(), 0),
+    circle = new ymaps.GeoObject({ geometry: geometry });
+
+// geometry.setMap(myMap);
+// geometry.options.setParent(myMap.options);
+myMap.geoObjects.add(circle);
+    var pixelGeometry = geometry.getPixelGeometry();
+    console.log(pixelGeometry.getMetaData());
+geometry.setRadius(10000);
+
+console.log(pixelGeometry.getRadius());
+
+myMap.events.add('boundschange', function (e) {
+    var factor = e.get('newZoom') - e.get('oldZoom') < 0 ? 0.5 : 2;
+    pixelGeometry = pixelGeometry.scale(factor);
+    console.log(pixelGeometry.getRadius());
+});
+
+geometry.setRadius(10000);
+
+// geometry.setParent(myMap.geoObjects);
+
 
         // А саму коллекцию добавим на карту.
         myMap.geoObjects.add(myCollection);
+
+        myCollection.each(function (p, i) {
+            var l = myCollection.getLength(),
+                position = [
+                    Math.sin(Math.PI * 2 / 15 * (l - i)) * 20,
+                    Math.cos(Math.PI * 2 / 15 * (l - i)) * 20
+                ];
+
+            p.options.set('iconOffset', position);
+        });
     });
     </script>
     <style type="text/css">
@@ -42,7 +78,7 @@
 <body>
     <div class="hero-unit">
         <div class="container">
-            <p>Привер коллекции геообъектов со смещением меток.</p>
+            <p>Пример коллекции геообъектов со смещением меток.</p>
             <div id="YMapsID"></div>
         </div>
     </div>
