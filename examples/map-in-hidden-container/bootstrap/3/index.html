@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Карта в скрытом табе bootstrap 3.0.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="http://yandex.st/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="http://yandex.st/bootstrap/3.0.0/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="//yandex.st/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="//api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU"></script>
+    <script type="text/javascript" src="//yandex.st/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    ymaps.ready(function () {
+
+        $('#myTab a').on('click', function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+        var myMap = new ymaps.Map("YMapsID", {
+                center: [55.751574, 37.573856],
+                zoom: 9,
+                behaviors: ['default', 'scrollZoom']
+            });
+
+        $('#myTab').on('shown.bs.tab', function () {
+            myMap.container.fitToViewport();
+        });
+    });
+    </script>
+    <style type="text/css">
+        body {
+            padding-top: 50px;
+        }
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <p class="lead">Карта в скрытом табе bootstrap 3.0</p>
+        </div>
+        <div class="row">
+            <ul id="myTab" class="nav nav-tabs">
+                <li><a href="#default">По умолчанию</a></li>
+                <li><a href="#map">Карта</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="default">
+                    <p>Содержимое вкладки открытой по умолчанию</p>
+                </div>
+                <div class="tab-pane" id="map">
+                    <p>Вкладка с картой</p>
+                    <div id="YMapsID"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
