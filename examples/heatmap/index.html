@@ -42,12 +42,12 @@
                     .add('sizechange', this._onMapSizeChange, this);
 
                 this.events
-                    .add(['viewportchange', 'actionend'], this._onPaneChange, this)
+                    .add('clientpixelschange', this._onPaneChange, this)
                     .add('overflowchange', this._onOverflowChange, this);
             },
             _detachHandlers: function () {
                 this.events
-                    .remove(['viewportchange', 'actionend'], this._onPaneChange, this)
+                    .remove('clientpixelschange', this._onPaneChange, this)
                     .remove('overflowchange', this._onOverflowChange, this);
 
                 this.getMap().events
@@ -70,22 +70,19 @@
             },
             setData: function (dataset) {
                 this._data = dataset;
+                this._geoObjects = this._dataToGeoObjects(dataset.data);
                 this._redraw();
             },
             _redraw: function () {
                 this._heatmap.clear();
-                this._heatmap.store.setDataSet(this._filterByBounds(this._data));
+                this._heatmap.store.setDataSet(this._filterByBounds());
             },
-            _filterByBounds: function (dataset) {
+            _dataToGeoObjects: function (data) {
                 var map = this.getMap(),
-                    geoObjects = [],
-                    result = {
-                        max: dataset.max,
-                        data: []
-                    };
+                    geoObjects = [];
 
-                for(var i = 0, len = dataset.data.length; i < len; i++) {
-                    var item = dataset.data[i],
+                for(var i = 0, len = data.length; i < len; i++) {
+                    var item = data[i],
                         geoObject = new ymaps.GeoObject({
                             geometry: {
                                 type: 'Point',
@@ -101,7 +98,16 @@
                     geoObjects.push(geoObject);
                 }
 
-                ymaps.geoQuery(geoObjects).searchIntersect(map)
+                return geoObjects;
+            },
+            _filterByBounds: function () {
+                var map = this.getMap(),
+                    result = {
+                        max: this._data.max,
+                        data: []
+                    };
+
+                ymaps.geoQuery(this._geoObjects).searchIntersect(map)
                     .each(ymaps.util.bind(function (geoObject) {
 
                     var coords = this._getLocalCoordinates(geoObject);
