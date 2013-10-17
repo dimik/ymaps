@@ -6,138 +6,26 @@
 
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
 
-    <script src="//api-maps.yandex.ru/2.1-dev/?load=package.full,pane.MovablePane,system.project&lang=ru-RU&mode=debug" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.1-dev/?load=package.full,pane.MovablePane&lang=ru-RU&mode=debug" type="text/javascript"></script>
     <script src="points-generator.js" type="text/javascript"></script>
     <script src="test-data.js" type="text/javascript"></script>
     <script src="heatmap.js" type="text/javascript"></script>
+    <script src="ymaps-heatmap-layer.js" type="text/javascript"></script>
 
     <script type="text/javascript">
     ymaps.ready(function () {
         var myMap = new ymaps.Map('YMapsID', {
                 center: [55.751574, 37.573856],
                 zoom: 3
-            }),
-            generator = new RandomPointsGenerator(),
-            // Создадим 200 меток в области видимости карты.
-            points = generator.generate(200).atBounds(myMap.getBounds()),
-            defineClass = ymaps.system.project.defineClass;
+            });
 
-            ymaps.geoQuery(points).addToMap(myMap);
-
-            myMap.geoObjects.options.set('visible', false);
-
-        function HeatMapPane(map, params) {
-            HeatMapPane.superclass.constructor.call(this, map, params);
-
-            this._attachHandlers();
-            this._setElementSize(map.container.getSize());
-            this._heatmap = h337.create(ymaps.util.extend({}, params.heatmap, {
-                element: this.getElement()
-            }));
-        }
-
-        ymaps.util.augment(HeatMapPane, ymaps.pane.MovablePane, {
-            _attachHandlers: function () {
-                this.getMap().events
-                    .add('sizechange', this._onMapSizeChange, this);
-
-                this.events
-                    .add('clientpixelschange', this._onPaneChange, this)
-                    .add('overflowchange', this._onOverflowChange, this);
-            },
-            _detachHandlers: function () {
-                this.events
-                    .remove('clientpixelschange', this._onPaneChange, this)
-                    .remove('overflowchange', this._onOverflowChange, this);
-
-                this.getMap().events
-                    .remove('sizechange', this._onMapSizeChange, this);
-            },
-            _onMapSizeChange: function (e) {
-                this._setElementSize(e.get('newSize'));
-            },
-            _setElementSize: function (size) {
-                var el = this.getElement();
-
-                el.style.width = size[0] + 'px';
-                el.style.height = size[1] + 'px';
-            },
-            _onPaneChange: function (e) {
-                this._redraw();
-            },
-            _onOverflowChange: function () {
-                console.log('overflowchange');
-            },
-            setData: function (dataset) {
-                this._data = dataset;
-                this._geoObjects = this._dataToGeoObjects(dataset.data);
-                this._redraw();
-            },
-            _redraw: function () {
-                this._heatmap.clear();
-                this._heatmap.store.setDataSet(this._filterByBounds());
-            },
-            _dataToGeoObjects: function (data) {
-                var map = this.getMap(),
-                    geoObjects = [];
-
-                for(var i = 0, len = data.length; i < len; i++) {
-                    var item = data[i],
-                        geoObject = new ymaps.GeoObject({
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [item.lat, item.lng]
-                            },
-                            properties: {
-                                value: item.count
-                            }
-                        });
-
-                    geoObject.geometry.setMap(map);
-                    geoObject.options.setParent(map.options);
-                    geoObjects.push(geoObject);
-                }
-
-                return geoObjects;
-            },
-            _filterByBounds: function () {
-                var map = this.getMap(),
-                    result = {
-                        max: this._data.max,
-                        data: []
-                    };
-
-                ymaps.geoQuery(this._geoObjects).searchIntersect(map)
-                    .each(ymaps.util.bind(function (geoObject) {
-
-                    var coords = this._getLocalCoordinates(geoObject);
-
-                    result.data.push({
-                        x: Math.floor(coords[0]),
-                        y: Math.floor(coords[1]),
-                        count: geoObject.properties.get('value')
-                    });
-                }, this));
-
-                return result;
-            },
-            _getLocalCoordinates: function (geoObject) {
-                return this.toClientPixels(
-                    geoObject.geometry.getPixelGeometry().getCoordinates()
-                );
-            },
-            destroy: function () {
-                this._detachHandlers();
-                HeatMapPane.superclass.constructor.destroy.call(this);
-            }
+        var heatmap = new HeatMapLayer(myMap, {
+            radius: 20,
+            visible: true,
+            opacity: 60
         });
 
-        var heatMapPane = new HeatMapPane(myMap, { zIndex: 150 });
-
-        myMap.panes.append('heatmap', heatMapPane);
-
-        heatMapPane.setData(testData);
-
+        heatmap.setData(testData);
     });
     </script>
     <style type="text/css">
