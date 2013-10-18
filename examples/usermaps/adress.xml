@@ -1,0 +1,163 @@
+<ymaps:ymaps xmlns:ymaps="http://maps.yandex.ru/ymaps/1.x" xmlns:repr="http://maps.yandex.ru/representation/1.x" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maps.yandex.ru/schemas/ymaps/1.x/ymaps.xsd">
+	<repr:Representation>
+		<repr:Style gml:id="myCustomStyle" hasHint="true">
+			<repr:balloonContentStyle>
+				<repr:template>#customTemplate</repr:template>
+			</repr:balloonContentStyle>
+			<repr:hintContentStyle>
+				<repr:template>#hintTemplate</repr:template>
+			</repr:hintContentStyle>
+			<repr:iconStyle>
+				<repr:size x="40" y="51"/>
+				<repr:offset x="-20" y="-46"/>
+			</repr:iconStyle>
+		</repr:Style>
+		<repr:Style gml:id="FlyS">
+			<repr:iconStyle>
+				<!--repr:href>
+					img/FlyBallun.png
+				</repr:href-->
+                    <repr:href>http://info.maps.yandex.net/api/i/steelblue/dot.png</repr:href>
+                        <repr:size x="26" y="46"/>
+                            <repr:offset x="-22" y="-46"/>
+			</repr:iconStyle>
+		</repr:Style>
+		<repr:Style gml:id="XDS">
+			<repr:iconStyle>
+				<repr:href>
+					img/xdBallun.png
+				</repr:href>
+			</repr:iconStyle>
+		</repr:Style>
+		<repr:Style gml:id="FiveDS">
+			<repr:iconStyle>
+				<repr:href>
+					img/5DBallun.png
+				</repr:href>
+			</repr:iconStyle>
+		</repr:Style>
+		<repr:Template gml:id="hintTemplate">
+			<repr:text>
+				<![CDATA[ <div><b>$[name]</b></div> ]]>
+			</repr:text>
+		</repr:Template>
+		<repr:Template gml:id="customTemplate">
+			<repr:text>
+				<![CDATA[<div style="font-size: 12px; width:350px; padding:10px"><div><span style="color:#ff0303;font-weight:bold;font-size: 12pt;">$[name]</span>, $[metaDataProperty.AnyMetaData.country]</div><div><strong>Тип аттракциона:</strong> $[metaDataProperty.AnyMetaData.type]</div>$[description]</div>]]>
+			</repr:text>
+		</repr:Template>
+	</repr:Representation>
+	<ymaps:GeoObjectCollection>
+		<ymaps:style>#myCustomStyle</ymaps:style>
+		<gml:featureMembers>
+			<ymaps:GeoObjectCollection>
+				<gml:name>Fly</gml:name>
+				<gml:featureMembers>
+  					<ymaps:GeoObject gml:id="44">
+	<ymaps:style>#FlyS</ymaps:style>
+	<gml:name>Бологое</gml:name>
+	<gml:description></gml:description>
+	<gml:Point>
+		<gml:pos>34.085028 57.882301</gml:pos>
+	</gml:Point>
+	<gml:metaDataProperty>
+		<ymaps:AnyMetaData>
+			<itemID>44</itemID>
+			<town>Бологое</town>
+			<country>Россия</country>
+			<type>Fly Motion</type>
+		</ymaps:AnyMetaData>
+	</gml:metaDataProperty>
+</ymaps:GeoObject><ymaps:GeoObject gml:id="41">
+	<ymaps:style>#FlyS</ymaps:style>
+	<gml:name>Анапа</gml:name>
+	<gml:description></gml:description>
+	<gml:Point>
+		<gml:pos>37.316313 44.894965</gml:pos>
+	</gml:Point>
+	<gml:metaDataProperty>
+		<ymaps:AnyMetaData>
+			<itemID>41</itemID>
+			<town>Анапа</town>
+			<country>Россия</country>
+			<type>Fly Motion</type>
+		</ymaps:AnyMetaData>
+	</gml:metaDataProperty>
+</ymaps:GeoObject>
+				</gml:featureMembers>
+			</ymaps:GeoObjectCollection>
+			<ymaps:GeoObjectCollection>
+				<gml:name>XD</gml:name>
+				<gml:featureMembers>
+  					<ymaps:GeoObject gml:id="45">
+	<ymaps:style>#XDS</ymaps:style>
+	<gml:name>Барселона</gml:name>
+	<gml:description></gml:description>
+	<gml:Point>
+		<gml:pos>2.168740 41.385580</gml:pos>
+	</gml:Point>
+	<gml:metaDataProperty>
+		<ymaps:AnyMetaData>
+			<itemID>45</itemID>
+			<town>Барселона</town>
+			<country>Испания</country>
+			<type>XD Motion</type>
+		</ymaps:AnyMetaData>
+	</gml:metaDataProperty>
+</ymaps:GeoObject><ymaps:GeoObject gml:id="42">
+	<ymaps:style>#XDS</ymaps:style>
+	<gml:name>Аланья</gml:name>
+	<gml:description></gml:description>
+	<gml:Point>
+		<gml:pos>32.058474 36.520987</gml:pos>
+	</gml:Point>
+	<gml:metaDataProperty>
+		<ymaps:AnyMetaData>
+			<itemID>42</itemID>
+			<town>Аланья</town>
+			<country>Турция</country>
+			<type>XD Motion</type>
+		</ymaps:AnyMetaData>
+	</gml:metaDataProperty>
+</ymaps:GeoObject>
+				</gml:featureMembers>
+			</ymaps:GeoObjectCollection>
+			<ymaps:GeoObjectCollection>
+				<gml:name>5D</gml:name>
+				<gml:featureMembers>
+  					<ymaps:GeoObject gml:id="46">
+	<ymaps:style>#FiveDS</ymaps:style>
+	<gml:name>Валенсия</gml:name>
+	<gml:description></gml:description>
+	<gml:Point>
+		<gml:pos>-0.543014 39.390491</gml:pos>
+	</gml:Point>
+	<gml:metaDataProperty>
+		<ymaps:AnyMetaData>
+			<itemID>46</itemID>
+			<town>Валенсия</town>
+			<country>Испания</country>
+			<type>5D кинотеатр</type>
+		</ymaps:AnyMetaData>
+	</gml:metaDataProperty>
+</ymaps:GeoObject><ymaps:GeoObject gml:id="43">
+	<ymaps:style>#FiveDS</ymaps:style>
+	<gml:name>Амурск</gml:name>
+	<gml:description></gml:description>
+	<gml:Point>
+		<gml:pos>136.879156 50.234507</gml:pos>
+	</gml:Point>
+	<gml:metaDataProperty>
+		<ymaps:AnyMetaData>
+			<itemID>43</itemID>
+			<town>Амурск</town>
+			<country>Россия</country>
+			<type>5D кинотеатр</type>
+		</ymaps:AnyMetaData>
+	</gml:metaDataProperty>
+</ymaps:GeoObject>
+				</gml:featureMembers>
+			</ymaps:GeoObjectCollection>
+      	</gml:featureMembers>
+  	</ymaps:GeoObjectCollection>
+</ymaps:ymaps>
