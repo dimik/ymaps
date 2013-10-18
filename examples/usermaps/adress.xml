@@ -14,12 +14,13 @@
 		</repr:Style>
 		<repr:Style gml:id="FlyS">
 			<repr:iconStyle>
-                    <repr:href>http://info.maps.yandex.net/api/i/steelblue/dot.png</repr:href>
+                    <repr:href>img/FlyBallun.png</repr:href>
                     <repr:size x="26" y="46"/>
                     <repr:offset x="-22" y="-46"/>
 			</repr:iconStyle>
 		</repr:Style>
 		<repr:Style gml:id="XDS">
+            <repr:parentStyle>myCustomStyle</repr:parentStyle>
 			<repr:iconStyle>
 				<repr:href>
 					img/xdBallun.png
@@ -27,6 +28,7 @@
 			</repr:iconStyle>
 		</repr:Style>
 		<repr:Style gml:id="FiveDS">
+            <repr:parentStyle>myCustomStyle</repr:parentStyle>
 			<repr:iconStyle>
 				<repr:href>
 					img/5DBallun.png
