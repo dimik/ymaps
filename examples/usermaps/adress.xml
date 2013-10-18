@@ -20,7 +20,7 @@
 			</repr:iconStyle>
 		</repr:Style>
 		<repr:Style gml:id="XDS">
-            <repr:parentStyle>#myCustomStyle</repr:parentStyle>
+            <repr:parentStyle>myCustomStyle</repr:parentStyle>
 			<repr:iconStyle>
 				<repr:href>
 					http://test.lsch.ru/scripts/img/xdBallun.png
@@ -28,7 +28,7 @@
 			</repr:iconStyle>
 		</repr:Style>
 		<repr:Style gml:id="FiveDS">
-            <repr:parentStyle>#myCustomStyle</repr:parentStyle>
+            <repr:parentStyle>myCustomStyle</repr:parentStyle>
 			<repr:iconStyle>
 				<repr:href>
 					http://test.lsch.ru/scripts/img/5DBallun.png
