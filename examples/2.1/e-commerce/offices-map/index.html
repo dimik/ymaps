@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Примеры. Карта для интернет-магазина.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full&mode=debug" type="text/javascript"></script>
+    <script src="offices-map.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var offices = new OfficesMap();
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 640px;
+            height: 480px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Карта для интернет-магазина.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
