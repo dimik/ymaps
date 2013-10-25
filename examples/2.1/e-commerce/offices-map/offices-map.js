@@ -60,6 +60,7 @@ OfficesMap.prototype = {
         }
         else {
             this._routeMapView.clear();
+            this._clearRoutePoints();
             this._detachRouteHandlers();
         }
     },
@@ -82,6 +83,10 @@ OfficesMap.prototype = {
             this._mapView
                 .setBounds(route.properties.get('boundedBy'));
         }
+    },
+    _clearRoutePoints: function () {
+        this._origin = null;
+        this._destination = null;
     },
     _getClosestTo: function (point) {
         return this._model.get('geoObjects')
@@ -129,6 +134,7 @@ RouteMapView.prototype = {
         if(this._route) {
             this._map.geoObjects
                 .remove(this._route);
+            this._route = null;
         }
 
         return this;
