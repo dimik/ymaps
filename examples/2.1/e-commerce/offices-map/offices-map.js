@@ -229,7 +229,7 @@ MapView.prototype = {
 
         this._map = new ymaps.Map(
             this._container.get(0),
-            ymaps.util.extend(this.getDefaultState(), state),
+            this._normalizeZoom(ymaps.util.extend(this.getDefaultState(), state)),
             this._options
         );
         this._addSearchControl();
@@ -247,6 +247,9 @@ MapView.prototype = {
             .remove('resultselect', this._onSearchResultSelected, this);
         this._map.events
             .remove('click', this._onMapClick, this);
+    },
+    _normalizeZoom: function (state) {
+        return ymaps.util.extend({}, state, { zoom: Math.min(state.zoom, 10) });
     },
     _onMapClick: function (e) {
         this.events.fire('click', e);
