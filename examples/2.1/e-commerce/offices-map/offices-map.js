@@ -201,7 +201,8 @@ RouteMapButtonView.prototype = {
     getDefaults: function () {
         return {
             data: {
-                content: 'Проложить маршрут'
+                content: 'Проложить маршрут',
+                title: 'Проложить маршрут до ближайшего пункта выдачи'
             },
             options: {
                 maxWidth: 150
