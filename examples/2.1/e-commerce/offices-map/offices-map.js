@@ -299,7 +299,10 @@ MapView.prototype = {
         return this;
     },
     _createClusterer: function (geoObjects) {
-        return geoObjects.clusterize({ preset: 'islands#invertedVioletClusterIcons' });
+        return geoObjects.clusterize({
+            preset: 'islands#invertedVioletClusterIcons',
+            zoomMargin: 50
+        });
     },
     showLocation: function (point) {
         if(point) {
