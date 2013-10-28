@@ -116,7 +116,7 @@ HeatMapLayer.prototype = {
             },
             point, coords, localPixels;
 
-            console.log('map bounds: ', this._map.getBounds(), 'current action state bounds: ', bounds.getBounds());
+            // console.log('map bounds: ', this._map.getBounds(), 'current action state bounds: ', bounds.getBounds());
 
         for(var i = 0, len = data.length; i < len; i++) {
             point = data[i];
@@ -125,7 +125,7 @@ HeatMapLayer.prototype = {
             if(bounds.contains(coords)) {
                 localPixels = this._getLocalCoordinates(coords);
 
-                console.log('latlng: ', point, 'local pixels: ', localPixels);
+                // console.log('latlng: ', point, 'local pixels: ', localPixels);
 
                 result.data.push({
                     x: Math.floor(localPixels[0]),
