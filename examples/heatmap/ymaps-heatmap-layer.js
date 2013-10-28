@@ -7,9 +7,6 @@ function HeatMapLayer(map, params) {
     this._dataset = null;
     this._bounds = new MapAreaBounds(map);
 
-    this._timeout = 30;
-    this._timeoutId = null;
-
     this._createPane({ zIndex: 199 });
     this._setElementSize(map.container.getSize());
     this._createView(params);
@@ -82,20 +79,7 @@ HeatMapLayer.prototype = {
         this._redraw();
     },
     _onPaneChange: function (e) {
-        var self = this;
-
-        if(!this._timeoutId) {
-            this._timeoutId = window.setTimeout(function () {
-                self._redraw();
-                self._clearTimeout();
-            }, this._timeout);
-        }
-    },
-    _clearTimeout: function () {
-        if(this._timeoutId) {
-            window.clearTimeout(this._timeoutId);
-            this._timeoutId = null;
-        }
+        this._redraw();
     },
     getElement: function () {
         return this._pane.getElement();
@@ -202,7 +186,7 @@ MapAreaBounds.prototype = {
             this.setCoordinates(coordinates);
         }
         else {
-            this._geometry = new ymaps.geometry.Rectangle(coordinates);
+            this._geometry = new ymaps.geometry.Rectangle(coordinates, { coordRendering: 'boundsPath' });
             this._geometry.setMap(this._map);
             this._geometry.options.setParent(this._map.options);
         }
