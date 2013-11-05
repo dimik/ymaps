@@ -8,7 +8,7 @@
     <script src="//ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js" type="text/javascript"></script>
     <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
     <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="//yandex.st/bootstrap/2.3.2/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/bootstrap/js/bootstrap.js" type="text/javascript"></script>
     <!--script src="https://raw.github.com/dimik/ymaps/master/points-generator.js" type="text/javascript"></script>
     <script src="https://raw.github.com/dimik/ymaps/master/piechart-clusterer.js" type="text/javascript"></script-->
     <script src="points-generator.js" type="text/javascript"></script>
@@ -99,7 +99,7 @@
 
             // Контейнер для таблицы.
             var sidebar = $('#sidebar'),
-                sidebarTemplate = $('#sidebarSimpleTemplate').template('sidebarTemplate'),
+                sidebarTemplate = $('#sidebarTemplate').template('sidebarTemplate'),
                 rowTemplate = $('#rowTemplate').template('rowTemplate');
                 getState = function (point) {
                     return clusterer.getObjectState(point);
@@ -165,8 +165,7 @@
                     });
                 })
                 .on('click', '[name=visible]', function (e) {
-                    // var id = $(e.target).closest('.tab-pane').attr('id'),
-                    var id = $(e.target).attr('id'),
+                    var id = $(e.target).closest('.tab-pane').attr('id'),
                         group = findGroupById(id);
 
                     group.toggle();
@@ -203,20 +202,6 @@
                 getState: $item.getState
             }) "#tabPaneTemplate"}}
         </div>
-    </script>
-    <!-- Шаблон упрощенного содержимого сайдбара. -->
-    <script id="sidebarSimpleTemplate" type="text/x-jquery-tmpl">
-        <form class="form-inline">
-            {{each(i, group) groups}}
-                <div class="control-group">
-                    <div class="controls">
-                        <label class="checkbox">
-                            <input id="${id}" type="checkbox" name="visible"{{if visible}} checked{{/if}}> Отображение группы <span class="label label-${style}">${title}</span>
-                        </label>
-                    </div>
-                </div>
-            {{/each}}
-        </form>
     </script>
     <!-- Шаблон таба. -->
     <script id="tabTemplate" type="text/x-jquery-tmpl">
