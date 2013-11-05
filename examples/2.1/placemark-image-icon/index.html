@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: создание иконки метки из собственного изображения</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 9
+                }),
+                myPlacemark = new ymaps.Placemark(myMap.getCenter(), {
+                        hintContent: 'Собственный значок метки'
+                    }, {
+                        // Опции.
+                        // Необходимо указать данный тип макета.
+                        iconLayout: 'default#image',
+                        // Своё изображение иконки метки.
+                        iconImageHref: 'http://api.yandex.ru/maps/doc/jsapi/2.x/examples/images/myIcon.gif',
+                        // Размеры метки.
+                        iconImageSize: [30, 42],
+                        // Смещение левого верхнего угла иконки относительно
+                        // её "ножки" (точки привязки).
+                        iconImageOffset: [-3, -42]
+                });
+
+            myMap.geoObjects.add(myPlacemark);
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пример создания иконки метки из собственного изображения.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
