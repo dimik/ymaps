@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="http://api-maps.yandex.ru/2.0/?load=package.standard&lang=ru-RU" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                center: [55.751574, 37.573856],
+                zoom: 9,
+                behaviors: ['default', 'scrollZoom']
+            }, {
+                projection: new ymaps.projection.Cartesian([[0.5, -0.5], [0.5, -0.5]])
+            });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Я - проекция Cartesian и я зависаю нах.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
