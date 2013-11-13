@@ -1,9 +1,9 @@
 {
    "type":"FeatureCollection",
     "crs": {
-        "type": "name",
+        "type": "OGC",
         "properties": {
-            "name": "urn:ogc:def:crs:OGC:1.3:CRS84",
+            "urn": "urn:ogc:def:crs:OGC:1.3:CRS84",
             "coordinate_order": [1, 0]
         }
     },
