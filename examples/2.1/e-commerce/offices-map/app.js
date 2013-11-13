@@ -15,13 +15,19 @@ requirejs.config({
             url: 'data.json'
         }
     },
+    map: {
+        '*': { 'jquery': 'jquery-private' },
+        'jquery-private': { jquery: 'jquery' }
+    },
     shim: {
         ymaps: {
             exports: 'ymaps'
         },
+        /*
         jquery: {
             exports: '$'
         }
+        */
     },
     waitSeconds: 0
 });
