@@ -44,10 +44,12 @@ function init() {
         // Добавляем первый найденный геообъект на карту.
         myMap.geoObjects.add(firstGeoObject);
         // Масштабируем карту на область видимости геообъекта.
-        myMap.setBounds(bounds);
+        myMap.setBounds(bounds, {
+            checkZoomRange: true // проверяем наличие тайлов на данном масштабе.
+        });
 
         /**
-         * Все данные ввиде javascript-объекта.
+         * Все данные в виде javascript-объекта.
          */
         console.log('Все данные геообъекта: ', firstGeoObject.properties.getAll());
         /**
