@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Примеры. Обратное геокодирование – определение адреса клика на карте.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="//api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+    <style type="text/css">
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script type="text/javascript">
+ymaps.ready(init);
+
+function init() {
+    var myPlacemark,
+        myMap = new ymaps.Map('map', {
+            center: [55.753994, 37.622093],
+            zoom: 9,
+            behaviors: ['default', 'scrollZoom']
+        });
+
+    // Слушаем клик на карте
+    myMap.events.add('click', function (e) {
+        var coords = e.get('coords');
+
+        // Если метка уже создана – просто передвигаем ее
+        if(myPlacemark) {
+            myPlacemark.geometry.setCoordinates(coords);
+        }
+        // Если нет – создаем.
+        else {
+            myPlacemark = createPlacemark(coords);
+            myMap.geoObjects.add(myPlacemark);
+            // Слушаем событие окончания перетаскивания на метке.
+            myPlacemark.events.add('dragend', function () {
+                getAddress(myPlacemark.geometry.getCoordinates());
+            });
+        }
+        getAddress(coords);
+    });
+
+    // Создание метки
+    function createPlacemark(coords) {
+        return new ymaps.Placemark(coords, {
+            iconContent: 'поиск...'
+        }, {
+            preset: 'twirl#violetStretchyIcon',
+            draggable: true
+        });
+    }
+
+    // Определяем адрес по координатам (обратное геокодирование)
+    function getAddress(coords) {
+        myPlacemark.properties.set('iconContent', 'поиск...');
+        ymaps.geocode(coords).then(function (res) {
+            var firstGeoObject = res.geoObjects.get(0);
+
+            myPlacemark.properties
+                .set({
+                    iconContent: firstGeoObject.properties.get('name'),
+                    balloonContent: firstGeoObject.properties.get('text')
+                })
+        });
+    }
+}
+    </script>
+</head>
+
+<body>
+    <div id="map"/>
+</body>
+
+</html>
