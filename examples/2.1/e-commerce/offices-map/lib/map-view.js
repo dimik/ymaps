@@ -110,8 +110,8 @@ MapView.prototype = {
         var search = this._searchControl = new ymaps.control.SearchControl({
             options: {
                 useMapBounds: true,
-                noSelect: true,
-                size: 'small'
+                // size: 'small',
+                noSelect: true
             }
         });
         this._map.controls.add(search);
