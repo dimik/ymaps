@@ -7,12 +7,6 @@ function RouteModel(options) {
 ymaps.util.augment(RouteModel, BaseModel, {
     _load: function (origin, destination) {
         return ymaps.route([origin, destination], this._options);
-    },
-    getDefaults: function () {
-        return {
-            url: 'data.json',
-            dataType: 'json'
-        };
     }
 });
 
