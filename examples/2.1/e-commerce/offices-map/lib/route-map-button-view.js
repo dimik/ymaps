@@ -53,6 +53,8 @@ RouteMapButtonView.prototype = {
         return {
             data: {
                 content: 'Проложить маршрут',
+                // пока нет в документации
+                iconType: 'routes',
                 title: 'Проложить маршрут до ближайшего пункта выдачи'
             },
             options: {
