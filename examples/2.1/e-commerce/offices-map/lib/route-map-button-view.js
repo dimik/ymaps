@@ -58,7 +58,7 @@ RouteMapButtonView.prototype = {
                 title: 'Проложить маршрут до ближайшего пункта выдачи'
             },
             options: {
-                maxWidth: 150
+                maxWidth: 200
             }
         };
     }

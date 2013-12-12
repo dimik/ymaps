@@ -127,7 +127,7 @@ MapView.prototype = {
         return {
             center: [62.39938, 96.48178],
             zoom: 2,
-            controls: ['geolocationControl', 'zoomControl', 'typeSelector', 'trafficControl']
+            controls: ['geolocationControl', 'zoomControl', 'typeSelector', 'trafficControl', 'fullscreenControl']
         };
     }
 };
