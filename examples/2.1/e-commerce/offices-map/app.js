@@ -1,7 +1,7 @@
 requirejs.config({
     baseUrl: 'lib',
     paths: {
-        ymaps: '//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full',
+        ymaps: '//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full&coordorder=longlat',
         jquery: '//yandex.st/jquery/2.0.3/jquery.min',
         ready: 'ymaps-ready'
     },
