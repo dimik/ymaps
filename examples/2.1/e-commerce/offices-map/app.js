@@ -16,7 +16,7 @@ requirejs.config({
         }
     },
     map: {
-        '*': { 'jquery': 'jquery-private' },
+        '*': { jquery: 'jquery-private' },
         'jquery-private': { jquery: 'jquery' }
     },
     shim: {
