@@ -9,6 +9,7 @@
  */
 function GeolocationService() {
     this._location = new ymaps.util.Promise();
+    this._timeoutId = null;
 };
 
 /**
@@ -34,6 +35,7 @@ GeolocationService.prototype = {
                 ymaps.util.bind(this._onGeolocationError, this),
                 options
             );
+            this._cleanUp();
         }
         else {
             this._location.resolve(
@@ -42,6 +44,16 @@ GeolocationService.prototype = {
         }
 
         return this._sync();
+    },
+    _cleanUp: function () {
+        // this._timeoutId = setTimeout(ymaps.util.bind(this._onGeolocationError, this, 2), 30000);
+        this._timeoutId = setTimeout($.proxy(this._onGeolocationError, this, 3), 30000);
+    },
+    _clearTimeout: function () {
+        if(this._timeoutId) {
+            clearTimeout(this._timeoutId);
+            this._timeoutId = null;
+        }
     },
     /**
      * Обертка над оригинальным промисом, чтобы его нельзя было зареджектить
@@ -82,6 +94,8 @@ GeolocationService.prototype = {
                 heading: position.coords.heading
             };
 
+        this._clearTimeout();
+
         this.getLocationData(coords)
             .then(
                 function (data) {
@@ -105,9 +119,11 @@ GeolocationService.prototype = {
      * @see http://www.w3.org/TR/geolocation-API/#position_error_interface
      */
     _onGeolocationError: function (error) {
+        this._clearTimeout();
+
         // Выводим в консоль описание ошибки.
         if(window.console) {
-            console.log(error.message || this.constructor.GEOLOCATION_ERRORS[error + 1]);
+            console.log(error.message || this.constructor.GEOLOCATION_ERRORS[(error.code || error) - 1]);
         }
 
         this._location.resolve(
