@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: Получение ссылки на геообъект в макете балуна.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.0/?lang=ru-RU&load=package.full" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = window.map = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 9,
+                    behaviors: ['default', 'scrollZoom']
+                }),
+                myBalloonContentBodyLayout = ymaps.templateLayoutFactory.createClass('$[properties.balloonContentBody]', {
+                    build: function () {
+                        this.constructor.superclass.build.apply(this, arguments);
+
+                        // Получаем ссылку на геообъект из данных
+                        this._geoObject = this.getData().geoObject;
+                        // Находим нужный элемент в контексте родителя балуна
+                        this._btn = $(this.getParentElement()).find('.btn');
+                        // Указываем обработчику события в качестве контекста наш макет.
+                        this._onClick = $.proxy(this._onClick, this);
+
+                        this._attachHandlers();
+                    },
+                    _attachHandlers: function () {
+                        this._btn.on('click', this._onClick);
+                    },
+                    _detachHandlers: function () {
+                        this._btn.off('click', this._onClick);
+                    },
+                    _onClick: function (e) {
+                        e.preventDefault();
+
+                        this._geoObject.setParent(null);
+                    },
+                    clear: function () {
+                        this._detachHandlers();
+                        this.constructor.superclass.clear.apply(this, arguments);
+                    }
+                }),
+                myPlacemark = new ymaps.Placemark(myMap.getCenter(), {
+                    balloonContentBody: '<a href="#" class="btn btn-warning">удалить метку</a>'
+                }, {
+                    balloonContentBodyLayout: myBalloonContentBodyLayout
+                });
+
+            myMap.geoObjects.add(myPlacemark);
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <p class="lead">Пример получения ссылки на геообъект в макете балуна.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
