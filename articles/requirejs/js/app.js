@@ -1,7 +1,7 @@
 requirejs.config({
     baseUrl: 'js/lib',
     paths: {
-        ymaps: '//api-maps.yandex.ru/2.0/?lang=ru-RU&load=package.full&coordorder=longlat',
+        ymaps: '//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full&coordorder=longlat',
         jquery: '//yandex.st/jquery/2.0.3/jquery.min',
         ready: 'requirejs/ymaps-ready'
     },
@@ -14,8 +14,7 @@ requirejs.config({
             container: 'YMapsID',
             state: {
                 center: [37.622093, 55.753994],
-                zoom: 9,
-                behaviors: ['default', 'scrollZoom']
+                zoom: 9
             },
             options: {}
         }
