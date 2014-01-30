@@ -36,11 +36,11 @@
                     build: function () {
                         this.constructor.superclass.build.call(this);
 
-                        this._element = $('.popover', this.getParentElement());
+                        this._$element = $('.popover', this.getParentElement());
 
                         this.applyElementOffset();
 
-                        this._element.find('.close')
+                        this._$element.find('.close')
                             .on('click', $.proxy(this.onCloseClick, this));
                     },
 
@@ -51,7 +51,7 @@
                      * @name clear
                      */
                     clear: function () {
-                        this._element.find('.close')
+                        this._$element.find('.close')
                             .off('click');
 
                         this.constructor.superclass.clear.call(this);
@@ -66,7 +66,7 @@
                     onSublayoutSizeChange: function () {
                         MyBalloonLayout.superclass.onSublayoutSizeChange.apply(this, arguments);
 
-                        if(!this._isElement(this._element)) {
+                        if(!this._isElement(this._$element)) {
                             return;
                         }
 
@@ -82,9 +82,9 @@
                      * @name applyElementOffset
                      */
                     applyElementOffset: function () {
-                        this._element.css({
-                            left: -(this._element[0].offsetWidth / 2),
-                            top: -(this._element[0].offsetHeight + this._element.find('.arrow')[0].offsetHeight)
+                        this._$element.css({
+                            left: -(this._$element[0].offsetWidth / 2),
+                            top: -(this._$element[0].offsetHeight + this._$element.find('.arrow')[0].offsetHeight)
                         });
                     },
 
@@ -108,16 +108,16 @@
                      * @returns {Number[][]} Координаты левого верхнего и правого нижнего углов шаблона относительно точки привязки.
                      */
                     getShape: function () {
-                        if(!this._isElement(this._element)) {
+                        if(!this._isElement(this._$element)) {
                             return MyBalloonLayout.superclass.getShape.call(this);
                         }
 
-                        var position = this._element.position();
+                        var position = this._$element.position();
 
                         return new ymaps.shape.Rectangle(new ymaps.geometry.pixel.Rectangle([
                             [position.left, position.top], [
-                                position.left + this._element[0].offsetWidth,
-                                position.top + this._element[0].offsetHeight + this._element.find('.arrow')[0].offsetHeight
+                                position.left + this._$element[0].offsetWidth,
+                                position.top + this._$element[0].offsetHeight + this._$element.find('.arrow')[0].offsetHeight
                             ]
                         ]));
                     },
