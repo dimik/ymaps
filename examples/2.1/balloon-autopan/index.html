@@ -109,7 +109,7 @@
                      */
                     getShape: function () {
                         if(!this._isElement(this._element)) {
-                            return MyBalloonLayout.superclass.getClientBounds.call(this);
+                            return MyBalloonLayout.superclass.getShape.call(this);
                         }
 
                         var position = this._element.position();
