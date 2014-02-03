@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример: Расчет стоимости доставки.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script data-main="js/app.js" src="js/lib/require.js"></script>
+
+    <style type="text/css">
+        #YMapsID {
+            width: 800px;
+            height: 520px;
+        }
+        .hero-unit {
+            background-color: #FFF;
+        }
+        .well {
+            padding: 15px 0;
+            height: 520px;
+        }
+        .label {
+            cursor: pointer;
+        }
+        #sidebar {
+            height: 520px;
+            overflow: scroll;
+        }
+       .table tbody tr {
+            cursor: pointer;
+        }
+    </style>
+    <!-- Шаблон содержимого сайдбара. -->
+    <script id="sidebarTemplate" type="text/x-jquery-tmpl">
+        <table class="table table-hover table-striped table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Тариф</th>
+                    <th>Длина маршрута</th>
+                    <th>Стоимость доставки</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{each(i, tarif) results}}
+                {{tmpl({
+                    i: i,
+                    tarif: tarif
+                }, {
+                    formatter: $item.formatter
+                }) "#rowTemplate"}}
+            {{/each}}
+            </tbody>
+        </table>
+    </script>
+    <!-- Шаблон тарифа в таблице. -->
+    <script id="rowTemplate" type="text/x-jquery-tmpl">
+        <tr id="${tarif.id}">
+            <td>${tarif.name}</td>
+            <td>${$item.formatter.distance(tarif.distance)}</td>
+            <td>${tarif.value} руб</td>
+        </tr>
+    </script>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <p class="lead">Расчет стоимости доставки.</p>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div id="YMapsID" class="span8"></div>
+                <div id="sidebar" class="span4"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
