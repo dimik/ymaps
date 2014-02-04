@@ -8,7 +8,7 @@ requirejs.config({
     },
     config: {
         'directions-service': {
-            avoidTrafficJams: true
+            // avoidTrafficJams: true
         },
         'directions-renderer': {
             suppressPolylines: true,
