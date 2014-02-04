@@ -43,12 +43,12 @@ requirejs.config({
                         this.contains(route.legs[0].end_location);
                 }*/
             }, {
-                id: 'mo',
-                name: 'Московская область',
+                id: 'russia',
+                name: 'Россия',
                 label: 'Маршрут за МКАД',
                 rate: 20,
                 color: '#ff0000',
-                url: 'mo.json'/*,
+                url: 'russia.json'/*,
                 notContains: function (route) {
                     return route.legs[0].end_address.indexOf('МКАД') > -1 ||
                         !this.contains(route.legs[0].end_location);
