@@ -37,22 +37,22 @@ requirejs.config({
                 color: '#0000ff',
                 rate: 500,
                 fixed: true,
-                url: 'moscow.json',
+                url: 'moscow.json'/*,
                 contains: function (route) {
                     return route.legs[0].end_address.indexOf('МКАД') > -1 ||
                         this.contains(route.legs[0].end_location);
-                }
+                }*/
             }, {
                 id: 'mo',
                 name: 'Московская область',
                 label: 'Маршрут за МКАД',
                 rate: 20,
                 color: '#ff0000',
-                url: 'mo.json',
+                url: 'mo.json'/*,
                 notContains: function (route) {
                     return route.legs[0].end_address.indexOf('МКАД') > -1 ||
                         !this.contains(route.legs[0].end_location);
-                }
+                }*/
             }]
         },
         'dom-view': {

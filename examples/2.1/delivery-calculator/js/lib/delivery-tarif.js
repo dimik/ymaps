@@ -42,7 +42,6 @@ DeliveryTarif.prototype = {
         return this._geometry.contains(point);
     },
     estimate: function (route) {
-    try{
         var options = this._options,
             geometry = this._geometry,
             paths = this._paths,
@@ -87,7 +86,6 @@ DeliveryTarif.prototype = {
                 setLastPoint(point);
             }
         });
-        }catch(e) { console.log(e) }
     },
     clear: function () {
         this._paths.removeAll();
