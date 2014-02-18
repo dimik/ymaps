@@ -48,7 +48,6 @@ requirejs.config({
             state: {
                 center: [0, 0],
                 zoom: 3,
-                behaviors: ['scrollZoom'],
                 controls: ['zoomControl']
             }
         },
