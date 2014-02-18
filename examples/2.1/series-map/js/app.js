@@ -16,9 +16,9 @@ requirejs.config({
                 "layerMaxZoom": 5,
                 "layerMinZoom": 3,
                 "legend": [
-                    '<div class="well">',
-                        '<img src="i/legend-01.png"/>',
-                    '</div>'
+                    //'<div class="well">',
+                        '<img src="i/legend-01.png"/>'//,
+                    //'</div>'
                     ].join('')
             }, /*{
                 "id": "popularity",
@@ -63,7 +63,7 @@ requirejs.config({
                 '{% endif %}">' +
                 '{{ data.content|raw }}' +
             '</div>',
-            position: { bottom: 10, right: 5 }
+            position: { bottom: 20, right: 5 }
         }
     },
     map: {

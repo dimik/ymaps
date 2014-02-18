@@ -5,7 +5,7 @@ define(['ready!ymaps', 'module'], function (ymaps, module) {
         this.events = new ymaps.event.Manager();
 
         this._map = this._createMap();
-        this._map.controls.get('fullscreenControl').enable();
+        this._map.controls.get('fullscreenControl').select();
         this._typeSelector = null;
     }
 
