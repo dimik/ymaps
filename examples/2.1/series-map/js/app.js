@@ -1,7 +1,7 @@
 requirejs.config({
     baseUrl: 'js/lib',
     paths: {
-        ymaps: '//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full',
+        ymaps: '//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full&mode=debug',
         jquery: '//yandex.st/jquery/2.0.3/jquery.min',
         ready: 'ymaps-ready'
     },
@@ -56,7 +56,14 @@ requirejs.config({
             }
         },
         'legend-map-view': {
-            layout: '<div style="width:200px;{% if options.visible == false %}display:none;{% endif %}">{{ data.content|raw }}</div>',
+            template:
+            '<div style="width:240px;' +
+                '{% if options.visible == false %}' +
+                    'display:none;' +
+                '{% endif %}">
+
+                '{{ data.content|raw }}' +
+            '</div>',
             position: { bottom: 10, right: 5 }
         }
     },

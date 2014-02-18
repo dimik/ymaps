@@ -61,7 +61,7 @@ function LegendControl(params, options) {
  * @name LegendControl.Layout
  */
 LegendControl.Layout = ymaps.templateLayoutFactory.createClass(
-    config.layout || ''
+    config.template || ''
 );
 
 /**
