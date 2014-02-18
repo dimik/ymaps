@@ -17,10 +17,10 @@ requirejs.config({
                 "layerMinZoom": 3,
                 "legend": [
                     '<div class="well">',
-                        'Яна Рудковская ответила фигуристу Алексею Ягудину, который заявил, что ему поступили угрозы от людей из окружения Евгения Плющенко. В частности, Рудковская отметила, что Ягудин стал жертвой телефонных хулиганов.',
+                        '<img src="i/legend-01.png"/>',
                     '</div>'
                     ].join('')
-            }, {
+            }, /*{
                 "id": "popularity",
                 "title": "популярность сериалов",
                 "tileUrlTemplate": "popularity/%z/%x-%y.png",
@@ -33,7 +33,7 @@ requirejs.config({
                         'Яна Рудковская ответила фигуристу Алексею Ягудину, который заявил, что ему поступили угрозы от людей из окружения Евгения Плющенко.',
                     '</div>'
                     ].join('')
-            }, {
+            }, */{
                 "id": "men-women",
                 "title": "мужские и женские сериалы",
                 "tileUrlTemplate": "men-women/%z/%x-%y.png",
@@ -48,14 +48,15 @@ requirejs.config({
             state: {
                 center: [0, 0],
                 zoom: 3,
-                controls: ['zoomControl']
+                controls: ['zoomControl', 'fullscreenControl']
             },
             options: {
-                "zoomControlSize": 'small'
+                zoomControlSize: 'small',
+                fullscreenControlSize: 'default'
             }
         },
         'legend-map-view': {
-            layout: '<div style="width:400px;{% if options.visible == false %} display: none; {% endif %}">{{ data.content|raw }}</div>',
+            layout: '<div style="width:200px;{% if options.visible == false %}display:none;{% endif %}">{{ data.content|raw }}</div>',
             position: { bottom: 10, right: 5 }
         }
     },

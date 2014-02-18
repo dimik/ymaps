@@ -5,6 +5,7 @@ define(['ready!ymaps', 'module'], function (ymaps, module) {
         this.events = new ymaps.event.Manager();
 
         this._map = this._createMap();
+        this._map.controls.get('fullscreenControl').enable();
         this._typeSelector = null;
     }
 
@@ -58,6 +59,7 @@ define(['ready!ymaps', 'module'], function (ymaps, module) {
         },
         _createTypeSelector: function (layers) {
             return new ymaps.control.TypeSelector({
+                data: { content: 'Показать' },
                 mapTypes: layers
             });
         },
