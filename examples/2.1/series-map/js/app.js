@@ -60,8 +60,7 @@ requirejs.config({
             '<div style="width:240px;' +
                 '{% if options.visible == false %}' +
                     'display:none;' +
-                '{% endif %}">
-
+                '{% endif %}">' +
                 '{{ data.content|raw }}' +
             '</div>',
             position: { bottom: 10, right: 5 }
