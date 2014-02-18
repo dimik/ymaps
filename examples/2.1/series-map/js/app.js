@@ -56,14 +56,8 @@ requirejs.config({
             }
         },
         'legend-map-view': {
-            template:
-            '<div style="width:240px;' +
-                '{% if options.visible == false %}' +
-                    'display:none;' +
-                '{% endif %}">' +
-                '{{ data.content|raw }}' +
-            '</div>',
-            position: { bottom: 20, right: 5 }
+            template: '{{ data.content|raw }}',
+            position: { bottom: 40, right: 10 }
         }
     },
     map: {
