@@ -95,7 +95,8 @@ LegendControl.prototype = {
              * Контрол будет добавляться в pane событий, чтобы исключить интерактивность.
              * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#setParentElement
              */
-            this.layout.setParentElement(map.panes.get('events').getElement());
+            // this.layout.setParentElement(map.panes.get('events').getElement());
+            this.layout.setParentElement(parent.getChildElement(this));
         }
         else {
             this.layout.setParentElement(null);
