@@ -2,6 +2,8 @@ define(['ready!ymaps', 'module'], function (ymaps, module) {
     var config = module.config();
 
     function MapView() {
+        this.events = new ymaps.event.Manager();
+
         this._map = this._createMap();
         this._typeSelector = null;
     }
@@ -12,8 +14,8 @@ define(['ready!ymaps', 'module'], function (ymaps, module) {
             return this._map;
         },
         render: function (layers) {
+            this._attachHandlers();
             this._map.setType(layers[0]);
-
             this._map.controls.add(
                 this._typeSelector = this._createTypeSelector(layers)
             );
@@ -24,8 +26,26 @@ define(['ready!ymaps', 'module'], function (ymaps, module) {
             return this;
         },
         clear: function () {
+            this._detachHandlers();
             this._map.layers.remove(this._fixLayer);
             this._map.controls.remove(this._typeSelector);
+        },
+        _attachHandlers: function () {
+            this._map.events
+                .add('typechange', this._onTypeChange, this);
+        },
+        _detachHandlers: function () {
+            this._map.events
+                .remove('typechange', this._onTypeChange, this);
+        },
+        _onTypeChange: function (e) {
+            var map = e.get('target');
+
+            this.events.fire('typechange', {
+                target: map,
+                type: 'typechange',
+                value: map.getType()
+            });
         },
         _createMap: function () {
             return new ymaps.Map(

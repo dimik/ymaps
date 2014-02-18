@@ -12,7 +12,7 @@ LegendMapView.prototype = {
     render: function (data) {
         this._map.controls.add(
             this._control = new LegendControl({ data: { content: data }}),
-            { float: 'none', position: { bottom: 10, right: 5 } }
+            { float: 'none', position: config.position }
         );
 
         return this;
@@ -37,7 +37,9 @@ LegendMapView.prototype = {
         return this;
     },
     setContent: function (content) {
-        this._control.data.set('data.content', content);
+        this._control.data.set('content', content);
+
+        return this;
     }
 };
 

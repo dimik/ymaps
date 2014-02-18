@@ -12,6 +12,7 @@ function SeriesCtl() {
     }));
 
     this._legend.render(this._layers[0].getLegend());
+    this._attachHandlers();
 }
 
 SeriesCtl.prototype = {
@@ -31,6 +32,22 @@ SeriesCtl.prototype = {
             this._legend
                 .hide();
         }
+    },
+    _attachHandlers: function () {
+        this._mapView.events
+            .add('typechange', this._onTypeChange, this);
+    },
+    _detachHandlers: function () {
+        this._mapView.events
+            .remove('typechange', this._onTypeChange, this);
+    },
+    _onTypeChange: function (e) {
+        var type = e.get('value'),
+            layer = jQuery.grep(this._layers, function (layer) {
+                return layer.getName() == type;
+            })[0];
+
+        this._provideLegend(layer);
     }
 };
 
