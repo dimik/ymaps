@@ -96,7 +96,10 @@ LegendControl.prototype = {
              * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#setParentElement
              */
             // this.layout.setParentElement(map.panes.get('events').getElement());
-            this.layout.setParentElement(parent.getChildElement(this));
+            parent.getChildElement(this)
+                .then(function (el) {
+                    this.layout.setParentElement(el);
+                }, this);
         }
         else {
             this.layout.setParentElement(null);

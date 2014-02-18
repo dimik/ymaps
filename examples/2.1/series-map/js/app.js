@@ -58,7 +58,7 @@ requirejs.config({
             }
         },
         'legend-map-view': {
-            layout: '<div style="width: 400px; height: 300px">$[data.content]</div>'
+            layout: '<div style="width:400px">$[data.content]</div>'
         }
     },
     map: {
