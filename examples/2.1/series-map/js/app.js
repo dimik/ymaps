@@ -49,6 +49,9 @@ requirejs.config({
                 center: [0, 0],
                 zoom: 3,
                 controls: ['zoomControl']
+            },
+            options: {
+                "zoomControlSize": 'small'
             }
         },
         'legend-map-view': {
