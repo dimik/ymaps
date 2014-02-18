@@ -11,8 +11,6 @@ function SeriesCtl() {
         return layer.getName();
     }));
 
-    console.log(this._layers[0].getLegend());
-
     this._legend.render(this._layers[0].getLegend());
 }
 

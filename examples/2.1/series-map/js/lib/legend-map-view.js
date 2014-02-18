@@ -10,10 +10,9 @@ function LegendMapView(map) {
 LegendMapView.prototype = {
     constructor: LegendMapView,
     render: function (data) {
-    console.log(data);
         this._map.controls.add(
             this._control = new LegendControl({ data: { content: data }}),
-            { bottom: 10, right: 5 }
+            { float: 'none', position: { bottom: 10, right: 5 } }
         );
 
         return this;

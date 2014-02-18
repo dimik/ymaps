@@ -8,7 +8,9 @@ function SelectableCollection() {
 }
 
 SelectableCollection.markerOptions = {
-    preset: 'twirl#redIcon'
+    preset: 'islands#redIcon',
+    pointOverlay: 'interactive#placemark',
+    draggable: true
 };
 SelectableCollection.rectangleOptions = {
     fill: false,
@@ -40,7 +42,13 @@ ymaps.ready(function () {
             this._map.events
                 .add('mousedown', this._onMapMouseDown, this)
                 .add('mousemove', this._onMapMouseMove, this);
-            this._map.geoObjects.events.add('mousemove', this._onMapMouseMove, this); // Слушаем "mousemove" и на геообъектах карты.
+            // this._map.geoObjects.events.add('mousemove', this._onMapMouseMove, this); // Слушаем "mousemove" и на геообъектах карты.
+            if(this._selected.options.get('draggable')) {
+                console.log('draggable');
+                this._selected.events.add('mousedown', function (e) {
+                    e.stopPropagation();
+                });
+            }
         },
         _detachHandlers: function () {
             this._map.geoObjects.events.remove('mousemove', this._onMapMouseMove, this);
@@ -49,7 +57,9 @@ ymaps.ready(function () {
                 .remove('mousedown', this._onMapMouseDown, this);
         },
         _onMapMouseDown: function (e) {
-            var coords = e.get('coordPosition');
+            var coords = e.get('coords');
+
+            console.log(e.get('target'));
 
             this._selectedArea = new ymaps.Rectangle([coords, coords], null, SelectableCollection.rectangleOptions);
             this._map.geoObjects.add(this._selectedArea);
@@ -64,7 +74,7 @@ ymaps.ready(function () {
             }
 
             var oldCoords = this._selectedArea.geometry.getCoordinates(),
-                newCoords = [oldCoords[0], e.get('coordPosition')];
+                newCoords = [oldCoords[0], e.get('coords')];
 
             this._selectedArea.geometry.setCoordinates(newCoords);
             this.each(this._isSelected, this);

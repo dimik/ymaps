@@ -102,8 +102,12 @@ HeatMapLayer.prototype = {
         return this;
     },
     _redraw: function () {
-        this._view.clear();
-        this._view.store.setDataSet(this._filterDataSetByBounds());
+        // this._view.clear();
+        // this._view.store.setDataSet(this._filterDataSetByBounds());
+        var bounds = this._bounds.create().getGeometry();
+
+        console.log(bounds.getPixelGeometry.getBounds());
+
 
         return this;
     },
