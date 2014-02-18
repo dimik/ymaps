@@ -80,29 +80,21 @@ LegendControl.prototype = {
     setParent: function (parent) {
         this.parent = parent;
 
-        if(parent) {
-            var map = parent.getMap();
-
-            /**
-             * Передаем в макет контрола данные и опции.
-             * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#constructor-summary
-             */
-            this.layout = new this.constructor.Layout({
+        /**
+         * Передаем в макет контрола данные и опции.
+         * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#constructor-summary
+         */
+        var layout = new this.constructor.Layout({
                 options: this.options,
                 data: this.data
             });
-            /**
-             * Контрол будет добавляться в pane событий, чтобы исключить интерактивность.
-             * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#setParentElement
-             */
-            // this.layout.setParentElement(map.panes.get('events').getElement());
+
+        if(parent) {
             parent.getChildElement(this)
-                .then(function (el) {
-                    this.layout.setParentElement(el);
-                }, this);
+                .then(layout.setParentElement, layout);
         }
         else {
-            this.layout.setParentElement(null);
+            layout.setParentElement(null);
         }
 
         return this;
