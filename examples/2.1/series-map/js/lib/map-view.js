@@ -22,6 +22,7 @@ define(['ready!ymaps', 'module'], function (ymaps, module) {
             this._map.layers.add(
                 this._fixLayer = this._createFixLayer()
             );
+            this._map.container.enterFullscreen();
 
             return this;
         },
