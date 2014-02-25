@@ -11,51 +11,14 @@
 
     <script type="text/javascript">
         ymaps.ready(function () {
-            var myMap = window.map = new ymaps.Map('YMapsID', {
+            var myMap = new ymaps.Map('YMapsID', {
                     center: [55.751574, 37.573856],
                     zoom: 9,
                     behaviors: ['default', 'scrollZoom']
                 }),
-                // searchControl = new ymaps.control.SearchControl({ provider: new GeocodeMixedProvider() });
-                searchControl = new ymaps.control.SearchControl({
-                    provider: {
-                        geocode: function (request, options) {
-                            return ymaps.geocode('Россия, ' + request, { boundedBy: false });
-                        /*
-                            var promise = new ymaps.util.Promise();
-
-                            ymaps.geocode('Россия, ' + request, { boundedBy: false })
-                                .then(function (res) {
-                                    promise.resolve(res);
-                                }, function (err) {
-                                    promise.reject(err);
-                                });
-
-                            return promise;
-                            */
-                        }
-                    }
-                })
+                searchControl = new ymaps.control.SearchControl({ provider: new GeocodeMixedProvider() });
 
             myMap.controls.add(searchControl, { top: 10, right: 10 });
-
-            /*
-            ymaps.geocode('Железобетон', { provider : new GeocodeMixedProvider(), results: 1 })
-                .then(function (res) {
-                    var result = res.geoObjects.get(0);
-
-                    if(result) {
-                        myMap.geoObjects.add(result);
-                        myMap.setBounds(result.properties.get('boundedBy'), {
-                            checkZoomRange: true
-                        });
-                    }
-                }, function (err) {
-                    if(window.console) {
-                        console.log(err);
-                    }
-                });
-            */
         });
     </script>
     <style type="text/css">
