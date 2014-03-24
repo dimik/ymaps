@@ -15,20 +15,20 @@ BaseModel.prototype = {
         return this._error;
     },
     load: function () {
-        var promise = new ymaps.vow.Promise();
+        var defer = ymaps.vow.defer();
 
         this._load.apply(this, arguments)
             .then(function (res) {
-                promise.fulfill(
+                defer.resolve(
                     this._result = this.process(res)
                 );
             }, function (err) {
-                promise.reject(
+                defer.reject(
                     this._error = err
                 );
             }, this);
 
-        return promise;
+        return defer.promise();
     },
     process: function (res) {
         return res;
