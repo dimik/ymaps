@@ -5,7 +5,6 @@ function HeatMapLayer(map, params) {
     this._pane = null;
     this._view = null;
     this._dataset = null;
-    this._bounds = new MapAreaBounds(map);
 
     this._createPane({ zIndex: 199 });
     this._setElementSize(map.container.getSize());
@@ -102,17 +101,13 @@ HeatMapLayer.prototype = {
         return this;
     },
     _redraw: function () {
-        // this._view.clear();
-        // this._view.store.setDataSet(this._filterDataSetByBounds());
-        var bounds = this._bounds.create().getGeometry();
-
-        console.log(bounds.getPixelGeometry.getBounds());
-
+        this._view.clear();
+        this._view.store.setDataSet(this._filterDataSetByBounds());
 
         return this;
     },
     _filterDataSetByBounds: function () {
-        var bounds = this._bounds.create().getGeometry(),
+        var bounds = this._getCurrentBounds(),
             data = this._dataset.data,
             result = {
                 max: this._dataset.max,
@@ -120,13 +115,13 @@ HeatMapLayer.prototype = {
             },
             point, coords, localPixels;
 
-            // console.log('map bounds: ', this._map.getBounds(), 'current action state bounds: ', bounds.getBounds());
+            // console.log('map bounds: ', this._map.getBounds(), 'current action state bounds: ', bounds);
 
         for(var i = 0, len = data.length; i < len; i++) {
             point = data[i];
             coords = [point.lat, point.lng];
 
-            if(bounds.contains(coords)) {
+            if(ymaps.util.bounds.contains(bounds, coords)) {
                 localPixels = this._getLocalCoordinates(coords);
 
                 // console.log('latlng: ', point, 'local pixels: ', localPixels);
@@ -141,32 +136,7 @@ HeatMapLayer.prototype = {
 
         return result;
     },
-    _getLocalCoordinates: function (coords) {
-        var map = this._map,
-            projection = map.options.get('projection');
-
-        return this._pane.toClientPixels(
-            projection.toGlobalPixels(coords, map.action.getCurrentState().zoom)
-        );
-    },
-    destroy: function () {
-        this._detachHandlers();
-        this
-            ._dropView()
-            ._dropPane();
-
-        return this;
-    }
-};
-
-function MapAreaBounds(map) {
-    this._map = map;
-    this._geometry = null;
-}
-
-MapAreaBounds.prototype = {
-    constructor: MapAreaBounds,
-    getCoordinates: function () {
+    _getCurrentBounds: function () {
         var map = this._map,
             projection = map.options.get('projection'),
             state = map.action.getCurrentState(),
@@ -183,41 +153,19 @@ MapAreaBounds.prototype = {
             projection.fromGlobalPixels(gLobalPixelBounds[1], zoom)
         ];
     },
-    create: function () {
-        var coordinates = this.getCoordinates();
+    _getLocalCoordinates: function (coords) {
+        var map = this._map,
+            projection = map.options.get('projection');
 
-        if(this._geometry) {
-            this.setCoordinates(coordinates);
-        }
-        else {
-            this._geometry = new ymaps.geometry.Rectangle(coordinates, { coordRendering: 'boundsPath' });
-            this._geometry.setMap(this._map);
-            this._geometry.options.setParent(this._map.options);
-        }
-
-        return this;
-    },
-    getGeometry: function () {
-        return this._geometry;
-    },
-    setCoordinates: function (coordinates) {
-        this._geometry.setCoordinates(coordinates);
-
-        return this;
-    },
-    getBounds: function () {
-        if(this._geometry) {
-            return this._geometry.getBounds();
-        }
-        else {
-            return null;
-        }
+        return this._pane.toClientPixels(
+            projection.toGlobalPixels(coords, map.action.getCurrentState().zoom)
+        );
     },
     destroy: function () {
-        this._geometry.setMap(null);
-        this._geometry.options.setParent(null);
-
-        this._geometry = null;
+        this._detachHandlers();
+        this
+            ._dropView()
+            ._dropPane();
 
         return this;
     }
