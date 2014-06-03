@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<head>
+    <title>Карта сериалов.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.1/lang=RU-ru"></script>
+
+    <script type="text/javascript">
+        ymaps.ready()
+            .done(function (ym) {
+                var myMap = new ym.Map('map', {
+                    center: [55.751574, 37.573856],
+                    zoom: 10
+                });
+
+                jQuery.getJSON('data.json', function (json) {
+                    /** Сохраним ссылку на геообъекты, на случай если понадобится какая-либо пост обработка.
+                     * @see http://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/GeoQueryResult.xml
+                     */
+                    var geoObjects = ym.geoQuery(json)
+                        .addToMap(myMap)
+                        .applyBoundsToMap(myMap, {
+                            checkZoomRange: true
+                        });
+                });
+        });
+    </script>
+
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Загрузка геоданных с помощью jQuery и geoQuery.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
