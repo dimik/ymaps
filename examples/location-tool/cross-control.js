@@ -39,10 +39,9 @@ CrossControl.prototype = {
         this.parent = parent;
 
         if(parent) {
-            var map = parent.getMap();
-
+            var map = this._map = parent.getMap();
             this._setPosition(map.container.getSize());
-            map.container.events.add('sizechange', this._setPosition, this);
+            this._setupListeners();
             /**
              * Передаем в макет контрола данные о его опциях.
              * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#constructor-summary
@@ -56,6 +55,7 @@ CrossControl.prototype = {
         }
         else {
             this.layout.setParentElement(null);
+            this._clearListeners();
         }
 
         return this;
@@ -83,5 +83,18 @@ CrossControl.prototype = {
             top: size[1] / 2 - 8,
             right: size[0] / 2 - 8
         });
+    },
+    _onPositionChange: function (e) {
+        this._setPosition(e.get('newSize'));
+    },
+    _setupListeners: function () {
+        this._map.container.events
+            .add('sizechange', this._onPositionChange, this);
+    },
+    _clearListeners: function () {
+        if(this._map) {
+            this._map.container.events
+                .remove('sizechange', this._onPositionChange, this);
+        }
     }
 };
