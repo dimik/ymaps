@@ -37,11 +37,12 @@ RegionSelector.OptsView.prototype = {
      */
     render: function (data) {
         var labels = this.constructor.LABELS,
+            countries = this.constructor.COUNTRIES,
             options = data.get('regions').properties.getAll();
 
         for(var key in labels) {
             var option = key === 'lang'? // Хак для списка доступных языков.
-                    labels[key][options.country] :
+                    labels[key][countries[options.country + ""]] : // TODO удалить когда вернут ключ страны.
                     labels[key],
                 btn = $(
                     this._btnTemplate
@@ -146,6 +147,14 @@ RegionSelector.OptsView.prototype = {
 
         return this;
     }
+};
+
+RegionSelector.OptsView.COUNTRIES = {
+    "60189": "RU",
+    "60199": "UA",
+    "59065": "BY",
+    "214665": "KZ",
+    "234": "TR"
 };
 
 /**
