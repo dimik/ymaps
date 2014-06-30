@@ -3,6 +3,7 @@ function DeliveryCalculator(map, origin, tarifs) {
     this._routeService = new DirectionsService({ avoidTrafficJams: true });
     this._routeRenderer = new DirectionsRenderer({ suppressPolylines: true, draggable: true, map: map });
     this._origin = origin;
+    this._destination = null;
     this._tarifs = [];
 
     this._template = $('#sidebarTemplate').template('sidebarTemplate');
@@ -27,13 +28,18 @@ DeliveryCalculator.prototype = {
         e.get('target').setMap(this._map);
     },
     _onWayPointsChange: function (e) {
-        this.getDirections(e.get('origin'), e.get('destination'));
+        this.getDirections(
+            this._origin = e.get('origin'),
+            this._destination = e.get('destination')
+        );
     },
     getDirections: function (origin, destination) {
-        this._routeService.route({
-            origin: origin,
-            destination: destination
-        }, $.proxy(this._onRouteSuccess, this));
+        if(origin && destination) {
+            this._routeService.route({
+                origin: origin,
+                destination: destination
+            }, $.proxy(this._onRouteSuccess, this));
+        }
     },
     _onRouteSuccess: function (result) {
         this._tarifs.forEach(function (tarif) {
@@ -43,7 +49,16 @@ DeliveryCalculator.prototype = {
         this.calculate(result.routes[0]);
     },
     setDestination: function (position) {
-        this.getDirections(this._origin, position);
+        this.getDirections(this._origin, this._destination = position);
+    },
+    getDestination: function () {
+        return this._destination;
+    },
+    setOrigin: function (position) {
+        this.getDirections(this._origin = position, this._destination);
+    },
+    getOrigin: function () {
+        return this._origin;
     },
     calculate: function (route) {
         var results = [],

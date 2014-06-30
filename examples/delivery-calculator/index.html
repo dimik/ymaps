@@ -25,7 +25,12 @@ function init() {
             zoom: 9,
             behaviors: ['drag', 'scrollZoom']
         }),
-        search = new ymaps.control.SearchControl({
+        searchOrigin = new ymaps.control.SearchControl({
+            useMapBounds: true,
+            noCentering: true,
+            noPlacemark: true
+        }),
+        searchDestination = new ymaps.control.SearchControl({
             useMapBounds: true,
             noCentering: true,
             noPlacemark: true
@@ -47,10 +52,19 @@ function init() {
         }],
         calculator = new DeliveryCalculator(myMap, 'Москва, Льва Толстого 18', tarifs);
 
-    myMap.controls.add(search, { right: 5, top: 5 });
+    myMap.controls.add(searchOrigin, { right: 5, top: 5 });
+    myMap.controls.add(searchDestination, { right: 5, top: 45 });
 
-    search.events.add('resultselect', function (e) {
-        var results = search.getResultsArray(),
+    searchOrigin.events.add('resultselect', function (e) {
+        var results = searchOrigin.getResultsArray(),
+            selected = e.get('resultIndex'),
+            point = results[selected].geometry.getCoordinates();
+
+            calculator.setOrigin(point);
+    });
+
+    searchDestination.events.add('resultselect', function (e) {
+        var results = searchDestination.getResultsArray(),
             selected = e.get('resultIndex'),
             point = results[selected].geometry.getCoordinates();
 
@@ -58,7 +72,14 @@ function init() {
     });
 
     myMap.events.add('click', function (e) {
-        calculator.setDestination(e.get('coordPosition'));
+        var position = e.get('coordPosition');
+
+        if(calculator.getOrigin()) {
+            calculator.setDestination(position);
+        }
+        else {
+            calculator.setOrigin(position);
+        }
     });
 }
 
