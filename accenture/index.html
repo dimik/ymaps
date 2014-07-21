@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователькая карта.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        html, body, #map {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru-RU&load=package.full"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var layerName = "user#layer";
+            var zoomRange = [0, 19];
+            var Layer = function () {
+                var layer = new ymaps.Layer("tiles/%s/%s-%s.png");
+                layer.getZoomRange = function () {
+                    return ymaps.vow.resolve(zoomRange);
+                };
+                return layer;
+            };
+            ymaps.layer.storage.add(layerName, Layer);
+            var mapType = ymaps.mapType.storage.get("yandex#map");
+            var layers = mapType.getLayers();
+            layers.unshift(layerName);
+            var map = new ymaps.Map("map", {
+                center: [55.7, 37.5],
+                zoom: 12,
+                type: layerName,
+                controls: ["zoomControl"]
+            }, {
+                projection: ymaps.projection.wgs84Mercator
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+</body>
+</html>
