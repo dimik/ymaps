@@ -17,7 +17,7 @@
             var layerName = "user#layer";
             var zoomRange = [0, 19];
             var Layer = function () {
-                var layer = new ymaps.Layer("tiles/%z/%x-%y.png");
+                var layer = new ymaps.Layer("tiles/%z/%x-%y.png", { zIndex: 10000 });
                 layer.getZoomRange = function () {
                     return ymaps.vow.resolve(zoomRange);
                 };
@@ -26,7 +26,7 @@
             ymaps.layer.storage.add(layerName, Layer);
             var mapType = ymaps.mapType.storage.get("yandex#map");
             var layers = mapType.getLayers();
-            layers.unshift(layerName);
+            layers.push(layerName);
             var map = window.map = new ymaps.Map("map", {
                 center: [55.8325085518425794, 36.8374525985813079],
                 zoom: 19,
