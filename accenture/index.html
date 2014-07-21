@@ -17,7 +17,7 @@
             var layerName = "user#layer";
             var zoomRange = [0, 19];
             var Layer = function () {
-                var layer = new ymaps.Layer("tiles/%z/%x-%y.png", { zIndex: 10000 });
+                var layer = new ymaps.Layer("tiles/%z/%x-%y.png", { zIndex: 10000, tileTransparent: true });
                 layer.getZoomRange = function () {
                     return ymaps.vow.resolve(zoomRange);
                 };
