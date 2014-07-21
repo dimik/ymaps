@@ -11,13 +11,13 @@
             height: 100%;
         }
     </style>
-    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru-RU&load=package.full&mode=debug"></script>
+    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru-RU"></script>
     <script type="text/javascript">
         ymaps.ready(function () {
             var layerName = "user#layer";
             var zoomRange = [0, 19];
             var Layer = function () {
-                var layer = new ymaps.Layer("tiles/%s/%s-%s.png");
+                var layer = new ymaps.Layer("tiles/%z/%x-%y.png");
                 layer.getZoomRange = function () {
                     return ymaps.vow.resolve(zoomRange);
                 };
@@ -27,10 +27,9 @@
             var mapType = ymaps.mapType.storage.get("yandex#map");
             var layers = mapType.getLayers();
             layers.unshift(layerName);
-            var map = new ymaps.Map("map", {
-                center: [55.7, 37.5],
-                zoom: 12,
-                // type: layerName,
+            var map = window.map = new ymaps.Map("map", {
+                center: [0, 0],
+                zoom: 0,
                 controls: ["zoomControl"]
             }, {
                 projection: ymaps.projection.wgs84Mercator
