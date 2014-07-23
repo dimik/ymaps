@@ -1,0 +1,2034 @@
+{
+   "type": "FeatureCollection",
+   "features": [{
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.129042,40.40703],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Владимир"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.000348,40.973921],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Иваново"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.033929,113.499396],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Чита"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.441606,65.344316],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Курган"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.970306,36.063514],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Орёл"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.317992,45.698197],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Грозный"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.753676,37.619899],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Москва"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.939095,30.315868],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Санкт-Петербург"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.030199,82.92043],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новосибирск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.838607,60.605514],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Екатеринбург"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.326887,44.005986],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Нижний Новгород"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.195533,50.101801],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Самара"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.989342,73.368212],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Омск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.795793,49.106585],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Казань"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.160283,61.400856],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Челябинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.222531,39.718705],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ростов-на-Дону"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.734768,55.957838],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Уфа"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [48.707103,44.516939],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Волгоград"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [58.010259,56.234195],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Пермь"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.010569,92.852545],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Красноярск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.661535,39.200287],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Воронеж"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.531528,46.03582],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Саратов"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.023877,38.970157],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Краснодар"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.852775,53.211463],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ижевск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.317002,48.402243],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ульяновск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.348779,83.776282],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Барнаул"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.116391,131.882421],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Владивосток"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.626569,39.893822],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ярославль"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.286387,104.28066],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Иркутск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.153033,65.534328],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Тюмень"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [42.984913,47.504646],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Махачкала"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [48.472584,135.057732],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Хабаровск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.768199,55.096955],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Оренбург"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.354881,86.086838],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кемерово"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.629148,39.735243],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Рязань"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.484725,84.948691],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Томск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [46.347869,48.033574],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Астрахань"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.194546,45.019529],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Пенза"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.61022,39.594719],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Липецк"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.193033,37.617752],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Тула"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [58.602901,49.668077],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Киров"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.1439,47.248887],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Чебоксары"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.70739,20.507307],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Калининград"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.2434,34.364198],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Брянск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.730361,36.192647],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Курск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.833507,107.584125],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Улан-Удэ"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.859611,35.911896],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Тверь"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.044502,41.969065],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ставрополь"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.952116,34.102411],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Симферополь"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [50.597467,36.588849],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Белгород"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [64.539304,40.518735],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Архангельск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.616649,33.52536],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Севастополь"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.782526,32.044128],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Смоленск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.507014,36.252277],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Калуга"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.024122,44.690476],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Владикавказ"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [68.969563,33.07454],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Мурманск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.220492,39.891568],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Вологда"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.180925,45.184792],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Саранск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.721246,41.452238],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Тамбов"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [62.028098,129.732555],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Якутск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.767683,40.926418],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кострома"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [61.789036,34.359688],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Петрозаводск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.634407,47.899878],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Йошкар-Ола"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.484605,43.60709],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Нальчик"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [61.668695,50.835734],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Сыктывкар"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [58.521475,31.275475],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Великий Новгород"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [50.290658,127.527173],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Благовещенск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.819365,28.331786],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Псков"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [46.959118,142.738068],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Южно-Сахалинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.054932,158.713716],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Петропавловск-Камчатский"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.722356,91.443699],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Абакан"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.609796,40.100561],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Майкоп"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.226863,42.04677],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Черкесск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.719086,94.437757],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кызыл"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [46.308309,44.270181],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Элиста"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.568182,150.808595],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Магадан"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.225727,44.764641],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Назрань"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [61.002486,69.018408],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ханты-Мансийск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [48.794668,132.921799],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Биробиджан"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.481448,53.465570],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Октябрьский"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.350116,132.159633],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Артём"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [48.797909,44.746162],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Волжский"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.708485,40.215958],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Шахты"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.171488,59.672641],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Златоуст"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [42.824037,132.892811],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Находка"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.361694,55.924582],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Салават"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.355774,41.312092],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ковров"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [58.135907,52.663446],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Глазов"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.283644,37.534748],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Губкин"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.208799,43.13834],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Минеральные Воды"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.508714,49.41918],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Тольятти"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.757569,87.136115],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новокузнецк"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.743553,52.39582],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Набережные Челны"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.411677,58.984415],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Магнитогорск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.581509,39.722882],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Сочи"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.127406,37.90692],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Череповец"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [61.254052,73.396204],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Сургут"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.630152,55.931634],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Стерлитамак"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [50.54986,137.007867],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Комсомольск-на-Амуре"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.20958,38.935194],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Таганрог"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [60.939751,76.569601],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Нижневартовск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.151382,101.634152],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Братск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.723489,37.76866],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новороссийск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.237592,43.459856],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Дзержинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.229351,58.47516],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Орск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.631285,51.814376],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Нижнекамск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.296695,37.835054],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Старый Оскол"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.895355,86.744657],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Прокопьевск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.541444,85.219686],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Бийск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [58.049002,38.852316],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Рыбинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [64.558186,39.82962],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Северодвинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.001116,41.132429],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Армавир"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.155782,48.474485],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Сызрань"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [69.349039,88.201014],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Норильск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.504025,42.175112],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Волгодонск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.411918,40.104163],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новочеркасск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.797279,131.951753],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Уссурийск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.407922,56.804015],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Березники"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.045671,60.107677],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Миасс"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.501336,81.207917],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Рубцовск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.901383,52.297113],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Альметьевск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.357309,36.468286],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Керчь"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.041163,43.066124],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Пятигорск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.010914,38.29148],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новомосковск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.905232,42.716778],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кисловодск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.109531,47.479116],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новочебоксарск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [61.088212,72.616331],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Нефтеюганск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.216846,49.625897],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Димитровград"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.088403,54.248254],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Нефтекамск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [50.083698,45.407349],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Камышин"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.622673,41.947605],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Невинномысск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.579169,42.052411],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Муром"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.757738,39.936430],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новошахтинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [63.197108,75.442224],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ноябрьск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.253827,90.479474],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ачинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.602794,84.880742],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Северск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.619248,38.499952],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Елец"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.190445,33.366861],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Евпатория"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.386666,43.815687],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Арзамас"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.094411,36.612196],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Обнинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [66.083963,76.680974],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новый Уренгой"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.686596,88.070372],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Междуреченск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.461621,53.803678],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Сарапул"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.044519,42.858883],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ессентуки"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.051806,53.987392],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Воткинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [58.201698,68.253762],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Тобольск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [63.562057,53.68448],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ухта"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.759316,83.107935],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Бердск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.34265,30.523397],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Великие Луки"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.196428,58.301731],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новотроицк"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.846659,48.501021],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Зеленодольск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.648333,56.771029],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Соликамск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [48.322917,40.269866],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Каменск-Шахтинский"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.337949,35.351725],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Железногорск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.922788,43.344844],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Саров"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.536413,52.789489],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Бугульма"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.116687,46.607022],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кузнецк"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.442544,42.168923],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кинешма"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.943039,102.741523],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Усть-Илимск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.252902,93.532219],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Железногорск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.112129,39.423267],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Азов"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.788100,52.262429],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Бузулук"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.763184,60.707599],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Озёрск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [58.555999,50.031679],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кирово-Чепецк"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.083238,61.559804],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Троицк"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.148599,43.473896],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Георгиевск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.710548,91.68725],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Минусинск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.756629,52.054415],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Елабуга"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [67.497286,64.061055],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Воркута"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.031929,35.382429],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Феодосия"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.498891,46.125121],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Энгельс"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.604785,60.575313],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Серов"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [51.554645,43.146415],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Балашов"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.433295,40.572859],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Кропоткин"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.910144,59.98132],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Нижний Тагил"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.544911,103.888546],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ангарск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.022331,47.782818],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Балаково"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.414897,61.918905],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Каменск-Уральский"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.908099,59.942935],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Первоуральск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.116753,61.617988],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Копейск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [43.250521,46.585148],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Хасавюрт"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [42.059022,48.290834],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Дербент"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [47.138235,39.750748],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Батайск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.099469,49.947767],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новокуйбышевск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [42.891507,47.636698],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Каспийск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.663474,86.162144],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ленинск-Кузнецкий"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.891305,40.510453],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Мичуринск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.006025,86.636706],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Киселёвск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.205060,95.705109],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Канск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [59.565424,30.127572],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Гатчина"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [57.247284,60.095352],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новоуральск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [46.711524,38.276451],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ейск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.756615,103.638904],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Усолье-Сибирское"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [55.713684,84.934884],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Юрга"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [60.713022,28.732893],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Выборг"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [44.495203,34.166299],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Ялта"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.087042,63.629747],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Шадринск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [54.422114,86.303692],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Белово"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [56.078382,86.019581],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Анжеро-Судженск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [52.978759,49.713711],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Чапаевск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.825897,91.325993],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Черногорск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [45.129648,42.028785],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Михайловск"
+       }
+   }, {
+       "type": "Feature",
+       "geometry": {
+           "type": "Circle",
+           "coordinates": [53.412633,83.931564],
+           "radius": 10000
+       },
+       "properties": {
+           "hintContent": "Новоалтайск"
+       }
+   }]
+}

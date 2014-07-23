@@ -11,6 +11,7 @@
             height: 100%;
         }
     </style>
+    <script src="//yandex.st/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru-RU"></script>
     <script type="text/javascript">
         ymaps.ready(function () {
@@ -35,6 +36,8 @@
                 restrictMapArea: [ [39.188251436409644, 19.84645587005146], [77.79490157747544, -169.65729900287965] ],
                 projection: ymaps.projection.wgs84Mercator
             });
+
+            ymaps.geoQuery($.getJSON('data.json')).addToMap(map);
         });
     </script>
 </head>
