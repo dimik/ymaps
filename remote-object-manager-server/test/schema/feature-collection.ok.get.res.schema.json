@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "error": {
+      "type": "null"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "eq": "FeatureCollection"
+        },
+        "features": {
+          "type": "array",
+          "minLength": 10,
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

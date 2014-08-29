@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "error": {
+      "type": "null"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "number",
+          "gt": 0
+        },
+        "ids": {
+          "type": "array",
+          "minLength": 100,
+          "items": {
+            "type": "string",
+            "exactLength": 24
+          }
+        }
+      }
+    }
+  }
+}
