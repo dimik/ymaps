@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<head>
+    <title>Пример работы с RemoteObjectManager.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+    <script src="//api-maps.yandex.ru/2.1.15/?lang=ru-RU&coordorder=longlat"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = window.map = new ymaps.Map('YMapsID', {
+                center: [37.573856, 55.751574],
+                // zoom: 10
+                zoom: 3
+            });
+
+            var objectManager = new ymaps.RemoteObjectManager('http://nodejs-geohosting.rhcloud.com/api/v1/features?clusterize=1&bbox=%b&zoom=%z', {
+                // Опции кластеров задаются с префиксом cluster.
+                clusterHasBalloon: false,
+                // Опции геообъектов задаются с префиксом geoObject
+                geoObjectOpenBalloonOnClick: false
+            });
+
+            myMap.geoObjects.add(objectManager);
+        });
+    </script>
+
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 480px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Серверная кластеризация с помощью RemoteObjectManager и NodeJS.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+</html>
