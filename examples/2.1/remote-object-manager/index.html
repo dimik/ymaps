@@ -13,11 +13,12 @@
         ymaps.ready(function () {
             var myMap = window.map = new ymaps.Map('YMapsID', {
                 center: [37.573856, 55.751574],
-                // zoom: 10
-                zoom: 3
+                zoom: 10
+            }, {
+                minZoom: 5
             });
 
-            var objectManager = new ymaps.RemoteObjectManager('http://nodejs-geohosting.rhcloud.com/api/v1/features?clusterize=1&bbox=%b&zoom=%z', {
+            var objectManager = new ymaps.RemoteObjectManager('http://nodejs-geohosting.rhcloud.com/api/v1/features/within/bbox/%b?clusterize=1&zoom=%z', {
                 // Опции кластеров задаются с префиксом cluster.
                 clusterHasBalloon: false,
                 // Опции геообъектов задаются с префиксом geoObject
