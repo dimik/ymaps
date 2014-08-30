@@ -9,12 +9,10 @@ var config = require('../config').get('server');
 var _ = require('underscore');
 
 describe('Geohosting API', function () {
-  /*
   var apiUrl = url.format(_.extend({
     slashes: true
   }, config));
-  */
-  var apiUrl = 'http://nodejs-geohosting.rhcloud.com';
+  //var apiUrl = 'http://nodejs-geohosting.rhcloud.com';
 
   var actionPutUrl = '/api/v1/features';
   describe('PUT ' + actionPutUrl, function () {
@@ -35,6 +33,31 @@ describe('Geohosting API', function () {
             var actual = JSON.parse(res.text);
 
             var schema = require("./schema/feature-collection.ok.put.res.schema.json");
+            var result = inspector.validate(schema, actual);
+            (result.valid).should.be.equal(true, result.format());
+
+            done();
+          }
+        });
+    });
+
+    it('should return 400 with dupliceta Feature._id property', function (done) {
+      var data = JSON.parse(fs.readFileSync("./test/data/feature.duplicate-id.invalid.json"));
+
+      request(apiUrl)
+        .put(actionPutUrl)
+        .set('ContentType', 'application/json')
+        .send(data)
+        .expect("Content-Type", /json/)
+        .expect(400)
+        .end(function (err, res) {
+          if(err) {
+            done(err);
+          }
+          else {
+            var actual = JSON.parse(res.text);
+
+            var schema = require("./schema/feature-collection.invalid.put.res.schema.json");
             var result = inspector.validate(schema, actual);
             (result.valid).should.be.equal(true, result.format());
 
@@ -70,7 +93,7 @@ describe('Geohosting API', function () {
   });
 
   var actionGetUrl = '/api/v1/features';
-  describe.skip('GET ' + actionGetUrl, function () {
+  describe('GET ' + actionGetUrl, function () {
     it('should return GeoJSON data', function (done) {
       request(apiUrl)
         .get(actionGetUrl)
@@ -94,7 +117,7 @@ describe('Geohosting API', function () {
     });
   });
 
-  var actionGetClusteredUrl = '/api/v1/features?bbox=36.5625,55.3589,38.6719,56.1519&zoom=10&callback=id_140926056083729104254&clusterize=1';
+  var actionGetClusteredUrl = '/api/v1/features/within/bbox/36.5625,55.3589,38.6719,56.1519/?zoom=10&callback=id_140926056083729104254&clusterize=1';
   describe('GET ' + actionGetClusteredUrl, function () {
     it('should return clustered GeoJSON data', function (done) {
       request(apiUrl)

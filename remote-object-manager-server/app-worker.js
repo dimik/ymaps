@@ -8,9 +8,9 @@ var bodyParser = require('body-parser');
 var app = express();
 var api = require('./routes/api');
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: 100000000 }));
 app.use(uncaughtExceptionHandler);
-app.use('/api', api);
+app.use('/api/v1', api);
 app.use(errorHandler);
 
 var host = config.get('server:hostname');
@@ -22,9 +22,8 @@ var server = app.listen(port, host, function () {
 // Expressjs middleware for handling errors.
 function errorHandler(err, req, res, next) {
   console.error('Express error', err);
-  res.status(500).json({
-    "error": err.message,
-    "stack": err.stack
+  res.status(400).json({
+    "error": err
   });
   // next(err);
 }
@@ -52,8 +51,7 @@ function uncaughtExceptionHandler(req, res, next) {
     // Try to send an error to the request that triggered the problem.
     try {
       res.status(500).json({
-        "error": err.message,
-        "stack": err.stack
+        "error": err
       });
     }
     catch (err) {

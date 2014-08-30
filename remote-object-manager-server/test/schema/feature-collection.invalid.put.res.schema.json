@@ -2,8 +2,8 @@
   "type": "object",
   "properties": {
     "error": {
-      "type": "string",
-      "minLength": 10
+      "type": "object",
+      "optional": false
     }
   }
 }
