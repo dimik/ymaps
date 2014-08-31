@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Make sure the agent is an executable
+chmod +x ${OPENSHIFT_REPO_DIR}logentries/le
+
+# If the config exists, the agent is registered and following files
+if [ ! -f "${OPENSHIFT_DATA_DIR}config" ];
+then
+    # Load the user config with Logentries Account Key
+    source ${OPENSHIFT_REPO_DIR}logentries/le_config.ini
+
+    ${OPENSHIFT_REPO_DIR}logentries/le register --hostname=${OPENSHIFT_APP_NAME} --account-key=${ACCOUNT_KEY}
+fi
+
+# Navigate to the log directory
+pushd $OPENSHIFT_LOG_DIR > /dev/null
+
+for logf in `ls $OPENSHIFT_LOG_DIR`
+do
+    if [[ $logf = *.log ]]
+    then
+        # Follow any new logs and make sure existing ones are being followed
+        ${OPENSHIFT_REPO_DIR}logentries/le follow "$logf"
+    fi
+done
+
+popd > /dev/null
+
+# Start monitoring the log files
+${OPENSHIFT_REPO_DIR}logentries/le monitordaemon
