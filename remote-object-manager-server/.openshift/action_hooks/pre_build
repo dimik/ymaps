@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# If the pid file exists, the agent should be closed
-if [ -f "${OPENSHIFT_DATA_DIR}logentries.pid" ];
-then
-    kill `cat ${OPENSHIFT_DATA_DIR}logentries.pid`
+pidf="${OPENSHIFT_DATA_DIR}logentries.pid";
+# POSIX portable way
+read pid <$pidf
+# Kill agent if it exists
+ps -p $pid 1>/dev/null && kill -9 $pid
+if [ $? -eq 0 ]; then
+  echo "Logentries monitordaemon stopped"
+else
+  echo "Logentries monitordaemon not found"
 fi
+# Don't break application build process
+exit 0
