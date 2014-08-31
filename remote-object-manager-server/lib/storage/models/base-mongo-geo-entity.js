@@ -22,12 +22,12 @@ module.exports = inherit(BaseModel, {
       }
     });
   },
-  findNear: function (ccordinates, params) {
+  findNear: function (coordinates, params) {
     return this.find({
       "$near": _.extend({
         "$geometry": {
           "type": "Point",
-          "coordinates": ccordinates
+          "coordinates": coordinates
         }
       }, params)
     });
