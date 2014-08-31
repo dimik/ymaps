@@ -4,7 +4,7 @@ pidf="${OPENSHIFT_DATA_DIR}logentries.pid";
 # POSIX portable way
 read pid <$pidf
 # Kill agent if it exists
-ps -p $pid 1>/dev/null && kill -9 $pid
+ps -p $pid &>/dev/null && kill -9 $pid
 if [ $? -eq 0 ]; then
   echo "Logentries monitordaemon stopped"
 else
