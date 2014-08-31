@@ -6,6 +6,7 @@ var ModelManager = require('./model-manager');
 var DataSet = require('./data-set');
 var FeatureSerializer = require('../serializer/features');
 var fS = new FeatureSerializer();
+var logger = require('../logger');
 
 module.exports = inherit(/** @lends StorageFacade.prototype */{
   /**
@@ -24,7 +25,8 @@ module.exports = inherit(/** @lends StorageFacade.prototype */{
 
     this._models = ModelManager.create([
       'features',
-      'features-admin'
+      'features-admin',
+      'features-cache'
     ]);
   },
   addFeatures: function (features) {
@@ -38,9 +40,14 @@ module.exports = inherit(/** @lends StorageFacade.prototype */{
       .then(this._serializeFeatures);
   },
   findFeaturesInBounds: function (bounds) {
-    return this._models.get('features')
-      .findInBounds(bounds)
-      .then(this._serializeFeatures);
+    var model = this._models.get('features');
+
+    return this._cacheFeatures(
+      model.findInBounds.bind(model, bounds),
+      'bounds' + '_' + bounds,
+      24 * 60 * 60
+    )
+    .then(this._serializeFeatures);
   },
   findFeaturesInside: function (geometry) {
     return this._models.get('features')
@@ -56,5 +63,21 @@ module.exports = inherit(/** @lends StorageFacade.prototype */{
     return (
       new DataSet(features)
     ).serialize(fS);
+  },
+  _cacheFeatures: function (handler, key, ttl) {
+    var cache = this._models.get('features-cache');
+
+    return cache.get(key)
+      .then(function (data) {
+        if(data) {
+          return data;
+        }
+
+        return handler().then(function (data) {
+          cache.set(key, data, ttl);
+
+          return data;
+        });
+      });
   }
 });

@@ -1,5 +1,7 @@
 'use strict';
 
+var config = require('../../config');
+var logger = require('../../lib/logger');
 var StorageFacade = require('../../lib/storage/facade');
 var storage = new StorageFacade();
 
@@ -15,9 +17,10 @@ exports['get'] = function (req, res) {
       });
     })
     .fail(function (err) {
+      logger.log('err', err);
       res.status(400);
       _send(res, {
-        "error": err
+        "error": err.stack || JSON.stringify(err)
       });
     });
 };
@@ -46,16 +49,18 @@ exports['put'] = function (req, res) {
         });
       })
       .fail(function (err) {
+        logger.log('err', err);
         res.status(400);
         _send(res, {
-          "error": err
+          "error": err.stack || JSON.stringify(err)
         });
       });
   }
   else {
+    logger.log('notice', result.format());
     res.status(400);
     _send(res, {
-      "error": new Error(result.format())
+      "error": result.format()
     });
   }
 };
@@ -83,6 +88,7 @@ exports['get-within-bbox'] = function (req, res) {
   var YMapsCluster = require('../../lib/serializer/ymaps-cluster');
   var yc = new YMapsCluster();
 
+
   var zoom = +req.param('zoom');
   var bbox = req.param('bbox').split(',').map(Number);
 
@@ -98,9 +104,10 @@ exports['get-within-bbox'] = function (req, res) {
       });
     })
     .fail(function (err) {
+      logger.log('err', err);
       res.status(400);
       _send(res, {
-        "error": err
+        "error": err.stack || JSON.stringify(err)
       });
     });
 };

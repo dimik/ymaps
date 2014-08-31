@@ -1,11 +1,13 @@
 'use strict';
 
+var util = require('util');
 var cluster = require('cluster');
 var numCPUs = require('os').cpus().length;
+var logger = require('./lib/logger');
 
 function createWorker() {
   var worker = cluster.fork();
-  console.log('Worker %d forked', worker.process.pid);
+  logger.log('info', util.format('Worker %d forked', worker.process.pid));
 }
 
 for(var i = 0; i < numCPUs; i++) {
@@ -13,10 +15,10 @@ for(var i = 0; i < numCPUs; i++) {
 }
 
 cluster.on('exit', function (worker, code, signal) {
-  console.log('Worker %d died (%s).', worker.process.pid, signal || code);
+  logger.log('alert', util.format('Worker %d died (%s).', worker.process.pid, signal || code));
   switch(code) {
     case 1:
-      console.log('Restarting...');
+      logger.log('alert', 'Restarting...');
       createWorker();
       break;
   }
@@ -53,7 +55,7 @@ var signals = [
 signals.forEach(function (signal, index) {
   if(signal) {
     process.on(signal, function () {
-      console.log('%s: Received %s – terminating process...', Date(Date.now()), signal);
+      logger.log('alert', util.format('Received %s – terminating process', signal));
       cluster.disconnect(function () {
         process.exit(128 + index + 1);
       });
@@ -62,5 +64,5 @@ signals.forEach(function (signal, index) {
 });
 
 process.on('exit', function (code) {
-  console.log('%s: Node process stopped (%d)', Date(Date.now()), code);
+  logger.log('alert', util.format('Node process stopped (%d)', code));
 });

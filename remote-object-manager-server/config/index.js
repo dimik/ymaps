@@ -23,5 +23,10 @@ nconf.defaults({
     "socket": env["OPENSHIFT_MONGODB_DB_SOCKET"],
     "url": env["OPENSHIFT_MONGODB_DB_URL"],
     "database": "nodejs"
+  },
+  "redis": {
+    "hostname": env["OPENSHIFT_REDIS_HOST"],
+    "port": env["OPENSHIFT_REDIS_PORT"],
+    "password": env["REDIS_PASSWORD"]
   }
 });

@@ -30,7 +30,9 @@
     "underscore": "~1.7.0",
     "body-parser": "~1.6.5",
     "vow": "~0.4.5",
-    "schema-inspector": "~1.4.8"
+    "schema-inspector": "~1.4.8",
+    "redis": "~0.12.1",
+    "hiredis": "~0.1.17"
   },
   "devDependencies": {
     "mocha": "~1.21.4",

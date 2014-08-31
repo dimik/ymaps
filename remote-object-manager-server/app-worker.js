@@ -1,5 +1,6 @@
 'use strict';
 
+var util = require('util');
 var worker = require('cluster').worker;
 var domain = require('domain');
 var config = require('./config');
@@ -7,8 +8,13 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var api = require('./routes/api');
+var logger = require('./lib/logger');
 
 app.use(bodyParser.json({ limit: 100000000 }));
+app.use(function (req, res, next) {
+  logger.log('info', { url: req.url, method: req.method, headers: req.headers });
+  next();
+});
 app.use(uncaughtExceptionHandler);
 app.use('/api/v1', api);
 app.use(errorHandler);
@@ -16,14 +22,14 @@ app.use(errorHandler);
 var host = config.get('server:hostname');
 var port = config.get('server:port');
 var server = app.listen(port, host, function () {
-  console.log('%s: Node server started on %s:%d ...', Date(Date.now()), host, port);
+  logger.log('info', util.format('Node server started on %s:%d', host, port));
 });
 
 // Expressjs middleware for handling errors.
 function errorHandler(err, req, res, next) {
-  console.error('Express error', err);
+  logger.log('crit', err);
   res.status(400).json({
-    "error": err
+    "error": err.stack || JSON.stringify(err)
   });
   // next(err);
 }
@@ -36,7 +42,7 @@ function uncaughtExceptionHandler(req, res, next) {
   d.add(res);
 
   d.on('error', function (err) {
-    console.error('Domain error', err);
+    logger.log('alert', err);
     // Make sure we close down within 5 seconds.
     var timer = setTimeout(function () {
       process.exit(1);
@@ -51,12 +57,12 @@ function uncaughtExceptionHandler(req, res, next) {
     // Try to send an error to the request that triggered the problem.
     try {
       res.status(500).json({
-        "error": err
+        "error": err.stack || JSON.stringify(err)
       });
     }
     catch (err) {
       // Oh well, not much we can do at this point.
-      console.error('Error sending 500!', err);
+      logger.log('emerg', err);
     }
   });
 

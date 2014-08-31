@@ -13,10 +13,10 @@ router.route('/features')
   .delete(features['delete']);
 
 router.route('/features/within/bbox/:bbox')
-  .get(features['get-within-bbox'])
+  .get(features['get-within-bbox']);
 
 router.route('/features/within/polygon/:coordinates')
-  .get(features['get-within-polygon'])
+  .get(features['get-within-polygon']);
 
 router.route('/features/near/:coordinates')
-  .get(features['get-near'])
+  .get(features['get-near']);
