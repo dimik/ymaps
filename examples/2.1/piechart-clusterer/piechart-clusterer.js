@@ -16,7 +16,7 @@ ymaps.modules.define('PieChartClusterer', [
     augment(PieChartClusterer, Clusterer, {
         createCluster: function (center, geoObjects) {
             // Создаем метку-кластер с помощью стандартной реализации метода.
-            var clusterPlacemark = PieChartClusterer.superclass.createCluster.call(this, center, geoObjects);
+            var clusterPlacemark = PieChartClusterer.superclass.createCluster.call(this, center, geoObjects),
                 styleGroups = this._countByIconStyle(geoObjects),
                 iconUrl = this._canvas.generateIconDataURL(styleGroups, geoObjects.length),
                 clusterOptions = {
