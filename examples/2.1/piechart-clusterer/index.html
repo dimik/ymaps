@@ -28,7 +28,7 @@
 
             ymaps.modules.require('PieChartClusterer', function (PieChartClusterer) {
                 var clusterer = new PieChartClusterer();
-                var points = generator.generate(100).atBounds(myMap.getBounds());
+                var points = generator.generate(200).atBounds(myMap.getBounds());
 
                 clusterer.add(points);
                 myMap.geoObjects.add(clusterer);
