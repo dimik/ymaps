@@ -59,7 +59,7 @@ ymaps.modules.define('PieChartClusterer.component.Canvas', [
         strokeStyle: 'white',
         lineWidth: 2,
         coreRadius: 23,
-        coreFillStyle: 'white',
+        coreFillStyle: 'white'
     };
 
     var Canvas = function (size) {
@@ -87,7 +87,6 @@ ymaps.modules.define('PieChartClusterer.component.Canvas', [
 
         ctx.strokeStyle = this.options.get('strokeStyle', DEFAULT_OPTIONS.strokeStyle);
         ctx.lineWidth = this.options.get('lineWidth', DEFAULT_OPTIONS.lineWidth);
-        ctx.globalAlpha = this.options.get('globalAlpha', DEFAULT_OPTIONS.globalAlpha);
 
         for(var style in styleGroups) {
             var num = styleGroups[style];
