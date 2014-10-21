@@ -57,10 +57,9 @@ ymaps.modules.define('PieChartClusterer.component.Canvas', [
 ], function (provide, OptionManager, iconColors) {
     var DEFAULT_OPTIONS = {
         strokeStyle: 'white',
-        lineWidth: 3,
-        coreRadius: 20,
+        lineWidth: 2,
+        coreRadius: 23,
         coreFillStyle: 'white',
-        globalAlpha: 1
     };
 
     var Canvas = function (size) {
@@ -83,7 +82,8 @@ ymaps.modules.define('PieChartClusterer.component.Canvas', [
             ctx = this._context,
             x = this._canvas.width / 2,
             y = this._canvas.height / 2,
-            radius = (x + y) / 2;
+            lineWidth = this.options.get('lineWidth', DEFAULT_OPTIONS.lineWidth),
+            radius = Math.floor((x + y - lineWidth) / 2);
 
         ctx.strokeStyle = this.options.get('strokeStyle', DEFAULT_OPTIONS.strokeStyle);
         ctx.lineWidth = this.options.get('lineWidth', DEFAULT_OPTIONS.lineWidth);
