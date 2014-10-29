@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пример PieChart кластеризатора</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link href="http://yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="http://api-maps.yandex.ru/2.1/?lang=ru-RU&mode=debug" type="text/javascript"></script>
+    <script src="build/all.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('YMapsID', {
+                    center: [55.751574, 37.573856],
+                    zoom: 10
+                });
+
+            ymaps.modules.require([
+                'RandomPointsGenerator', 'PieChartClusterer'
+            ], function (RandomPointsGenerator, PieChartClusterer) {
+                var generator = new RandomPointsGenerator(200);
+
+                // Перекрываем метод генератора меток для создания случайных пресетов 4-х типов.
+                generator.getPointOptions = function (i) {
+                    var presets = ['islands#blueIcon', 'islands#orangeIcon', 'islands#greenIcon', 'islands#pinkIcon'];
+                    return {
+                        preset: presets[Math.floor(Math.random() * presets.length)]
+                    };
+                };
+
+                var clusterer = new PieChartClusterer();
+                var points = generator.generate(200).atBounds(myMap.getBounds());
+
+                clusterer.add(points);
+                myMap.geoObjects.add(clusterer);
+            });
+        });
+    </script>
+    <style type="text/css">
+        #YMapsID {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Пример PieChart кластеризатора.</p>
+            <div id="YMapsID"></div>
+        </div>
+    </div>
+</body>
+
+</html>

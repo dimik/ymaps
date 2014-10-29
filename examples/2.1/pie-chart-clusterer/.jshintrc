@@ -1,0 +1,7 @@
+{
+    "boss": true,
+    "expr": true,
+    "eqeqeq": true,
+    "eqnull": true,
+    "loopfunc": true
+}

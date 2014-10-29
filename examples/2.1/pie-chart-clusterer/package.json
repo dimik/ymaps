@@ -1,0 +1,15 @@
+{
+  "name": "PieChartClusterer",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "~3.8.0",
+    "gulp-concat": "~2.2.0",
+    "gulp-uglify": "~0.3.0",
+    "gulp-jshint": "~1.6.3",
+    "jshint-stylish": "~0.2.0"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
