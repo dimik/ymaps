@@ -7,22 +7,23 @@
     <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
 
     <script src="//yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
-    <script src="//api-maps.yandex.ru/2.1.15/?lang=ru-RU&coordorder=longlat"></script>
+    <script src="//api-maps.yandex.ru/2.1/?lang=ru-RU&coordorder=longlat&mode=debug"></script>
 
     <script type="text/javascript">
         ymaps.ready(function () {
             var myMap = window.map = new ymaps.Map('YMapsID', {
                 center: [37.573856, 55.751574],
-                zoom: 10
+                zoom: 6
             }, {
-                minZoom: 5
+                // minZoom: 5
             });
 
-            var objectManager = new ymaps.RemoteObjectManager('http://nodejs-geohosting.rhcloud.com/api/v1/features/within/bbox/%b?clusterize=1&zoom=%z', {
+            var objectManager = new ymaps.RemoteObjectManager('http://geohosting.pro/geohosting/api/v1/features/within/tiles?bbox=%t&clusterize=1&zoom=%z', {
                 // Опции кластеров задаются с префиксом cluster.
                 clusterHasBalloon: false,
                 // Опции геообъектов задаются с префиксом geoObject
-                geoObjectOpenBalloonOnClick: false
+                // geoObjectOpenBalloonOnClick: false,
+                // splitRequests: true
             });
 
             myMap.geoObjects.add(objectManager);
