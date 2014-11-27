@@ -1,3 +1,4 @@
 {
-    "concatTo": "rose-clusterer.min.js"
+    "concatTo": "rose-clusterer.min.js",
+    "minify": false
 }

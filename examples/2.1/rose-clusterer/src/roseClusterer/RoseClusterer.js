@@ -21,40 +21,33 @@ var RoseClusterer = defineClass(
                 maxZoom = map.zoomRange.getCurrent()[1];
 
             if(zoom >= maxZoom) {
-                 return this._createRose(center, geoObjects);
+                 return this._createRoseCollection(center, geoObjects);
             }
             else {
                 return RoseClusterer.superclass.createCluster.call(this, center, geoObjects);
             }
         },
-        _createRose: function (center, geoObjects) {
-            var map = this.getMap(),
-                collection = new GeoObjectCollection(),
-                zoom = map.getZoom(),
-                projection = map.options.get('projection'),
-                pixelCenter = projection.toGlobalPixels(center, zoom),
-                num = geoObjects.length,
-                radius = this.options.get('radius'),
-                getOffset = function (geoObject) {
-                    var coordinates = geoObject.geometry.getCoordinates(),
-                        pixelCoordinates = projection.toGlobalPixels(coordinates, zoom);
+        _createRoseCollection: function (center, geoObjects) {
+            var collection = new GeoObjectCollection({
+                properties: { center: center }
+            });
 
-                    return [
-                        pixelCenter[0] - pixelCoordinates[0],
-                        pixelCenter[1] - pixelCoordinates[1]
-                    ];
-                };
+            geoObjects.forEach(collection.add, collection);
 
-            map.geoObjects.add(collection);
+            collection.events.once('mapchange', this._onRoseCollectionMapChange, this);
 
-            geoObjects.forEach(function (geoObject, index) {
+            return collection;
+        },
+        _onRoseCollectionMapChange: function (e) {
+            var collection = e.get('target'),
+                center = collection.properties.get('center'),
+                num = collection.getLength(),
+                radius = this.options.get('radius');
+
+            collection.each(function (geoObject, index) {
                 var angle = Math.PI * 2 / num * (num - index),
-                    offset = getOffset(geoObject);
+                    offset = this._getGeoObjectOffset(center, geoObject);
 
-                collection.add(geoObject);
-
-                // костыльнах
-                setTimeout(function () {
                 geoObject.getOverlay()
                     .then(function (overlay) {
                         overlay.options.set('offset', [
@@ -64,10 +57,20 @@ var RoseClusterer = defineClass(
                     }, function (err) {
                         console.log(err);
                     });
-                }, 0);
-            });
+            }, this);
+        },
+        _getGeoObjectOffset: function (center, geoObject) {
+            var map = this.getMap(),
+                zoom = map.getZoom(),
+                projection = map.options.get('projection'),
+                pixelCenter = projection.toGlobalPixels(center, zoom),
+                coordinates = geoObject.geometry.getCoordinates(),
+                pixelCoordinates = projection.toGlobalPixels(coordinates, zoom);
 
-            return collection;
+            return [
+                pixelCenter[0] - pixelCoordinates[0],
+                pixelCenter[1] - pixelCoordinates[1]
+            ];
         }
     });
 
