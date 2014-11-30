@@ -158,7 +158,7 @@ MapLocationState.prototype.toString = function () {
 MapLocationState.fromString = function (location) {
     var params = {};
 
-    location.replace(/[^?&#]+(?=&|$)/g, function (s) {
+    location.slice(1).replace(/[^?&]+(?=&|$)/g, function (s) {
         var param = s.split('=');
 
         params[decodeURI(param[0])] = decodeURIComponent(param[1]);
