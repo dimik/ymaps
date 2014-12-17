@@ -1,0 +1,4 @@
+{
+    "concatTo": "location-tool.min.js",
+    "minify": false
+}

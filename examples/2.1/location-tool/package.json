@@ -1,0 +1,20 @@
+{
+  "name": "PieChartClusterer",
+  "description": "PieChartClusterer module for API Yandex.Maps",
+  "version": "0.0.1",
+  "author": {
+    "name": "Dmitry Poklonskiy",
+    "email": "dmk@yandex-team.ru"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yandex/ymaps-pie-chart-clusterer.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "ym-builder": "^0.1.1"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
