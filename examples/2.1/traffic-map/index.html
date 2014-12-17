@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<head>
+    <title>Карта пробок.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="//api-maps.yandex.ru/2.1/?lang=ru_RU&mode=debug"></script>
+    <script type="text/javascript" src="build/traffic-research.min.js"></script>
+    <script type="text/javascript">
+        var config = {
+            map: {
+                id: 'map',
+                center: [0, 0],
+                zoom: 3,
+                type: 'morning',
+                controls: ['fullscreenControl']
+            },
+            layers: [{
+                id: 'morning',
+                title: 'Утро с 8:00 до 10:00',
+                minZoom: 3,
+                maxZoom: 3,
+                tileUrlTemplate: './morning/%z/tile-%x-%y.png'
+            }, {
+                id: 'evening',
+                title: 'Вечер с 18:00 до 20:00',
+                minZoom: 3,
+                maxZoom: 3,
+                tileUrlTemplate: './evening/%z/tile-%x-%y.png'
+            }]
+        };
+        ymaps.ready(function () {
+            ymaps.modules.require('TrafficResearch', function (TrafficResearch) {
+                var app = new TrafficResearch(config);
+            });
+        });
+    </script>
+    <style type="text/css">
+        #map {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>Карта пробок.</p>
+            <div id="map"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+{
+    "concatTo": "traffic-research.min.js",
+    "minify": false
+}
