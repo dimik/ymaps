@@ -14,22 +14,16 @@
                 id: 'map',
                 center: [0, 0],
                 zoom: 3,
-                type: 'morning',
+                type: 'evening',
                 controls: ['fullscreenControl']
             },
-            layers: [{
-                id: 'morning',
-                title: 'Утро с 8:00 до 10:00',
-                minZoom: 3,
-                maxZoom: 3,
-                tileUrlTemplate: './morning/%z/tile-%x-%y.png'
-            }, {
+            layer: {
                 id: 'evening',
                 title: 'Вечер с 18:00 до 20:00',
                 minZoom: 3,
                 maxZoom: 3,
                 tileUrlTemplate: './evening/%z/tile-%x-%y.png'
-            }]
+            }
         };
         ymaps.ready(function () {
             ymaps.modules.require('TrafficResearch', function (TrafficResearch) {
