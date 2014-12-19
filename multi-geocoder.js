@@ -43,8 +43,8 @@ function MultiGeocoder(options) {
 MultiGeocoder.prototype.geocode = function (requests, options) {
     var self = this,
         size = requests.length,
-        promise = new ymaps.util.Promise(),
-        geoObjects = new ListCollection();
+        defer = new ymaps.vow.defer(),
+        geoObjects = new ymaps.Collection();
 
     requests.forEach(function (request, index) {
         ymaps.geocode(request, ymaps.util.extend({}, self._options, options))
@@ -53,13 +53,13 @@ MultiGeocoder.prototype.geocode = function (requests, options) {
                     var geoObject = response.geoObjects.get(0);
 
                     geoObject && geoObjects.add(geoObject, index);
-                    --size || promise.resolve({ geoObjects : geoObjects });
+                    --size || defer.resolve({ geoObjects : geoObjects });
                 },
                 function (err) {
-                    promise.reject(err);
+                    defer.reject(err);
                 }
             );
     });
 
-    return promise;
+    return defer.promise();
 };
