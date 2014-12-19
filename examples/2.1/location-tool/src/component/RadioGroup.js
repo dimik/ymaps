@@ -18,13 +18,15 @@ ym.modules.define('LocationTool.component.RadioGroup', [
     }, Collection, /** @lends RadioGroup.prototype */{
         add: function (child) {
             child.options.setParent(this.options);
-            child.events.setParent(this.events);
+            // child.events.setParent(this.events);
             child.setParent(this);
+            /*
             child.getLayout().then(function (layout) {
                 layout.setParentElement(this._el);
             }, function (err) {
                 console.log(err);
             }, this);
+            */
 
             return RadioGroup.superclass.add.call(this, child);
         },
@@ -34,19 +36,13 @@ ym.modules.define('LocationTool.component.RadioGroup', [
 
             return RadioGroup.superclass.remove.call(this, child);
         },
-        setParent: function (parent) {
-            this._parent = parent;
-            this._map = parent.getMap();
-            this.getParent().getChildElement(this).then(this._onElement, this);
-        },
-        getMap: function () {
-            return this._map;
-        },
-        getParent: function () {
-            return this._parent;
-        },
         getLayout: function () {
             console.log('get layout');
+        },
+        setParent: function (parent) {
+            parent.getChildElement(this).then(this._onElement, this);
+
+            return RadioGroup.superclass.setParent.call(this, parent);
         },
         getChildElement: function (child) {
             console.log('in getChildElement', child);
@@ -55,13 +51,10 @@ ym.modules.define('LocationTool.component.RadioGroup', [
             return vow.resolve(el);
         },
         onAddToMap: function (map) {
-        debugger;
-            RadioGroup.superclass.onAddToMap.call(this, map);
-            this.getParent().getChildElement(this).then(this._onElement, this);
-            console.log(this.getParent(), this.getParent() === this);
+            return RadioGroup.superclass.onAddToMap.call(this, map);
         },
         onRemoveFromMap: function (map) {
-            RadioGroup.superclass.onRemoveFromMap.call(this, map);
+            return RadioGroup.superclass.onRemoveFromMap.call(this, map);
         },
         _onElement: function (parentContainer) {
             this._el.id = 'test';
