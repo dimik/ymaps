@@ -54,9 +54,9 @@
                 'LocationTool.component.RadioGroup'
             ], function (LocationTool, CrossControl, RadioGroup) {
                 var group = new RadioGroup();
+                map.controls.add(group);
                 group.add(b1).add(b2).add(b3).add(b4);
 
-                map.controls.add(group);
 
                 map.controls
                     .add(new CrossControl())
