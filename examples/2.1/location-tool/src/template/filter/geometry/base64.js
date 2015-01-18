@@ -1,6 +1,6 @@
-ym.modules.define('template.filter.geometryToBase64', [
+ym.modules.define('template.filter.geometry.base64', [
     'template.filtersStorage'
-], function (provide, filtersStorage, LineString, Polygon) {
+], function (provide, filtersStorage) {
 
     var geometryToBase64 = function (data, value, param) {
         var geometry = value.getObject();
@@ -8,7 +8,7 @@ ym.modules.define('template.filter.geometryToBase64', [
         return geometry.constructor.toEncodedCoordinates(geometry);
     };
 
-    filtersStorage.add('geometryToBase64', geometryToBase64);
+    filtersStorage.add('geometry#base64', geometryToBase64);
 
     provide(filtersStorage);
 });
