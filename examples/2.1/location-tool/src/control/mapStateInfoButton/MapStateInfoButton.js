@@ -5,7 +5,7 @@ ym.modules.define('control.MapStateInfoButton', [
     var defaultOptions = {
         position: {
             right: 10,
-            bottom 30
+            bottom: 30
         }
     };
     var defaultData = {
