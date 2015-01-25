@@ -47,6 +47,7 @@ define(['ready!ymaps', 'jquery', 'RectangleGeometry'], function (ymaps, $, Recta
                 switch(geometryType) {
                     case 'Point':
                         geoObject = new ymaps.Placemark(coordinates);
+                        break;
                     case 'LineString':
                         geoObject = new ymaps.Polyline([coordinates]);
                         break;
@@ -116,4 +117,3 @@ define(['ready!ymaps', 'jquery', 'RectangleGeometry'], function (ymaps, $, Recta
 
     return CollectionEditorView;
 });
-
