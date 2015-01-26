@@ -10,11 +10,11 @@ ym.modules.define('control.MapStateInfoWindow', [
     'layout.MapStateInfoWindowLayout'
 ], function (provide, defineClass, extend, bind, bounds, CollectionItem, DataManager, layoutStorage, Monitor) {
     var MapStateInfoWindow = defineClass(function (options) {
-        MapStateInfoWindow.superclass.constructor.call(this);
+        MapStateInfoWindow.superclass.constructor.call(this, options);
 
         this.state = new DataManager();
         this._intervalId = null;
-        this._mapEvents = map.events.group();
+        this._mapEvents = null;
     }, CollectionItem, {
         onAddToMap: function (map) {
             MapStateInfoWindow.superclass.onAddToMap.call(this, map);

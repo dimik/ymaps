@@ -18,10 +18,14 @@
                 });
             ymaps.modules.require([
                 'GeoObjectEditor',
-                'MapStateInfo'
-            ]).spread(function (GeoObjectEditor, MapStateInfo) {
+                'MapStateInfo',
+                'control.DraggablePlacemark'
+            ]).spread(function (GeoObjectEditor, MapStateInfo, DraggablePlacemark) {
                 var geoObjectEditor = new GeoObjectEditor(map);
                 var mapState = new MapStateInfo(map);
+                map.controls.add(new DraggablePlacemark);
+            }).fail(function (err) {
+                console.log(err);
             });
         });
     </script>

@@ -2,19 +2,16 @@ ym.modules.define('control.CrossControl', [
     'util.defineClass',
     'templateLayoutFactory',
     'collection.Item',
-    'data.Manager',
-    'option.Manager',
-    'event.Manager'
-], function (provide, defineClass, templateLayoutFactory, CollectionItem, DataManager, OptionManager, EventManager) {
+    'data.Manager'
+], function (provide, defineClass, templateLayoutFactory, CollectionItem, DataManager) {
     /**
      * Класс контрола "центр карты".
      * @class
      * @name CrossControl
      */
-    var CrossControl = defineClass(function (params) {
-        params = params || {};
-        this.events = new EventManager();
-        this.options = new OptionManager(params.options);
+    var CrossControl = defineClass(function (options) {
+        CrossControl.superclass.constructor.call(this, options);
+
     }, CollectionItem, /** @lends CrossControl.prototype */{
         /**
          * Устанавливает родительский объект.
