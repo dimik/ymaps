@@ -10,7 +10,7 @@ ym.modules.define('control.DraggablePlacemark', [
 
     var ICON_HALF_HEIGHT = 41 / 2;
     var DraggablePlacemark = defineClass(function (options) {
-        DraggablePlacemark.superclass.constructor.call(this, options);
+        DraggablePlacemark.superclass.constructor.call(this, extend({ preset: 'islands#redIcon' }, options));
 
         this.state = new DataManager();
     }, CollectionItem, {
@@ -25,6 +25,7 @@ ym.modules.define('control.DraggablePlacemark', [
         },
         onRemoveFromMap: function (oldMap) {
             this._clearListeners();
+            oldMap.panes.get('events').getElement().removeChild(this._element);
 
             DraggablePlacemark.superclass.onRemoveFromMap.call(this, oldMap);
         },
@@ -39,9 +40,9 @@ ym.modules.define('control.DraggablePlacemark', [
             return elem;
         },
         _onChildElement: function (parentDomContainer) {
-            this._parentElement = parentDomContainer;
             this._draggerEvents = this.dragger.events.group();
-            parentDomContainer.appendChild(this._element);
+            // parentDomContainer.appendChild(this._element);
+            this.getMap().panes.get('events').getElement().appendChild(this._element);
 
             var Layout = layoutStorage.get('default#image');
 
