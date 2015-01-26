@@ -13,6 +13,7 @@ ym.modules.define('MapStateInfo', [
         this._crossControl = new CrossControl();
 
         this._setupListeners();
+        this._buttonControl.select();
     }, {
         _setupListeners: function () {
             this._buttonControl.events
@@ -21,7 +22,7 @@ ym.modules.define('MapStateInfo', [
         },
         _onButtonSelect: function () {
             this._map.controls
-                .add(this._windowControl)
+                .add(this._windowControl, { position: { bottom: 160, right: 230 }})
                 .add(this._crossControl);
         },
         _onButtonDeselect: function () {

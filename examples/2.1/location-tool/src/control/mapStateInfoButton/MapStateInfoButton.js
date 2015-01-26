@@ -5,14 +5,14 @@ ym.modules.define('control.MapStateInfoButton', [
     var defaultOptions = {
         position: {
             right: 10,
-            bottom: 30
+            bottom: 64
         }
     };
     var defaultData = {
-        image: 'i/button-mapinfo.png',
+        image: 'i/button-mapstate.png',
         title: 'Состояние карты'
     };
-    var MapStateButton = function (params) {
+    var MapStateInfoButton = function (params) {
         params = params || {};
         var button = new Button({
             data: extend(defaultData, params.data),

@@ -17,18 +17,11 @@
                     zoom: 9
                 });
             ymaps.modules.require([
-                'LocationTool',
-                'LocationTool.component.CrossControl',
-                'GeoObjectEditor'
-            ]).spread(function (LocationTool, CrossControl, GeoObjectEditor) {
-
+                'GeoObjectEditor',
+                'MapStateInfo'
+            ]).spread(function (GeoObjectEditor, MapStateInfo) {
                 var geoObjectEditor = new GeoObjectEditor(map);
-                var locationTool = new LocationTool(map);
-
-                map.controls
-                    .add(new CrossControl());
-            }, function (err) {
-                console.log(err);
+                var mapState = new MapStateInfo(map);
             });
         });
     </script>
@@ -46,6 +39,31 @@
             width: 16px;
             height: 16px;
         }
+        .mapstateinfo-window {
+            display: block;
+            height: 104px;
+        }
+        .mapstateinfo-window form {
+            padding: 10px 10px 0 10px;
+            margin-left: -100px;
+        }
+        .mapstateinfo-window .control-group {
+            margin: 0 0 5px 0;
+        }
+        /*
+        .form-horizontal .control-group:before, .form-horizontal .control-group:after {
+            display: none;
+        }
+        */
+        .mapstateinfo-window input {
+            font-size: 10px;
+            height: 10px;
+        }
+        .mapstateinfo-window label {
+            font-size: 10px;
+            padding-top: 0px;
+            line-height: 15px;
+        }
     </style>
 </head>
 <body>
@@ -54,36 +72,6 @@
             <p>Определение координат.</p>
             <p><small>Введите в строке поиска название географического объекта или перетащите метку в то место, координаты которого вы хотите узнать. Под картой будут показаны: координаты метки в формате "широта, долгота", текущий масштаб карты и координаты центра карты.</small></p>
             <div id="map"></div>
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="row-fluid">
-                <div class="span4"></div>
-                <div class="span4">
-                    <form class="form-horizontal">
-                        <div class="control-group">
-                            <label class="control-label" for="markerPosition">Координаты метки</label>
-                            <div class="controls">
-                                <input type="text" id="markerPosition">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="mapZoom" >Масштаб карты</label>
-                            <div class="controls">
-                                <input type="text" id="mapZoom">
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="mapCenter">Центр карты</label>
-                            <div class="controls">
-                                <input type="text" id="mapCenter">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="span4"></div>
-            </div>
         </div>
     </div>
 </body>

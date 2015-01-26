@@ -152,7 +152,8 @@ ymaps.modules.define('LocationTool.component.MapView', [
             return new Placemark(this._map.getCenter(), {
                 hintContent: 'Перетащите метку'
             }, {
-                draggable: true
+                draggable: true,
+                pane: 'controls'
             });
         }
     });
