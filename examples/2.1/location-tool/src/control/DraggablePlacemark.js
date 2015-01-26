@@ -21,6 +21,8 @@ ym.modules.define('control.DraggablePlacemark', [
             this.getParent().getChildElement(this).then(this._onChildElement, this);
         },
         onRemoveFromMap: function (oldMap) {
+            this._clearListeners();
+
             DraggablePlacemark.superclass.onRemoveFromMap.call(this, oldMap);
         },
         _createElement: function () {
@@ -32,13 +34,35 @@ ym.modules.define('control.DraggablePlacemark', [
 
             var Layout = layoutStorage.get('default#image');
 
-            this.layout = new Layout({ state: this.state });
-            /**
-             * Контрол будет добавляться в pane событий, чтобы исключить интерактивность.
-             * @see http://api.yandex.ru/maps/doc/jsapi/2.x/ref/reference/ILayout.xml#setParentElement
-             */
+            this.layout = new Layout({
+                state: this.state,
+                options: this.options
+            });
             this.layout.setParentElement(this._element);
-        }
+            this._setupListeners();
+        },
+        _setupListeners: function () {
+            this._draggerEvents
+                .add('start', this._onDrag, this)
+                .add('move', this._onDrag, this)
+                .add('stop', this._onDragStop, this);
+        },
+        _clearListeners: function () {
+            this._draggerEvents.removeAll();
+        },
+        _onDrag: function (e) {
+            var position = e.get('position');
+            this._setPosition(position);
+        },
+        _onDragStop: function (e) {
+        // element.parentElement.removeChild(element);
+        console.log('stop');
+        },
+        _setPosition: function (position) {
+            this._element.style.position = 'absolute';
+            this._element.style.left = position[0] + 'px';
+            this._element.style.top = position[1] + 'px';
+        },
     });
 
     provide(DraggablePlacemark);
