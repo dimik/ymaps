@@ -18,21 +18,22 @@
                 });
             ymaps.modules.require([
                 'GeoObjectEditor',
-                'MapStateInfo',
-                'control.DraggablePlacemark'
-            ]).spread(function (GeoObjectEditor, MapStateInfo, DraggablePlacemark) {
+                'MapStateInfo'
+            ]).spread(function (GeoObjectEditor, MapStateInfo) {
                 var geoObjectEditor = new GeoObjectEditor(map);
                 var mapState = new MapStateInfo(map);
-                map.controls.add(new DraggablePlacemark);
             }).fail(function (err) {
                 console.log(err);
             });
         });
     </script>
     <style type="text/css">
+        html, body {
+            height: 100%;
+        }
         #map {
-            width: 900px;
-            height: 400px;
+            width: 100%;
+            height: 100%;
         }
         .hero-unit p {
             line-height: 20px;
@@ -45,7 +46,7 @@
         }
         .mapstateinfo-window {
             display: block;
-            height: 104px;
+            height: 134px;
         }
         .mapstateinfo-window form {
             padding: 10px 10px 0 10px;
@@ -71,12 +72,6 @@
     </style>
 </head>
 <body>
-    <div class="hero-unit">
-        <div class="container">
-            <p>Определение координат.</p>
-            <p><small>Введите в строке поиска название географического объекта или перетащите метку в то место, координаты которого вы хотите узнать. Под картой будут показаны: координаты метки в формате "широта, долгота", текущий масштаб карты и координаты центра карты.</small></p>
-            <div id="map"></div>
-        </div>
-    </div>
+    <div id="map"></div>
 </body>
 </html>
