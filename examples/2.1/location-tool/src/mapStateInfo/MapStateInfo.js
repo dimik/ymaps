@@ -32,6 +32,7 @@ ym.modules.define('MapStateInfo', [
 
         this.state = new DataManager();
 
+        this._updateTimeout = 30;
         this._intervalId = null;
 
         this._windowControl = new MapStateInfoWindow();
