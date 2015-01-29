@@ -10,7 +10,7 @@ ym.modules.define('control.DraggablePlacemark', [
 
     var ICON_HALF_HEIGHT = 41 / 2;
     var DraggablePlacemark = defineClass(function (options) {
-        DraggablePlacemark.superclass.constructor.call(this, extend({color: 'red'}, options));
+        DraggablePlacemark.superclass.constructor.call(this, options);
 
         this.state = new DataManager();
     }, CollectionItem, {
@@ -44,7 +44,9 @@ ym.modules.define('control.DraggablePlacemark', [
             // parentDomContainer.appendChild(this._element);
             this.getMap().panes.get('events').getElement().appendChild(this._element);
 
-            var Layout = layoutStorage.get('default#image');
+            var preset = presetStorage.get('islands#icon');
+            var Layout = layoutStorage.get(preset.iconLayout.canvasLayout);
+            // var Layout = layoutStorage.get('default#image');
 
             this.layout = new Layout({
                 state: this.state,
