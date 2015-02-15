@@ -42,64 +42,46 @@ ym.modules.define('layout.MapStateInfoWindowLayout', [
             this._setupListeners();
         },
         clear: function () {
+            this._clearListeners();
+
             MapStateInfoWindowLayout.superclass.clear.call(this);
         },
         _setupListeners: function () {
             var element = this.getElement();
 
             jQuery('form', element).on('submit', jQuery.proxy(this._onStateSubmit, this));
-
-            /*
-            jQuery(element)
-                .on('keyup', '#mapCenter', jQuery.debounce(this._onMapCenterChange, 1000, this))
-                .on('keyup', '#mapZoom', jQuery.debounce(this._onMapZoomChange, 1000, this))
-                .on('keyup', '#mapBounds', jQuery.debounce(this._onMapBoundsChange, 1000, this));
-                */
         },
         _clearListeners: function () {
+            var element = this.getElement();
+
+            jQuery('form', element).off('submit');
+        },
+        _parseCoordinates: function (s) {
+            return s.match(/[\d.]+/g).map(Number);
         },
         _onStateSubmit: function (e) {
             e.preventDefault();
 
             var element = this.getElement();
-            var mapCenter = jQuery('#mapCenter', element).val();
-            var mapZoom = jQuery('#mapZoom', element).val();
-            var mapBounds = jQuery('#mapBounds', element).val();
             var newState = {};
-            try {
-                var center = mapCenter.match(/([\d.]+),([\d.]+)/).slice(1, 3).map(Number);
+            var mapCenter = jQuery('#mapCenter', element);
+            var mapZoom = jQuery('#mapZoom', element);
+            var mapBounds = jQuery('#mapBounds', element);
+            var center = this._parseCoordinates(mapCenter.val());
+            var zoom = Number.parseFloat(mapZoom.val());
+            var bbox = this._parseCoordinates(mapBounds.val());
 
-                if(center.every(isFinite)) {
-                    newState['mapCenter'] = center;
-                }
+            if(center.every(isFinite) && center.length === 2 && mapCenter.val() != mapCenter[0].defaultValue) {
+                newState['mapCenter'] = center;
             }
-            catch(e) {}
-            var zoom = Number.parseFloat(mapZoom);
-            if(zoom >= 0) {
+            if(zoom >= 0 && mapZoom.val() != mapZoom[0].defaultValue) {
                 newState['mapZoom'] = zoom;
+            }
+            if(bbox.every(isFinite) && bbox.length === 4 && mapBounds.val() != mapBounds[0].defaultValue) {
+                newState['mapBounds'] = [bbox.slice(0, 2), bbox.slice(2, 4)];
             }
 
             this.getData().control.state.set(newState);
-        },
-        _onMapCenterChange: function (e) {
-            try {
-                var coords = e.target.value.match(/([\d.]+),([\d.]+)/).slice(1, 3).map(Number);
-
-                if(Number.isFinite(coords[0]) && Number.isFinite(coords[1])) {
-                    this.getData().control.state.set('mapCenter', coords);
-                }
-            }
-            catch(e) {}
-        },
-        _onMapZoomChange: function (e) {
-            var zoom = Number.parseFloat(e.target.value);
-
-            if(zoom >= 0) {
-                this.getData().control.state.set('mapZoom', zoom);
-            }
-        },
-        _onMapBoundsChange: function (e) {
-
         }
     });
 
