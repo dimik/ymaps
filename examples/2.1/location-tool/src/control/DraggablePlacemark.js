@@ -8,7 +8,8 @@ ym.modules.define('control.DraggablePlacemark', [
     'option.presetStorage'
 ], function (provide, defineClass, extend, Dragger, CollectionItem, DataManager, layoutStorage, presetStorage) {
 
-    var ICON_HALF_HEIGHT = 41 / 2;
+    var ICON_SIZE = [34, 41];
+    var ICON_OFFSET = { top: 48, left: 11 };
     var DraggablePlacemark = defineClass(function (options) {
         DraggablePlacemark.superclass.constructor.call(this, extend({ color: 'red' }, options));
 
@@ -18,14 +19,17 @@ ym.modules.define('control.DraggablePlacemark', [
             DraggablePlacemark.superclass.onAddToMap.call(this, map);
 
             this._element = this._createElement();
-            this.dragger = new Dragger({
+            this._cursor = null;
+            this._dragger = new Dragger({
                 autoStartElement: this._element
             });
+            this._dragOffset = [0, 0];
             this.getParent().getChildElement(this).then(this._onChildElement, this);
         },
         onRemoveFromMap: function (oldMap) {
             this._clearListeners();
-            oldMap.panes.get('events').getElement().removeChild(this._element);
+            this.layout.setParentElement(null);
+            this._removeElement();
 
             DraggablePlacemark.superclass.onRemoveFromMap.call(this, oldMap);
         },
@@ -34,15 +38,18 @@ ym.modules.define('control.DraggablePlacemark', [
                 size = this.getMap().container.getSize();
 
             elem.style.position = 'absolute';
-            elem.style.left = (size[0] / 2) + 'px';
-            elem.style.top = (size[1]- ICON_HALF_HEIGHT) / 2 + 'px';
+            elem.style.width = ICON_SIZE[0] + 'px';
+            elem.style.height = ICON_SIZE[1] + 'px';
+            elem.style.left = ((size[0] / 2) - ICON_OFFSET.left) + 'px';
+            elem.style.top = ((size[1] / 2) - ICON_OFFSET.top) + 'px';
 
             return elem;
         },
+        _removeElement: function () {
+            this._element.parentNode.removeChild(this._element);
+        },
         _onChildElement: function (parentDomContainer) {
-            this._draggerEvents = this.dragger.events.group();
-            // parentDomContainer.appendChild(this._element);
-            this.getMap().panes.get('events').getElement().appendChild(this._element);
+             parentDomContainer.appendChild(this._element);
 
             var preset = presetStorage.get('islands#icon');
             // var Layout = layoutStorage.get(preset.iconLayout.domLayout);
@@ -54,20 +61,56 @@ ym.modules.define('control.DraggablePlacemark', [
                 options: this.options
             });
             this.layout.setParentElement(this._element);
+            // Зануляем смещение DOM-элемента метки
+            this._element.firstChild.style.left = 0;
+            this._element.firstChild.style.top = 0;
             this._setupListeners();
         },
         _setupListeners: function () {
-            this._draggerEvents
-                .add('start', this._onDrag, this)
+            this.layout.events
+                .add('mouseenter', this._onMouseEnter, this)
+                .add('mouseleave', this._onMouseLeave, this);
+            this.getMap().container.events
+                .add('sizechange', this._onMapContainerSizeChange, this);
+            this._dragger.events
+                .add('start', this._onDragStart, this)
                 .add('move', this._onDrag, this)
                 .add('stop', this._onDragStop, this);
         },
         _clearListeners: function () {
-            this._draggerEvents.removeAll();
+            this._dragger.events
+                .remove('start', this._onDragStart, this)
+                .remove('move', this._onDrag, this)
+                .remove('stop', this._onDragStop, this);
+            this.getMap().container.events
+                .remove('sizechange', this._onMapContainerSizeChange, this);
+            this.layout.events
+                .remove('mouseenter', this._onMouseEnter, this)
+                .remove('mouseleave', this._onMouseLeave, this);
+        },
+        _onMouseEnter: function () {
+            this._cursor = this.getMap().cursors.push('grab');
+        },
+        _onMouseLeave: function () {
+            this._cursor.remove();
+        },
+        _onMapContainerSizeChange: function (e) {
+            var newSize = e.get('newSize');
+            var oldSize = e.get('oldSize');
+            var offset = [
+                (newSize[0] - oldSize[0]) / 2,
+                (newSize[1] - oldSize[1]) / 2
+            ];
+            var position = this.getPosition();
+
+            this.setPosition([position[0] + offset[0], position[1] + offset[1]]);
         },
         _onDragStart: function (e) {
-            this._isDragged = true;
-            this._onDrag(e);
+            var ePos = e.get('position');
+            var pPos = this.getPosition();
+            this._dragOffset[0] = ePos[0] - pPos[0];
+            this._dragOffset[1] = ePos[1] - pPos[1];
+            this._cursor.setKey('grabbing');
         },
         _onDrag: function (e) {
             var position = e.get('position');
@@ -75,21 +118,26 @@ ym.modules.define('control.DraggablePlacemark', [
             this.setPosition(position);
         },
         _onDragStop: function (e) {
-        // element.parentElement.removeChild(element);
+            if(this._cursor) {
+                this._cursor.setKey('pointer');
+            }
+            this._dragOffset = [0, 0];
         },
         setPosition: function (position) {
             var map = this.getMap(),
                 elem = this._element,
-                offset = map.container.getOffset();
+                offset = map.container.getOffset(),
+                dragOffset = this._dragOffset,
+                pos = [position[0] - dragOffset[0], position[1] - dragOffset[1]],
                 coords = map.options.get('projection').fromGlobalPixels(
-                    map.converter.pageToGlobal(position),
+                    map.converter.pageToGlobal(pos),
                     map.getZoom()
                 );
 
             this.state.set('markerCenter', coords);
 
-            elem.style.left = (position[0] - offset[0]) + 'px';
-            elem.style.top = (position[1] - offset[1]) + 'px';
+            elem.style.left = (pos[0] - offset[0] - ICON_OFFSET.left) + 'px';
+            elem.style.top = (pos[1] - offset[1] - ICON_OFFSET.top) + 'px';
         },
         getPosition: function () {
             var map = this.getMap(),
@@ -97,8 +145,8 @@ ym.modules.define('control.DraggablePlacemark', [
                 offset = map.container.getOffset();
 
             return [
-                parseFloat(elem.style.left) + offset[0],
-                parseFloat(elem.style.top) + offset[1] + ICON_HALF_HEIGHT / 2
+                parseFloat(elem.style.left) + offset[0] + ICON_OFFSET.left,
+                parseFloat(elem.style.top) + offset[1] + ICON_OFFSET.top
             ];
         }
     });
