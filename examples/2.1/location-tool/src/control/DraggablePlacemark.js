@@ -11,7 +11,7 @@ ym.modules.define('control.DraggablePlacemark', [
     var ICON_SIZE = [34, 41];
     var ICON_OFFSET = { top: 48, left: 11 };
     var DraggablePlacemark = defineClass(function (options) {
-        DraggablePlacemark.superclass.constructor.call(this, extend({ color: 'red' }, options));
+        DraggablePlacemark.superclass.constructor.call(this, extend({ color: 'red', cursor: 'grabbing' }, options));
 
         this.state = new DataManager();
     }, CollectionItem, {
