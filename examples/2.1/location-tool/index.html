@@ -59,6 +59,8 @@
             var map = new ymaps.Map('map', {
                     center: coordOrder == 'latlong'? mapCenter : mapCenter.reverse(),
                     zoom: 9
+                }, {
+                    searchControlNoPlacemark: true
                 });
             ymaps.modules.require([
                 'GeoObjectEditor',

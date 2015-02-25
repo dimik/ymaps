@@ -26,12 +26,12 @@ ym.modules.define('control.DraggablePlacemark', [
             this._dragOffset = [0, 0];
             this.getParent().getChildElement(this).then(this._onChildElement, this);
         },
-        onRemoveFromMap: function (oldMap) {
-            this._clearListeners();
+        onRemoveFromMap: function (map) {
+            this._clearListeners(map);
             this.layout.setParentElement(null);
             this._removeElement();
 
-            DraggablePlacemark.superclass.onRemoveFromMap.call(this, oldMap);
+            DraggablePlacemark.superclass.onRemoveFromMap.call(this, map);
         },
         _createElement: function () {
             var elem = document.createElement('div'),
@@ -77,12 +77,12 @@ ym.modules.define('control.DraggablePlacemark', [
                 .add('move', this._onDrag, this)
                 .add('stop', this._onDragStop, this);
         },
-        _clearListeners: function () {
+        _clearListeners: function (map) {
             this._dragger.events
                 .remove('start', this._onDragStart, this)
                 .remove('move', this._onDrag, this)
                 .remove('stop', this._onDragStop, this);
-            this.getMap().container.events
+            map.container.events
                 .remove('sizechange', this._onMapContainerSizeChange, this);
             this.layout.events
                 .remove('mouseenter', this._onMouseEnter, this)
@@ -138,6 +138,12 @@ ym.modules.define('control.DraggablePlacemark', [
 
             elem.style.left = (pos[0] - offset[0] - ICON_OFFSET.left) + 'px';
             elem.style.top = (pos[1] - offset[1] - ICON_OFFSET.top) + 'px';
+        },
+        moveToMapCenter: function () {
+            var mapSize = this.getMap().container.getSize();
+            this.setPosition(mapSize.map(function (pos) {
+                return pos / 2;
+            }));
         },
         getPosition: function () {
             var map = this.getMap(),

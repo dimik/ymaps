@@ -58,10 +58,12 @@ ym.modules.define('MapStateInfo', [
                  */
                 .add('actionbegin', this._onMapActionBegin, this)
                 .add('actionend', this._onMapActionEnd, this);
+            this._map.controls.get('searchControl').events.add('resultshow', this._onSearchControlResult, this);
             this.state.events.add('change', this._onStateChange, this);
         },
         _clearListeners: function () {
             this.state.events.remove('change', this._onStateChange, this);
+            this._map.controls.get('searchControl').events.remove('resultshow', this._onSearchControlResult, this);
             this._mapEvents.removeAll();
         },
         _setupMonitor: function () {
@@ -71,6 +73,9 @@ ym.modules.define('MapStateInfo', [
         _clearMonitor: function () {
             this._stateMonitor
                 .removeAll();
+        },
+        _onSearchControlResult: function () {
+            this._markerControl.moveToMapCenter();
         },
         _onButtonSelect: function () {
             this._map.controls
