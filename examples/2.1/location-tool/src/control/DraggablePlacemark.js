@@ -9,7 +9,8 @@ ym.modules.define('control.DraggablePlacemark', [
 ], function (provide, defineClass, extend, Dragger, CollectionItem, DataManager, layoutStorage, presetStorage) {
 
     var ICON_SIZE = [34, 41];
-    var ICON_OFFSET = { top: 48, left: 11 };
+    // var ICON_OFFSET = { top: 48, left: 11 };
+    var ICON_OFFSET = { top: 38, left: 11 };
     var DraggablePlacemark = defineClass(function (options) {
         DraggablePlacemark.superclass.constructor.call(this, extend({ color: 'red', cursor: 'grabbing' }, options));
 
@@ -49,7 +50,8 @@ ym.modules.define('control.DraggablePlacemark', [
             this._element.parentNode.removeChild(this._element);
         },
         _onChildElement: function (parentDomContainer) {
-             parentDomContainer.appendChild(this._element);
+             // parentDomContainer.appendChild(this._element);
+             this.getMap().panes.get('events').getElement().appendChild(this._element);
 
             var preset = presetStorage.get('islands#icon');
             // var Layout = layoutStorage.get(preset.iconLayout.domLayout);
@@ -89,7 +91,7 @@ ym.modules.define('control.DraggablePlacemark', [
                 .remove('mouseleave', this._onMouseLeave, this);
         },
         _onMouseEnter: function () {
-            this._cursor = this.getMap().cursors.push('grab');
+            this._cursor = this.getMap().cursors.push('pointer');
         },
         _onMouseLeave: function () {
             this._cursor.remove();
