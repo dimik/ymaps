@@ -3,54 +3,62 @@ ym.modules.define('CenteredControl', [
     'util.extend',
     'templateLayoutFactory',
     'collection.Item',
-], function (provide, defineClass, extend, templateLayoutFactory, CollectionItem) {
+    'data.Manager'
+], function (provide, defineClass, extend, templateLayoutFactory, CollectionItem, DataManager) {
 
-    var ContentLayout = templateLayoutFactory.createClass([
-            '<div class="container-fluid">',
-                '{% if options.contentBodyLayout %}',
-                    '{% include options.contentBodyLayout %}',
+    var CenteredControlLayout = templateLayoutFactory.createClass([
+            '<div class="container-fluid" style="position:absolute; left:{{ options.pos.left }}px; top:{{ options.pos.top }}px;">',
+                '{% if options.contentLayout %}',
+                    '{% include options.contentLayout %}',
                 '{% endif %}',
             '</div>'
-        ].join(''), {
-            build: function () {
-                ContentLayout.superclass.build.call(this);
+        ].join(''));
+
+    var CenteredControl = defineClass(function (parameters) {
+            CenteredControl.superclass.constructor.call(this, extend({
+                float: 'none'
+            }, parameters.options));
+            this.data = new DataManager(parameters.data);
+        }, CollectionItem, {
+            onAddToMap: function (map) {
+                CenteredControl.superclass.onAddToMap.call(this, map);
+
+                this.getParent().getChildElement(this).then(this._onChildElement, this);
+            },
+            onRemoveFromMap: function (map) {
+                this._clearListeners(map);
+                this._layout.setParentElement(null);
+
+                CenteredControl.superclass.onRemoveFromMap.call(this, map);
+            },
+            _onChildElement: function (element) {
+                var layout = this._layout = new CenteredControlLayout({
+                    options: this.options,
+                    data: this.data,
+                    control: this
+                });
+                layout.setParentElement(element);
                 this._setupListeners();
                 this._setPosition();
             },
-
-            clear: function () {
-                this._clearListeners();
-                ContentLayout.superclass.clear.call(this);
-            },
-
             _setupListeners: function () {
                 this.getMap().events
                     .add('sizechange', this._setPosition, this);
             },
-
-            _clearListeners: function () {
-                this.getMap().events
+            _clearListeners: function (map) {
+                map.events
                     .remove('sizechange', this._setPosition, this);
             },
-
             _setPosition: function () {
-                var control = this.getData().control,
-                    mapSize = this.getMap().container.getSize(),
-                    layoutContentElement = this.getElement().firstChild;
+                var mapSize = this.getMap().container.getSize(),
+                    layoutContentElement = this._layout.getParentElement().firstChild.firstChild;
 
-                control.options.set('position', {
+                this.options.set('pos', {
                     top: Math.round(mapSize[1] / 2 - layoutContentElement.offsetHeight / 2),
                     left: Math.round(mapSize[0] / 2 - layoutContentElement.offsetWidth / 2)
                 });
             }
         });
-
-    var CenteredControl = defineClass(function (params) {
-            CenteredControl.superclass.constructor.call(this, extend({
-                contentLayout: ContentLayout,
-                float: 'none'
-            }, options));
-        }, CollectionItem);
 
     provide(CenteredControl);
 });
