@@ -3,7 +3,8 @@ ym.modules.define('GeoObjectEditor.component.styles', [
     'util.bind',
     'option.presetStorage',
     'template.filter.geometry.json',
-    'template.filter.geometry.base64'
+    'template.filter.geometry.base64',
+    'template.filter.geometry.bounds'
 ], function (provide, templateLayoutFactory, bind, presetStorage) {
 
     var BalloonContentLayout = templateLayoutFactory.createClass([
@@ -15,6 +16,14 @@ ym.modules.define('GeoObjectEditor.component.styles', [
                         '{% include options.coordinatesFieldLayout %}',
                     '</div>',
                 '</div>',
+                '{% if options.boundingBoxFieldLayout %}',
+                    '<div class="control-group">',
+                        '<label class="control-label" for="boundingBoxField">Область</label>',
+                        '<div class="controls">',
+                            '{% include options.boundingBoxFieldLayout %}',
+                        '</div>',
+                    '</div>',
+                '{% endif %}',
                 '{% if options.encodedCoordinatesFieldLayout %}',
                     '<div class="control-group">',
                         '<label class="control-label" for="encodedCoordinatesField">Base64 координаты</label>',
@@ -73,9 +82,10 @@ ym.modules.define('GeoObjectEditor.component.styles', [
         }
     });
     var PointCoordinatesFieldLayout = templateLayoutFactory.createClass('<input id="coordinatesField" class="span4" value="{{ geometry|geometry#json }}"></input>');
-    var LineStringCoordinatesFieldLayout = templateLayoutFactory.createClass('<textarea rows="3" id="coordinatesField">{{ geometry|geometry#json }}</textarea>');
-    var PolygonCoordinatesFieldLayout = templateLayoutFactory.createClass('<textarea rows="3" id="coordinatesField">{{ geometry|geometry#json }}</textarea>');
+    var LineStringCoordinatesFieldLayout = templateLayoutFactory.createClass('<textarea rows="2" id="coordinatesField">{{ geometry|geometry#json }}</textarea>');
+    var PolygonCoordinatesFieldLayout = templateLayoutFactory.createClass('<textarea rows="2" id="coordinatesField">{{ geometry|geometry#json }}</textarea>');
     var EncodedCoordinatesFieldLayout = templateLayoutFactory.createClass('<textarea rows="2" id="encodedCoordinatesField">{{ geometry|geometry#base64 }}</textarea>');
+    var BoundingBoxFieldLayout = templateLayoutFactory.createClass('<input id="boundingBoxField" class="span4" value="{{ geometry|geometry#bounds }}"></input>');
 
     presetStorage.add('GeoObjectEditor#Point', {
         balloonContentLayout: BalloonContentLayout,
@@ -84,12 +94,13 @@ ym.modules.define('GeoObjectEditor.component.styles', [
     presetStorage.add('GeoObjectEditor#LineString', {
         balloonContentLayout: BalloonContentLayout,
         balloonCoordinatesFieldLayout: LineStringCoordinatesFieldLayout,
-        balloonEncodedCoordinatesFieldLayout: EncodedCoordinatesFieldLayout
+        balloonEncodedCoordinatesFieldLayout: EncodedCoordinatesFieldLayout,
+        balloonBoundingBoxFieldLayout: BoundingBoxFieldLayout
     });
     presetStorage.add('GeoObjectEditor#Polygon', {
         balloonContentLayout: BalloonContentLayout,
         balloonCoordinatesFieldLayout: PolygonCoordinatesFieldLayout,
-        balloonEncodedCoordinatesFieldLayout: EncodedCoordinatesFieldLayout
+        balloonBoundingBoxFieldLayout: BoundingBoxFieldLayout
     });
 
     provide(presetStorage);
