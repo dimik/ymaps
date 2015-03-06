@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>PieChartClusterer example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="//api-maps.yandex.ru/2.1/?lang=en_US" type="text/javascript"></script>
+    <script src="build/pie-chart-clusterer.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map('map', {
+                    center: [55.7517318022522, 37.61691485505143],
+                    zoom: 10
+                });
+
+            ymaps.modules.require([
+                'RandomPointsGenerator', 'PieChartClustererLayout'
+            ], function (RandomPointsGenerator, PieChartClustererLayout) {
+                var generator = new RandomPointsGenerator(200);
+
+                generator.getPointData = function (i) {
+                    return { id: 'id-' + i };
+                };
+
+                // Overlap placemark generator's method to create placemarks of 4 different types.
+                generator.getPointOptions = function (i) {
+                    var presets = ['islands#blueIcon', 'islands#orangeIcon', 'islands#greenIcon', 'islands#pinkIcon'];
+                    return {
+                        preset: presets[Math.floor(Math.random() * presets.length)]
+                    };
+                };
+
+                var objectManager = new ymaps.ObjectManager({
+	    	    clusterize: true,
+		    clusterIconLayout: PieChartClustererLayout
+		});
+                var points = generator.generate(200).atBounds(myMap.getBounds());
+
+		points.forEach(function (point) {
+    		    objectManager.add({
+			type: 'Feature',
+			geometry: {
+			    type: 'Point',
+			    coordinates: point.geometry.getCoordinates()
+			},
+			id: point.properties.get('id'),
+			properties: point.properties.getAll(),
+			options: {
+			    preset: point.options.get('preset')
+			}
+		    });
+		});
+
+                myMap.geoObjects.add(objectManager);
+            });
+        });
+    </script>
+    <style type="text/css">
+        #map {
+            width: 900px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container">
+            <p>PieChartClusterer example</p>
+            <div id="map"></div>
+        </div>
+    </div>
+</body>
+
+</html>
