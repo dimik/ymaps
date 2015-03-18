@@ -26,7 +26,7 @@
 
                 // Overlap placemark generator's method to create placemarks of 4 different types.
                 generator.getPointOptions = function (i) {
-                    var presets = ['islands#blueIcon', 'islands#orangeIcon', 'islands#greenIcon', 'islands#pinkIcon'];
+                    var presets = ['islands#blueIcon', 'islands#yellowIcon', 'islands#greenIcon', 'islands#pinkIcon'];
 
                     return {
                         preset: presets[Math.floor(Math.random() * presets.length)]
@@ -54,7 +54,7 @@
                 myMap.geoObjects.add(objectManager);
 
                 setTimeout(function () {
-                    objectManager.setFilter('options.preset == "islands#orangeIcon"');
+                    objectManager.setFilter('options.preset == "islands#yellowIcon"');
                 }, 3000);
             });
         });
