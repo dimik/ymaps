@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Примеры. Список объектов в области видимости карты</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="//yandex.st/jquery/2.1.0/jquery.min.js" type="text/javascript"></script>
+
+    <script src="//api-maps.yandex.ru/2.1/?lang=ru-RU" type="text/javascript"></script>
+    <script src="build/points-generator.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var listView = $('#objects-list');
+            var map = new ymaps.Map('map', {
+                    center: [55.753994, 37.622093],
+                    zoom: 9
+                });
+
+            ymaps.modules.require([
+                'RandomPointsGenerator'
+            ], function (RandomPointsGenerator) {
+                var generator = new RandomPointsGenerator();
+                generator.getPointData = function (index) {
+                    return {
+                        title: 'метка ' + index
+                    };
+                };
+                var points = generator.generate(100).atBounds(map.getBounds());
+                ymaps.geoQuery(points).addToMap(map);
+                filterByVisibleArea();
+                map.events.add('boundschange', filterByVisibleArea);
+
+                listView
+                    .on({
+                        mouseenter: function (e) {
+                            $(e.currentTarget).data('geoObject').options.set('preset', 'islands#redIcon');
+                        },
+                        mouseleave: function (e) {
+                            $(e.currentTarget).data('geoObject').options.unset('preset');
+                        },
+                        click: function (e) {
+                            e.preventDefault();
+
+                            map.setCenter($(e.currentTarget).data('geoObject').geometry.getCoordinates());
+                        }
+                    }, 'li');
+
+                function cleanUp() {
+                    listView.empty();
+                    ymaps.geoQuery(map.geoObjects).unsetOptions('preset');
+                }
+                function filterByVisibleArea() {
+                    cleanUp();
+                    ymaps.geoQuery(map.geoObjects).searchIntersect(map)
+                        .each(function (geoObject) {
+                            var geoObjectView = $('<li><a href="#">' + geoObject.properties.get('title') + '</a></li>');
+
+                            geoObjectView.data({ geoObject: geoObject });
+
+                            listView.append(geoObjectView);
+                        });
+                }
+            });
+
+
+        });
+    </script>
+    <style type="text/css">
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+        #objects-list {
+            margin-top: 40px;
+            overflow: scroll;
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-unit">
+        <div class="container-fluid">
+            <div class="span8">
+                <p>Список объектов в области видимости карты</p>
+                <div id="map"></div>
+            </div>
+            <div class="span4">
+                <ul id="objects-list">
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
