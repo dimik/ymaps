@@ -1,0 +1,4 @@
+{
+    "concatTo": "points-generator.min.js",
+    "minify": false
+}
