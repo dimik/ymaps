@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователькая карта.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        html, body, #map {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru-RU"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var layerName = "user#layer";
+            var zoomRange = [4, 6];
+            var Layer = function () {
+                var layer = new ymaps.Layer("./tiles/%z/%x-%y.png");
+                layer.getZoomRange = function () {
+                    return ymaps.vow.resolve(zoomRange);
+                };
+                return layer;
+            };
+            ymaps.layer.storage.add(layerName, Layer);
+            var mapType = new ymaps.MapType(layerName, [layerName]);
+            ymaps.mapType.storage.add(layerName, mapType);
+            var map = new ymaps.Map("map", {
+                center: [0, 0],
+                zoom: 4,
+                type: layerName,
+                controls: ["zoomControl"]
+            }, {
+                projection: new ymaps.projection.Cartesian([[-1, -1], [1, 1]], [false, false])
+            });
+            var hotspotObjectSource = new ymaps.hotspot.ObjectSource('./hotspots/%z/hotspot-%x-%y.js', 'hotspot_callback'/* ,{ noCache: true }*/);
+            hotspotObjectSource.restrict = function(layer, tileNumber, zoom) {
+                return !(tileNumber[0] == 34 && tileNumber[1] == 27 && zoom == 6);
+            };
+            var hotspotLayer = new ymaps.hotspot.Layer(hotspotObjectSource, { cursor: 'pointer' });
+            map.layers.add(hotspotLayer);
+
+            map.events.add('click', function (e) {
+                var gobalPixelPoint = e.get('coords')
+                    .map(function (point) {
+                        console.log(point, map.getZoom());
+                        return map.options.get('projection').toGlobalPixels(point, map.getZoom());
+                    });
+
+                console.log(gobalPixelPoint);
+                map.balloon.open(e.get('coords'), {
+                    content: JSON.stringify(gobalPixelPoint)
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+</body>
+</html>
