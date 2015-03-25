@@ -37,7 +37,7 @@
                 restrictMapArea: [[-4608, 10752], [4608, -10752]],
                 zoomControlSize: 'small'
             });
-            var hotspotObjectSource = new ymaps.hotspot.ObjectSource('./hotspots/%z/hotspot-%x-%y.js', 'hotspot_callback' ,{ noCache: true });
+            var hotspotObjectSource = new ymaps.hotspot.ObjectSource('./hotspots/%z/hotspot-%x-%y.js', 'hotspot_callback'/* ,{ noCache: true }*/);
             var hotspotLayer = new ymaps.hotspot.Layer(hotspotObjectSource, { cursor: 'arrow' });
             map.layers.add(hotspotLayer);
         });
