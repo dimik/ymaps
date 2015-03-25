@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>ЮАР</strong><br/>[туры в юар]<br/>[принадлежность юар и соседних стран к экономическим и политическим блокам] <br/>[где же уголь из юар]","HotspotMetaData":{"id":"ZA","RenderedGeometry":{"type":"Rectangle","coordinates":[[171,114],[188,124]]}}}}]}})

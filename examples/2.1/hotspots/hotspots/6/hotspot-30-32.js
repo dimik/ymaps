@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Либерия</strong><br/>[лихорадка эбола в либерии]<br/>[своими глазами эпидемия эболы в либерии]<br/>[либерия эбола новости]","HotspotMetaData":{"id":"LR","RenderedGeometry":{"type":"Rectangle","coordinates":[[9,166],[67,203]]}}}}]}})

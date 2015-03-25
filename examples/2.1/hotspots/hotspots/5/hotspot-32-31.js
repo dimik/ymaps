@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Алжир</strong><br/>[алжирское терпение пасьянс]<br/>[флаг алжира] <br/>[алжир столица]","HotspotMetaData":{"id":"DZ","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,13],[5,82]]}}}}]}})

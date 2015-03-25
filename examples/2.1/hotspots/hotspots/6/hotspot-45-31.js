@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Филиппины</strong><br/>[филиппинские острова на карте]<br/>[филиппинский долгопят] <br/>[где отдыхать на филиппинах]","HotspotMetaData":{"id":"PH","RenderedGeometry":{"type":"Rectangle","coordinates":[[6,124],[80,175]]}}}}]}})

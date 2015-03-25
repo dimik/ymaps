@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Куба</strong><br/>[куба гавана отдых цены]<br/>[купить комбинированный тур куба-ямайка из спб] <br/>[куба отели 2 звезды отзывы]","HotspotMetaData":{"id":"CU","RenderedGeometry":{"type":"Rectangle","coordinates":[[116,191],[166,241]]}}}}]}})

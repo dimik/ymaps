@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Мьянма</strong><br/>[бирманская кошка описание породы]<br/>[мьянма бокс видео] <br/>[Священная Бирма]","HotspotMetaData":{"id":"MM","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,224],[90,256]]}}}}]}})

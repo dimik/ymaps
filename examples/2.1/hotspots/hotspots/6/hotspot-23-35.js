@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Чили</strong><br/>[перец чили вред и польза]<br/>[соус чили рецепт приготовления]","HotspotMetaData":{"id":"CL","RenderedGeometry":{"type":"Rectangle","coordinates":[[94,243],[146,256]]}}}}]}})

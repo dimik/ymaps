@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Камбоджа</strong><br/>[туры в камбоджу туроператор]<br/>[мир наизнанку камбоджа]<br/>[из бангкока в камбоджу самостоятельно]","HotspotMetaData":{"id":"KH","RenderedGeometry":{"type":"Rectangle","coordinates":[[211,0],[256,19]]}}}}]}})

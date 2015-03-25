@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Туркмения</strong><br/>[новости свободного туркменистана]<br/>[правила оформления на работу граждан туркменистана] <br/>[песня туркменские]","HotspotMetaData":{"id":"TM","RenderedGeometry":{"type":"Rectangle","coordinates":[[193,229],[256,256]]}}}}]}})

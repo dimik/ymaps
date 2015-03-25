@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Мальдивы</strong><br/>[отдых с детьми на мальдивах]<br/>[туры на мальдивы]<br/>[мальдивы отели все включено цены]","HotspotMetaData":{"id":"MV","RenderedGeometry":{"type":"Rectangle","coordinates":[[133,254],[175,256]]}}}}]}})

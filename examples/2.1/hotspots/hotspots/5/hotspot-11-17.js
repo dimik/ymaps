@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Перу</strong><br/>[музыка индейцев перу]<br/>[Город древних Инков Мачу-Пикчу в Перу] ","HotspotMetaData":{"id":"PE","RenderedGeometry":{"type":"Rectangle","coordinates":[[98,89],[143,127]]}}}}]}})

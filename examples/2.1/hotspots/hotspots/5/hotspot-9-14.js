@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>США</strong><br/>[американская история ужасов 4 сезон 13 серия]<br/>[смотреть американские добрые фильмы]","HotspotMetaData":{"id":"US","RenderedGeometry":{"type":"Rectangle","coordinates":[[194,82],[256,150]]}}}}]}})

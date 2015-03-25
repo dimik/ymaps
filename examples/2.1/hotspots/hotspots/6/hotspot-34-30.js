@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Египет</strong><br/>[история и религия древнего египта]<br/>[красивые отели египта] <br/>[туры в египет из тюмени]","HotspotMetaData":{"id":"EG","RenderedGeometry":{"type":"Rectangle","coordinates":[[100,97],[200,170]]}}}}]}})

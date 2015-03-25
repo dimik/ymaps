@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Бразилия</strong><br/>[сериалы бразильские список]<br/>[проспект бразилии 128 серия]  <br/>[футбол чемпионат бразилии серия а результаты игр вчера]","HotspotMetaData":{"id":"BR","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,51],[5,122]]}}}}]}})

@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Шри-Ланка</strong><br/>[отдых на шри ланке отзывы]<br/>[шри ланка виза]<br/>[отели шри-ланка 4 звезды]","HotspotMetaData":{"id":"LK","RenderedGeometry":{"type":"Rectangle","coordinates":[[63,65],[100,78]]}}}}]}})

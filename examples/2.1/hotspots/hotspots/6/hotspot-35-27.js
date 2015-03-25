@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Украина</strong><br/>[украина последние новости]<br/>[украинская правда на русском] <br/>[война на юго востоке украины]","HotspotMetaData":{"id":"UA","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,203],[10,256]]}}}}]}})

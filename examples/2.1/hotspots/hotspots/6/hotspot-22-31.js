@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Ямайка</strong><br/>[ямайский спринтер 5 букв]<br/>[текст песни ямайка]<br/>[аккорды к песне аргентина ямайка 5 0]","HotspotMetaData":{"id":"JM","RenderedGeometry":{"type":"Rectangle","coordinates":[[116,138],[190,191]]}}}}]}})

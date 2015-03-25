@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Канада</strong><br/>[каркасный дом по канадской технологии]<br/>[детские пуховики канада гус]","HotspotMetaData":{"id":"CA","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,238],[20,256]]}}}}]}})

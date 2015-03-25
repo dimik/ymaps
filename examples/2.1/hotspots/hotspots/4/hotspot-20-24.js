@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Япония</strong><br/>[японский кроссворд наездница решение]<br/>[купить авто с аукциона в японии]","HotspotMetaData":{"id":"JP","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,146],[4,155]]}}}}]}})

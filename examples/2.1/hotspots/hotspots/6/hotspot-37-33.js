@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Сейшельские Острова</strong><br/>[дом 2 на сейшельских островах]<br/>[тур на сейшельские острова из саратова] <br/>[погода на сейшельских островах]","HotspotMetaData":{"id":"SC","RenderedGeometry":{"type":"Rectangle","coordinates":[[138,244],[180,256]]}}}}]}})

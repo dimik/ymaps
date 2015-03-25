@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Монголия</strong><br/>[было ли татаро-монгольское иго]<br/>[монгол шуудан слушать] <br/>[монголо-татарское нашествие на русь этапы]","HotspotMetaData":{"id":"MN","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,0],[121,119]]}}}}]}})

@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Вьетнам</strong><br/>[отдых во вьетнаме в марте]<br/>[вьетнам отели туры] <br/>[погода на 2 недели вьетнам нячанг]","HotspotMetaData":{"id":"VN","RenderedGeometry":{"type":"Rectangle","coordinates":[[0,242],[42,256]]}}}}]}})

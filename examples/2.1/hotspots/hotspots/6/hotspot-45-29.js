@@ -1,0 +1,1 @@
+hotspot_callback({"data":{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"hintContent":"<strong>Корея</strong><br/>[морковь по-корейски рецепт с фото]<br/>[корейский сериал вперед скумбрия вперед с русской озвучкой]","HotspotMetaData":{"id":"KR","RenderedGeometry":{"type":"Rectangle","coordinates":[[207,58],[256,109]]}}}}]}})
