@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователькая карта.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        html, body, #map {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru_RU&coordorder=longlat"></script>
+    <script src="//yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://kashey.ru/maps/regions.js"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var layerName = "user#layer";
+            var zoomRange = [0, 6];
+            var Layer = function () {
+                var layer = new ymaps.Layer("./tiles/background.png");
+                layer.getZoomRange = function () {
+                    return ymaps.vow.resolve(zoomRange);
+                };
+                return layer;
+            };
+            ymaps.layer.storage.add(layerName, Layer);
+            var mapType = new ymaps.MapType(layerName, [layerName]);
+            ymaps.mapType.storage.add(layerName, mapType);
+            var map = new ymaps.Map('map', {
+                center: [55.753994, 37.622093],
+                zoom: 2,
+                type: layerName,
+                controls: ["zoomControl"]
+            }, {
+                // projection: new ymaps.projection.Cartesian([[-1, -1], [1, 1]], [false, false])
+                // projection: new ymaps.projection.Cartesian([[-16384, 16384], [16384, -16384]], [false, false]),
+                // restrictMapArea: [[-4608, 10752], [4608, -10752]],
+                zoomControlSize: 'small'
+            });
+            osmeRegions.geoJSON('world', {
+                lang: 'ru',
+                quality: 0,
+                type: 'coast'
+            }, function (geoJson) {
+                var regions = ymaps.geoQuery(geoJson).setOptions({ fillColor: 'ffffff' }).addToMap(map);
+                jQuery.ajax({
+                    url: 'data/data.json',
+                    dataType: 'json'
+                }).then(function (data) {
+                    var listBox = new ymaps.control.ListBox({
+                        data: { content: 'запросы' }
+                    });
+                    map.controls.add(listBox);
+                    listBox.events.add('deselect', function (e) {
+                        regions.setOptions({
+                            fillColor: 'ffffff'
+                        });
+                    });
+
+                    data.forEach(function (it) {
+                        var listBoxItem = new ymaps.control.ListBoxItem({
+                            data: { content: it.theme }
+                        });
+                        listBoxItem.events.add('select', function (e) {
+                            listBox.each(function (i) {
+                                if(i != listBoxItem) {
+                                    i.deselect();
+                                }
+                            });
+                            it.countries.forEach(function (country) {
+                                var res = regions.search(function (region) {
+                                    return region.properties.get('properties.iso3166') == country.id;
+                                }).setOptions({
+                                    fillColor: country.color + ""
+                                });
+                            });
+                        });
+                        listBox.add(listBoxItem);
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+</body>
+</html>
