@@ -28,23 +28,22 @@
             ymaps.layer.storage.add(layerName, Layer);
             var mapType = new ymaps.MapType(layerName, [layerName]);
             ymaps.mapType.storage.add(layerName, mapType);
-            var map = new ymaps.Map('map', {
-                center: [55.753994, 37.622093],
+            var map = window.map = new ymaps.Map('map', {
+                center: [52.437499999999986, 44.18201243994362],
                 zoom: 2,
                 type: layerName,
                 controls: ["zoomControl"]
             }, {
-                // projection: new ymaps.projection.Cartesian([[-1, -1], [1, 1]], [false, false])
-                // projection: new ymaps.projection.Cartesian([[-16384, 16384], [16384, -16384]], [false, false]),
-                // restrictMapArea: [[-4608, 10752], [4608, -10752]],
+                restrictMapArea: [[-179,-60],[179,83]],
                 zoomControlSize: 'small'
             });
+
             osmeRegions.geoJSON('world', {
                 lang: 'ru',
                 quality: 0,
                 type: 'coast'
             }, function (geoJson) {
-                var regions = ymaps.geoQuery(geoJson).setOptions({ fillColor: 'ffffff' }).addToMap(map);
+                var regions = ymaps.geoQuery(geoJson).setOptions({ fillColor: 'ffffff', strokeColor: 'ffffff' }).addToMap(map);
                 jQuery.ajax({
                     url: 'data/data.json',
                     dataType: 'json'
