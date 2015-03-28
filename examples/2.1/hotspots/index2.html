@@ -49,9 +49,9 @@
                     dataType: 'json'
                 }).then(function (data) {
                     var listBox = new ymaps.control.ListBox({
-                        data: { content: 'запросы' }
+                        data: { content: 'Выбрать тему' }
                     });
-                    map.controls.add(listBox);
+                    map.controls.add(listBox, { float: 'right' });
                     listBox.events.add('deselect', function (e) {
                         regions.setOptions({
                             fillColor: 'ffffff'
