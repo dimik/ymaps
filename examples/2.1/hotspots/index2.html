@@ -40,13 +40,13 @@
             });
 
             var TitleControlLayout = ymaps.templateLayoutFactory.createClass([
-                '<div style="font: 16px arial, sans-serif;">{{ data.content }}</div>'
+                '<div style="font: 16px arial, sans-serif; position: absolute; top: {{ options.position.top }}px; left: {{ options.position.left }}px">{{ data.content }}</div>'
             ].join(''));
             var TitleControl = ymaps.util.defineClass(function (params) {
                 TitleControl.superclass.constructor.call(this, params.options);
 
                 this.data = new ymaps.data.Manager(params.data);
-                this._layout = new TitleControlLayout({ data: this.data });
+                this._layout = new TitleControlLayout({ data: this.data, options: this.options });
             }, ymaps.collection.Item, {
                 onAddToMap: function (map) {
                     TitleControl.superclass.onAddToMap.call(this, map);
@@ -58,7 +58,8 @@
                     TitleControl.superclass.onRemoveFromMap.call(this, oldMap);
                 },
                 _onChildElement: function (parentDomContainer) {
-                    this._layout.setParentElement(parentDomContainer);
+                    // this._layout.setParentElement(parentDomContainer);
+                    this._layout.setParentElement(map.panes.get('events').getElement());
                 }
             });
 
