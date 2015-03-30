@@ -31,15 +31,42 @@
             var mapType = new ymaps.MapType(layerName, [layerName]);
             ymaps.mapType.storage.add(layerName, mapType);
             var map = window.map = new ymaps.Map('map', {
-                // center: [52.437499999999986, 44.18201243994362],
                 center: [25.015625, 35.243634002208665],
                 zoom: 2,
                 type: layerName,
                 controls: ["zoomControl"]
             }, {
-                // restrictMapArea: [[-179,-60],[179,83]],
                 zoomControlSize: 'small'
             });
+
+            var TitleControlLayout = ymaps.templateLayoutFactory.createClass([
+                '<div style="font: 16px arial, sans-serif;">{{ data.content }}</div>'
+            ].join(''));
+            var TitleControl = ymaps.util.defineClass(function (params) {
+                TitleControl.superclass.constructor.call(this, params.options);
+
+                this.data = new ymaps.data.Manager(params.data);
+                this._layout = new TitleControlLayout({ data: this.data });
+            }, ymaps.collection.Item, {
+                onAddToMap: function (map) {
+                    TitleControl.superclass.onAddToMap.call(this, map);
+                    this.getParent().getChildElement(this).then(this._onChildElement, this);
+                },
+                onRemoveFromMap: function (oldMap) {
+                    this._layout.setParentElement(null);
+
+                    TitleControl.superclass.onRemoveFromMap.call(this, oldMap);
+                },
+                _onChildElement: function (parentDomContainer) {
+                    this._layout.setParentElement(parentDomContainer);
+                }
+            });
+
+            var titleControl = new TitleControl({
+                data: { content: '' },
+                options: { float: 'none', position: { top: 20, left: 20 } }
+            });
+            map.controls.add(titleControl);
 
             osmeRegions.geoJSON('world', {
                 lang: 'ru',
@@ -71,6 +98,7 @@
                                     i.deselect();
                                 }
                             });
+                            titleControl.data.set({ content: it.theme });
                             it.countries.forEach(function (country) {
                                 var res = regions.search(function (region) {
                                     return region.properties.get('properties.iso3166') == country.id;
