@@ -71,7 +71,7 @@
 
             osmeRegions.geoJSON('world', {
                 lang: 'ru',
-                quality: 0,
+                quality: 1,
                 type: 'coast'
             }, function (geoJson) {
                 var regions = ymaps.geoQuery(geoJson).setOptions({ fillColor: 'ffffff', strokeColor: 'ffffff', pixelRendering: 'static' }).addToMap(map);
