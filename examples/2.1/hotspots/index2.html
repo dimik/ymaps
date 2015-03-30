@@ -39,6 +39,10 @@
                 zoomControlSize: 'small'
             });
 
+            map.options.get('projection').isCycled = function () {
+                return [false, false];
+            };
+
             osmeRegions.geoJSON('world', {
                 lang: 'ru',
                 quality: 0,
