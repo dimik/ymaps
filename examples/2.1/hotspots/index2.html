@@ -19,7 +19,9 @@
             var layerName = "user#layer";
             var zoomRange = [0, 6];
             var Layer = function () {
-                var layer = new ymaps.Layer("./tiles/background.png");
+                var layer = new ymaps.Layer("./tiles/background.png", {
+                    notFoundTile: "./tiles/background.png"
+                });
                 layer.getZoomRange = function () {
                     return ymaps.vow.resolve(zoomRange);
                 };
@@ -39,18 +41,12 @@
                 zoomControlSize: 'small'
             });
 
-            /*
-            map.options.get('projection').isCycled = function () {
-                return [false, false];
-            };
-            */
-
             osmeRegions.geoJSON('world', {
                 lang: 'ru',
                 quality: 0,
                 type: 'coast'
             }, function (geoJson) {
-                var regions = ymaps.geoQuery(geoJson).setOptions({ fillColor: 'ffffff', strokeColor: 'ffffff' }).addToMap(map);
+                var regions = ymaps.geoQuery(geoJson).setOptions({ fillColor: 'ffffff', strokeColor: 'ffffff', pixelRendering: 'static' }).addToMap(map);
                 jQuery.ajax({
                     url: 'data/data.json',
                     dataType: 'json'
