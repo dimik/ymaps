@@ -12,7 +12,7 @@
         }
     </style>
     <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru_RU&coordorder=longlat"></script>
-    <script src="//yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+    <script src="http://yandex.st/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="http://kashey.ru/maps/regions.js?5"></script>
     <script type="text/javascript">
         ymaps.ready(function () {
@@ -34,7 +34,8 @@
                 center: [25.015625, 35.243634002208665],
                 zoom: 2,
                 type: layerName,
-                controls: ["zoomControl"]
+                controls: ["zoomControl"],
+                behaviors: []
             }, {
                 zoomControlSize: 'small'
             });
