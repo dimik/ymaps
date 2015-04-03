@@ -30,7 +30,7 @@
             ymaps.layer.storage.add(layerName, Layer);
             var mapType = new ymaps.MapType(layerName, [layerName]);
             ymaps.mapType.storage.add(layerName, mapType);
-            var map = window.map = new ymaps.Map('map', {
+            var map = new ymaps.Map('map', {
                 center: [25.015625, 35.243634002208665],
                 zoom: 2,
                 type: layerName,
