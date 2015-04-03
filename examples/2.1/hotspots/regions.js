@@ -648,6 +648,8 @@
                 var lang = options.lang || 'en',
                     addr = lang + '_' + region;
 
+                    addr = region;
+                /*
                 if ((region + "").indexOf('http') === 0) {
                     addr = region;
                 } else {
@@ -659,6 +661,7 @@
                         addr += '&type=' + options.type;
                     }
                 }
+                */
                 if (!cache[addr] || options.nocache) {
                     var _this = this;
                     this.loadData(addr, function (data) {
