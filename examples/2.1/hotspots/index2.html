@@ -13,7 +13,7 @@
     </style>
     <script type="text/javascript" src="//api-maps.yandex.ru/2.1/?lang=ru_RU&coordorder=longlat"></script>
     <script type="text/javascript" src="//yandex.st/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="//kashey.ru/maps/regions.js?6"></script>
+    <script type="text/javascript" src="regions.js"></script>
     <script type="text/javascript">
         ymaps.ready(function () {
             var layerName = "user#layer";
@@ -69,7 +69,7 @@
             });
             map.controls.add(titleControl);
 
-            osmeRegions.geoJSON('world', {
+            osmeRegions.geoJSON('data/regions.json', {
                 lang: 'ru',
                 quality: 0,
                 type: 'coast'
