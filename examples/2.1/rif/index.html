@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Пользователькая карта.</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        html, body, #map {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru-RU"></script>
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var layerName = "user#layer";
+            var zoomRange = [0, 4];
+            var Layer = function () {
+                var layer = new ymaps.Layer("./tiles/%z/%x-%y.png", {
+                    tileTransparent: true
+                });
+                layer.getZoomRange = function () {
+                    return ymaps.vow.resolve(zoomRange);
+                };
+                return layer;
+            };
+            ymaps.layer.storage.add(layerName, Layer);
+            var mapType = new ymaps.MapType(layerName, [layerName]);
+            ymaps.mapType.storage.add(layerName, mapType);
+
+
+            var map = new ymaps.Map("map", {
+                center: [0, 0],
+                zoom: 0,
+                type: layerName,
+                controls: ["zoomControl"]
+            }, {
+                projection: new ymaps.projection.Cartesian([[-1, -1], [1, 1]], [false, false])
+            });
+
+            var LegendControlLayout = ymaps.templateLayoutFactory.createClass('<img src="./legend.png"/>');
+            var LegendControl = ymaps.util.defineClass(function (params) {
+                LegendControl.superclass.constructor.call(this, params.options);
+
+                this.data = new ymaps.data.Manager(params.data);
+                this._layout = new LegendControlLayout({ data: this.data, options: this.options });
+            }, ymaps.collection.Item, {
+                onAddToMap: function (map) {
+                    LegendControl.superclass.onAddToMap.call(this, map);
+                    this.getParent().getChildElement(this).then(this._onChildElement, this);
+                },
+                onRemoveFromMap: function (oldMap) {
+                    this._layout.setParentElement(null);
+
+                    LegendControl.superclass.onRemoveFromMap.call(this, oldMap);
+                },
+                _onChildElement: function (parentDomContainer) {
+                    this._layout.setParentElement(parentDomContainer);
+                    // this._layout.setParentElement(map.panes.get('events').getElement());
+                }
+            });
+
+            var legendControl = new LegendControl({
+                data: { content: '' },
+                options: { float: 'none', position: { bottom: 20, left: 20 } }
+            });
+            map.controls.add(legendControl);
+        });
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+</body>
+</html>
