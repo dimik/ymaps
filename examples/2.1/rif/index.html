@@ -15,7 +15,7 @@
     <script type="text/javascript">
         ymaps.ready(function () {
             var layerName = "user#layer";
-            var zoomRange = [0, 4];
+            var zoomRange = [1, 4];
             var Layer = function () {
                 var layer = new ymaps.Layer("./tiles/%z/%x-%y.png", {
                     tileTransparent: true
@@ -30,12 +30,17 @@
             ymaps.mapType.storage.add(layerName, mapType);
 
 
-            var map = new ymaps.Map("map", {
+            var map = window.map = new ymaps.Map("map", {
                 center: [0, 0],
-                zoom: 0,
+                zoom: 3,
                 type: layerName,
-                controls: ["zoomControl"]
+                controls: ["zoomControl"],
             }, {
+                /*
+                restrictMapArea: [
+                    [-0.7146237220890721, -0.4683987435590167], [0.7120688366875021, 0.46728049133915395]
+                ],
+                */
                 projection: new ymaps.projection.Cartesian([[-1, -1], [1, 1]], [false, false])
             });
 
