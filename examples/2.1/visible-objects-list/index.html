@@ -54,13 +54,26 @@
                 }
                 function filterByVisibleArea() {
                     cleanUp();
+                    /*
                     ymaps.geoQuery(map.geoObjects).searchIntersect(map)
+                    */
+                    var pixelBounds = map.getBounds()
+                        .map(function (point) {
+                            return map.options.get('projection').toGlobalPixels(point, map.getZoom());
+                        });
+                    map.geoObjects
                         .each(function (geoObject) {
-                            var geoObjectView = $('<li><a href="#">' + geoObject.properties.get('title') + '</a></li>');
+                            geoObject.getOverlay()
+                                .then(function (layout) {
+                                    console.log(ymaps.util.pixelBounds.containsBounds(pixelBounds, layout.getShape().getBounds()))
+                                    if(ymaps.util.pixelBounds.containsBounds(pixelBounds, layout.getShape().getBounds())) {
+                                        var geoObjectView = $('<li><a href="#">' + geoObject.properties.get('title') + '</a></li>');
 
-                            geoObjectView.data({ geoObject: geoObject });
+                                        geoObjectView.data({ geoObject: geoObject });
 
-                            listView.append(geoObjectView);
+                                        listView.append(geoObjectView);
+                                    }
+                                });
                         });
                 }
             });
