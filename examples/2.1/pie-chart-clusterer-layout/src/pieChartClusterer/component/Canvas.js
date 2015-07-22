@@ -3,10 +3,10 @@ ym.modules.define('PieChartClusterer.component.Canvas', [
     'PieChartClusterer.icon.colors'
 ], function (provide, OptionManager, iconColors) {
     var DEFAULT_OPTIONS = {
-        iconStrokeStyle: 'white',
-        iconLineWidth: 2,
-        iconCoreRadius: 23,
-        iconCoreFillStyle: 'white'
+        canvasIconStrokeStyle: 'white',
+        canvasIconLineWidth: 2,
+        canvasIconCoreRadius: 23,
+        canvasIconCoreFillStyle: 'white'
     };
 
     var Canvas = function (size) {
@@ -30,8 +30,8 @@ ym.modules.define('PieChartClusterer.component.Canvas', [
         var ctx = this._context;
         var x = this._canvas.width / 2;
         var y = this._canvas.height / 2;
-        var lineWidth = this.options.get('iconLineWidth', DEFAULT_OPTIONS.iconLineWidth);
-        var strokeStyle = this.options.get('iconStrokeStyle', DEFAULT_OPTIONS.iconStrokeStyle);
+        var lineWidth = this.options.get('canvasIconLineWidth', DEFAULT_OPTIONS.canvasIconLineWidth);
+        var strokeStyle = this.options.get('canvasIconStrokeStyle', DEFAULT_OPTIONS.canvasIconStrokeStyle);
         var radius = Math.floor((x + y - lineWidth) / 2);
 
         ctx.strokeStyle = strokeStyle;
@@ -55,8 +55,8 @@ ym.modules.define('PieChartClusterer.component.Canvas', [
 
     Canvas.prototype._drawCore = function (x, y) {
         var ctx = this._context;
-        var fillStyle = this.options.get('iconCoreFillStyle', DEFAULT_OPTIONS.iconCoreFillStyle);
-        var radius = this.options.get('iconCoreRadius', DEFAULT_OPTIONS.iconCoreRadius);
+        var fillStyle = this.options.get('canvasIconCoreFillStyle', DEFAULT_OPTIONS.canvasIconCoreFillStyle);
+        var radius = this.options.get('canvasIconCoreRadius', DEFAULT_OPTIONS.canvasIconCoreRadius);
 
         ctx.fillStyle = fillStyle;
         this._drawCircle(x, y, radius);
