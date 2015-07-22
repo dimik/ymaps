@@ -177,7 +177,7 @@ ym.modules.define('MapStateInfo', [
 
             this.state.set({
                 mapCenter: center,
-                mapBounds: bounds.fromGlobalPixelBounds(pixelBounds, projection, zoom),
+                mapBounds: bounds.fromGlobalPixelBounds(pixelBounds, zoom, projection),
                 mapZoom: zoom,
                 markerCenter: this._getMarkerCoordinates()
             });
