@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Пример: Геокодирование адреса из формы поиска.</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+  <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="//yandex.st/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+  <script src="//yandex.st/bootstrap/2.3.2/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="//api-maps.yandex.ru/2.1/?lang=ru-RU" type="text/javascript"></script>
+  <script src="build/form-search.min.js" type="text/javascript"></script>
+
+  <script type="text/javascript">
+    ymaps.ready().then(function () {
+      return ymaps.modules.require('form-search');
+    })
+    .spread(function (FormSearch) {
+      new FormSearch;
+    })
+    .fail(console.error, console);
+  </script>
+  <style type="text/css">
+    #map {
+      width: 900px;
+      height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-unit">
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span12">
+          <p class="lead">Геокодирование адреса из формы поиска.</p>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <form class="form-search">
+          <div class="control-group">
+            <div class="controls">
+              <div class="input-append">
+                <input type="text" class="input-xlarge search-query" placeholder="Введите адрес" data-provide="typeahead">
+                <button type="submit" class="btn">Найти</button>
+              </div>
+              <span class="help-inline invisible" style="font-size:14px;"></span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="row-fluid">
+        <div id="map" class="span8"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

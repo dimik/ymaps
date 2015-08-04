@@ -1,0 +1,4 @@
+{
+    "concatTo": "form-search.min.js",
+    "minify": false
+}
