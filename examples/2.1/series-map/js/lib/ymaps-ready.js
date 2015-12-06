@@ -1,8 +1,8 @@
 define({
     load: function (name, require, load, config) {
-        require([name], function (ymaps) {
-            ymaps.ready(function () {
-                load(ymaps);
+        require([name], function () {
+            ymaps.ready().then(function (ym) {
+                load(ym);
             });
         });
     }
