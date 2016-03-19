@@ -46,7 +46,7 @@ ym.modules.define('GeoObjectEditor.component.styles', [
         build: function () {
             BalloonContentLayout.superclass.build.apply(this, arguments);
 
-            this._element = jQuery(this.getParentElement());
+            this._$element = jQuery(this.getParentElement());
             this._geoObject = this.getData().geoObject;
             this._setupListeners();
         },
@@ -56,13 +56,13 @@ ym.modules.define('GeoObjectEditor.component.styles', [
             BalloonContentLayout.superclass.clear.apply(this, arguments);
         },
         _setupListeners: function () {
-            this._element
+            this._$element
                 .on('submit', bind(this._onStartEditing, this))
                 .on('reset', bind(this._onRemove, this))
                 .on('click', '.btn-warning', bind(this._onStopEditing, this));
         },
         _clearListeners: function () {
-            this._element.off();
+            this._$element.off();
         },
         _onStartEditing: function (e) {
             e.preventDefault();
