@@ -1,0 +1,4 @@
+{
+    "concatTo": "region-selector.min.js",
+    "minify": false
+}
