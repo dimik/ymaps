@@ -21,15 +21,16 @@ ym.modules.define('km.Map.Poi', [
     },
     setActiveGroup: function (id) {
       if(this._activeGroup) {
-        if(id === this._activeGroup.properties.get('id')) {
-          return;
-        }
         this._activeGroup.options.set('visible', false);
       }
 
-      if(this._groups[id]) {
-        this._activeGroup = this._groups[id];
-        this._groups[id].options.set('visible', true);
+      if(this._activeGroup && id === this._activeGroup.properties.get('id')) {
+        this._activeGroup = null;
+      } else {
+        if(this._groups[id]) {
+          this._activeGroup = this._groups[id];
+          this._groups[id].options.set('visible', true);
+        }
       }
     },
     _createGroup: function (data) {

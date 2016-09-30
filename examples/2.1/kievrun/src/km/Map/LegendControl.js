@@ -40,13 +40,18 @@ ym.modules.define('km.Map.LegendControl', [
 
     _handleLegendItemClick: function (e) {
       e.preventDefault()
-      var groupId = $(e.target).data('id')
+      var target = $(e.target)
+      var groupId = target.data('id')
 
-      if(this._activeItemId === groupId) {
-        return;
+      if(this._activeItem) {
+        this._activeItem.removeClass('active');
       }
 
-      this._activeItemId = groupId;
+      if(this._activeItem && this._activeItem.data('id') === groupId) {
+        this._activeItem = null;
+      } else {
+        this._activeItem = target.addClass('active');
+      }
 
       this.events.fire('activegroupchange', {
         target: this,
