@@ -17,11 +17,16 @@ ym.modules.define('km.Map.Points', [
       this._geoObjects.removeAll();
     },
     _createPlacemark: function (coords, index) {
-      return new Placemark(coords, {}, {
+      return new Placemark(coords, {
+        iconContent: '<h6 class="km-sign">' + (index + 1) + '</h6>'
+      }, {
+        preset: 'islands#blueCircleIcon'
+        /*
         iconLayout: 'default#image',
         iconImageHref: 'http://kyivmarathon.org/wp-content/themes/WizzairMarathon-2016/maps/img/km' + (index + 1) + '.png',
         iconImageSize: [30, 30],
         iconImageOffset: [-15, -30]
+        */
       });
     },
   });
