@@ -21,6 +21,9 @@ ym.modules.define('km.Map.Poi', [
     },
     setActiveGroup: function (id) {
       if(this._activeGroup) {
+        if(id === this._activeGroup.properties.get('id')) {
+          return;
+        }
         this._activeGroup.options.set('visible', false);
       }
 

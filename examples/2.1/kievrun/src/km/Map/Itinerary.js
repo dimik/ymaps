@@ -35,11 +35,11 @@ ym.modules.define('km.Map.Itinerary', [
       e.get('target').options.set('strokeColor', '#00ff00');
     },
     _handleMouseLeave: function (e) {
-      e.get('target').options.set('strokeColor', '#ff0000');
+      e.get('target').options.set('strokeColor', '#1e98ff');
     },
     _createItinerary: function () {
       return this._itinerary = new Polyline(ItineraryData, {}, {
-        strokeColor: '#ff0000',
+        strokeColor: '#1e98ff',
         strokeWidth: 4
       });
     },
