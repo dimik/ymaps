@@ -1,0 +1,4 @@
+{
+    "concatTo": "index.min.js",
+    "minify": false
+}

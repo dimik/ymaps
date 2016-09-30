@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Киевский Марафон.</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+  <link href="//yandex.st/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="//yandex.st/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+
+  <script src="//api-maps.yandex.ru/2.1/?lang=ru-RU" type="text/javascript"></script>
+  <script src="build/index.min.js" type="text/javascript"></script>
+
+  <script type="text/javascript">
+    ymaps.ready().then(function () {
+      return ymaps.modules.require('km.App');
+    })
+    .spread(function (App) {
+      new App(document.getElementById('map'));
+    })
+    .fail(console.error, console);
+  </script>
+  <style type="text/css">
+    #map {
+      width: 1200px;
+      height: 700px;
+    }
+    .km-legend {
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+</body>
+</html>
