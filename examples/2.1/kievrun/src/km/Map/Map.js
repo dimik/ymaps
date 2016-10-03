@@ -4,9 +4,8 @@ ym.modules.define('km.Map', [
  'Map',
  'km.Map.LegendControl',
  'km.Map.Itinerary',
- 'km.Map.Points',
  'km.Map.Poi',
-], function (provide, defineClass, EventManager, Map, LegendControl, Itinerary, Points, Poi) {
+], function (provide, defineClass, EventManager, Map, LegendControl, Itinerary, Poi) {
   provide(defineClass(function (el) {
     var map = this._map = this._createMap(el);
     this.events = new EventManager();
@@ -22,15 +21,15 @@ ym.modules.define('km.Map', [
 
     this._itinerary = new Itinerary(map.geoObjects);
     this._itinerary.render();
-    this._points = new Points(map.geoObjects);
-    this._points.render();
     this._poi = new Poi(map.geoObjects);
     this._poi.render();
   }, {
     _createMap: function (el) {
+      var mapState = window.km.data.map.state;
+
       return new Map(el, {
-        center: [50.43837750477888,30.53715151203909],
-        zoom: 13,
+        center: mapState.center,
+        zoom: mapState.zoom,
         controls: []
       }, {
       });

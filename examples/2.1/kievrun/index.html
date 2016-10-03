@@ -5,36 +5,17 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
   <link href="//yandex.st/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-
-  <script src="//yandex.st/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
-
-  <script src="//api-maps.yandex.ru/2.1/?lang=ru-RU" type="text/javascript"></script>
-  <script src="build/index.min.js" type="text/javascript"></script>
-
-  <script type="text/javascript">
-    ymaps.ready().then(function () {
-      return ymaps.modules.require('km.App');
-    })
-    .spread(function (App) {
-      new App(document.getElementById('map'));
-    })
-    .fail(console.error, console);
-  </script>
-  <style type="text/css">
-    #map {
-      width: 1200px;
-      height: 700px;
-    }
-    .km-legend {
-      width: 300px;
-    }
-    .km-sign {
-      margin: 2px 1px 0 0;
-      font-size: 80%;
-    }
-  </style>
 </head>
 <body>
-  <div id="map"></div>
+  <p>42km</p>
+  <iframe style="border:none !important" src="km-42.html" width="1200" height="722"></iframe>
+  <p>21km</p>
+  <iframe style="border:none !important" src="km-21.html" width="1200" height="722"></iframe>
+  <p>10km</p>
+  <iframe style="border:none !important" src="km-10.html" width="1200" height="722"></iframe>
+  <p>5km</p>
+  <iframe style="border:none !important" src="km-5.html" width="1200" height="722"></iframe>
+  <p>2km</p>
+  <iframe style="border:none !important" src="km-2.html" width="1200" height="722"></iframe>
 </body>
 </html>

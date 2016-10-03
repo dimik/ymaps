@@ -41,19 +41,16 @@ ym.modules.define('km.Map.Poi', [
         },
         children: data.items.map(this._createPlacemark, this)
       }, {
-        preset: data.preset,
-        visible: false
+        // preset: data.preset,
+        visible: false,
+        iconLayout: 'default#image',
+        iconImageHref: data.icon,
+        iconImageSize: [32, 32],
+        iconImageOffset: [-16, -32]
       });
     },
     _createPlacemark: function (data, index) {
-      return new Placemark(data.center, {}, {
-        /*
-        iconLayout: 'default#image',
-        iconImageHref: data.icon,
-        iconImageSize: [30, 30],
-        iconImageOffset: [-15, -30]
-        */
-      });
+      return new Placemark(data.center, {}, {});
     },
   });
 

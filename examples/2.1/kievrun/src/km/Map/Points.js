@@ -20,7 +20,8 @@ ym.modules.define('km.Map.Points', [
       return new Placemark(coords, {
         iconContent: '<h6 class="km-sign">' + (index + 1) + '</h6>'
       }, {
-        preset: 'islands#blueCircleIcon'
+        preset: 'islands#blueCircleIcon',
+        iconColor: '#9e7afb'
         /*
         iconLayout: 'default#image',
         iconImageHref: 'http://kyivmarathon.org/wp-content/themes/WizzairMarathon-2016/maps/img/km' + (index + 1) + '.png',

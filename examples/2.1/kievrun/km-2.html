@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Киевский Марафон.</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+  <link href="//yandex.st/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="//yandex.st/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+
+  <script src="//api-maps.yandex.ru/2.1/?lang=uk_UA" type="text/javascript"></script>
+  <script src="build/index.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+var km = window.km = {};
+
+km.data = {
+  map: {
+    state: {
+      center: [50.450599814850186,30.530381616485503],
+      zoom: 16
+    }
+  },
+  poi: [{
+    name: "точки гідратації",
+    id: 'g1',
+    preset: "islands#blueHydroCircleIcon",
+    icon: "images/1.png",
+    items: [{
+        center: [50.448983144332026,30.52317183865347],
+        icon: "img/water_pin.png"
+      },
+    ]
+  }, {
+    name: "медична допомога",
+    id: 'g2',
+    icon: "images/4.png",
+    preset: "islands#blueMedicalCircleIcon",
+    items: [{
+        center: [50.44895574265808,30.52360099209586],
+        icon: "img/medical_pin.png"
+      }
+    ]
+  }, {
+    name: "туалети",
+    preset: "islands#blueToiletCircleIcon",
+    icon: "images/2.png",
+    id: 'g9',
+    items: [{
+        center: [50.44896944349704,30.524137433898833],
+        icon: "img/wc_pin.png"
+      }
+    ]
+  }],
+  kmPins: [
+    [50.45224382960859,30.53469460858145]
+  ],
+  startPoint: [50.449394167522534,30.522935804260158],
+  finishPoint: [50.449202357145154,30.523236211669815],
+  itinerary: [[50.44928456168832,30.523236211669815], [50.4498325883065,30.523944314849757], [50.45183283130373,30.526776727569473], [50.45181913129842,30.527334627044578], [50.45175063121197,30.52782815350331], [50.451586230597705,30.52830022228994], [50.45127112781488,30.528750833404434], [50.450777919223164,30.529158529174723], [50.45066831661186,30.529244359863196], [50.45235342855026,30.534522947204504], [50.452339728696515,30.534823354614158], [50.4523739783234,30.534930642974764], [50.45242877767459,30.53449076069632], [50.452401378006975,30.534383472335715], [50.45075736875298,30.52930873287954], [50.451408129284076,30.528675731552042], [50.45166158095055,30.528268035781753], [50.45176433123724,30.52804273022452], [50.45183283130373,30.52777450932302], [50.451839681304904,30.527602847946074], [50.45188763128514,30.52703421963492], [50.45188763128514,30.52670162571708], [50.451839681304904,30.5264012183074], [50.449743534415305,30.523515161407364], [50.44934621500148,30.523000177276526]],
+}
+</script>
+  <script type="text/javascript">
+    ymaps.ready().then(function () {
+      return ymaps.modules.require('km.App');
+    })
+    .spread(function (App) {
+      new App(document.getElementById('map'));
+    })
+    .fail(console.error, console);
+  </script>
+  <style type="text/css">
+    #map {
+      width: 100%;
+      height: 700px;
+    }
+    .km-legend {
+      width: 300px;
+    }
+    .km-sign {
+      margin: 2px 1px 0 0;
+      font-size: 80%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+</body>
+</html>
