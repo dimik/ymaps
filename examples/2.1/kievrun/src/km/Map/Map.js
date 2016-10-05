@@ -3,9 +3,10 @@ ym.modules.define('km.Map', [
  'event.Manager',
  'Map',
  'km.Map.LegendControl',
+ 'km.Map.LogoControl',
  'km.Map.Itinerary',
  'km.Map.Poi',
-], function (provide, defineClass, EventManager, Map, LegendControl, Itinerary, Poi) {
+], function (provide, defineClass, EventManager, Map, LegendControl, LogoControl, Itinerary, Poi) {
   provide(defineClass(function (el) {
     var map = this._map = this._createMap(el);
     this.events = new EventManager();
@@ -16,6 +17,13 @@ ym.modules.define('km.Map', [
         top: 40
       }
     });
+    map.controls.add(new LogoControl({
+      float: 'none',
+      position: {
+        right: 20,
+        bottom: 40
+      }
+    }));
     map.controls.add(this._legend);
     this._setupListeners();
 
