@@ -10,7 +10,7 @@ ym.modules.define('km.Map.Points', [
     parent.add(this._geoObjects);
   }, {
     render: function (data) {
-      geoQuery(PointData.map(this._createPlacemark, this))
+      return geoQuery(PointData.map(this._createPlacemark, this))
         .addTo(this._geoObjects);
     },
     clear: function () {
@@ -21,7 +21,6 @@ ym.modules.define('km.Map.Points', [
         iconContent: '<h6 class="km-sign">' + (index + 1) + '</h6>'
       }, {
         preset: 'islands#blueCircleIcon',
-        iconColor: '#9e7afb'
         /*
         iconLayout: 'default#image',
         iconImageHref: 'http://kyivmarathon.org/wp-content/themes/WizzairMarathon-2016/maps/img/km' + (index + 1) + '.png',
