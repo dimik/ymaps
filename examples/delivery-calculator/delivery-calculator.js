@@ -47,11 +47,12 @@ DeliveryCalculator.prototype = {
         this._tarifs.forEach(function (tarif) {
             tarif.clear();
         });
-        this._wayPoints.removeAll();
+        this._wayPoints.options.set('visible', false);
         this._routeRenderer.setDirections(result);
         this.calculate(result.routes[0]);
     },
     setDestination: function (position) {
+        this._wayPoints.options.set('visible', true);
         this._wayPoints.add(new ymaps.Placemark(position, {iconContent: 'B'}), 1);
         this.getDirections(this._origin, this._destination = position);
     },
@@ -59,6 +60,7 @@ DeliveryCalculator.prototype = {
         return this._destination;
     },
     setOrigin: function (position) {
+        this._wayPoints.options.set('visible', true);
         this._wayPoints.add(new ymaps.Placemark(position, {iconContent: 'A'}), 0);
         this.getDirections(this._origin = position, this._destination);
     },
