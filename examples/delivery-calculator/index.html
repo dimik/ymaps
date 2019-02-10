@@ -73,11 +73,16 @@ function init() {
     myMap.events.add('click', function (e) {
         var position = e.get('coordPosition');
 
-        if(calculator.getOrigin()) {
-            calculator.setDestination(position);
-        }
-        else {
-            calculator.setOrigin(position);
+        switch (calculator.getWaypoints().getLength()) {
+            case 0:
+                calculator.setOrigin(position);
+                break;
+            case 1:
+                calculator.setDestination(position);
+                break;
+            default:
+                calculator.clear();
+                break;
         }
     });
 }

@@ -44,10 +44,7 @@ DeliveryCalculator.prototype = {
         }
     },
     _onRouteSuccess: function (result) {
-        this._tarifs.forEach(function (tarif) {
-            tarif.clear();
-        });
-        this._wayPoints.removeAll();
+        this.clear();
         this._routeRenderer.setDirections(result);
         this.calculate(result.routes[0]);
     },
@@ -64,6 +61,15 @@ DeliveryCalculator.prototype = {
     },
     getOrigin: function () {
         return this._origin;
+    },
+    getWaypoints: function () {
+        return this._wayPoints;
+    },
+    clear: function () {
+        this._tarifs.forEach(function (tarif) {
+            tarif.clear();
+        });
+        this._wayPoints.removeAll();
     },
     calculate: function (route) {
         var results = [],
