@@ -4,6 +4,8 @@ function DeliveryCalculator(map, origin, tarifs) {
     this._routeRenderer = new DirectionsRenderer({ suppressPolylines: true, draggable: true, map: map });
     this._origin = origin;
     this._destination = null;
+    this._wayPoints = new ymaps.GeoObjectArray();
+    map.geoObjects.add(this._wayPoints);
     this._tarifs = [];
 
     this._template = $('#sidebarTemplate').template('sidebarTemplate');
@@ -45,16 +47,19 @@ DeliveryCalculator.prototype = {
         this._tarifs.forEach(function (tarif) {
             tarif.clear();
         });
+        this._wayPoints.removeAll();
         this._routeRenderer.setDirections(result);
         this.calculate(result.routes[0]);
     },
     setDestination: function (position) {
+        this._wayPoints.add(new ymaps.Placemark(position, {iconContent: 'B'}), 1);
         this.getDirections(this._origin, this._destination = position);
     },
     getDestination: function () {
         return this._destination;
     },
     setOrigin: function (position) {
+        this._wayPoints.add(new ymaps.Placemark(position, {iconContent: 'A'}), 0);
         this.getDirections(this._origin = position, this._destination);
     },
     getOrigin: function () {

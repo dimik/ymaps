@@ -47,7 +47,9 @@ function init() {
             color: '#ff0000',
             url: 'mo.json'
         }],
-        calculator = new DeliveryCalculator(myMap, 'Москва, Льва Толстого 18', tarifs);
+        calculator = new DeliveryCalculator(myMap, null, tarifs);
+        // Вариант с заданной начальной точкой
+        // calculator = new DeliveryCalculator(myMap, 'Москва, Льва Толстого 18', tarifs);
 
     myMap.controls.add(searchOrigin, { right: 5, top: 5 });
     myMap.controls.add(searchDestination, { right: 5, top: 45 });
