@@ -75,6 +75,7 @@ DeliveryCalculator.prototype = {
             tarif.clear();
         });
         this._wayPoints.removeAll();
+        this._routeRenderer.clear();
         this._origin = this._destination = null;
     },
     calculate: function (route) {

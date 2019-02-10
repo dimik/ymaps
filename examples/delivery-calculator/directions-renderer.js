@@ -77,7 +77,7 @@ DirectionsRenderer.prototype = {
             this._render();
         }
     },
-    _clear: function () {
+    clear: function () {
         this._detachHandlers();
         this._markers.removeAll();
 
@@ -130,7 +130,7 @@ DirectionsRenderer.prototype = {
         var coordinates = [],
             route = this._directions.routes[this._routeIndex];
 
-        this._clear();
+        this.clear();
 
         route.legs.forEach(function (leg, i) {
             this._createMarkers(leg, i);
